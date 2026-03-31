@@ -1,0 +1,16 @@
+.DS_Store
+
+.documents
+.infra
+.kits
+.efforts
+.output
+
+company.md
+
+node_modules
+backup
+
+
+
+

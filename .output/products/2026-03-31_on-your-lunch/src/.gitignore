@@ -1,0 +1,36 @@
+# 의존성
+node_modules/
+
+# 빌드 산출물
+dist/
+.turbo/
+
+# 환경 변수
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma
+apps/api/prisma/*.db
+apps/api/prisma/*.db-journal
+
+# 테스트
+coverage/
+
+# Expo
+apps/mobile/.expo/
+apps/mobile/ios/
+apps/mobile/android/
+
+# 로그
+*.log
+npm-debug.log*
+pnpm-debug.log*

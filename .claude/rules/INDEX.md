@@ -15,6 +15,7 @@
 | `common/infra-management.md` | .infra/ vs src/ 구분 기준. |
 | `common/kits-management.md` | .kits/ 템플릿 사용법 + attachments 파일 정리 규칙. |
 | `common/output-management.md` | .output/ 프로젝트 산출물 관리. product/contents 분리. |
+| `common/stage-verification.md` | Stage 검증 절차. 1차 전문 → 2차 정합성 → PO 승인. |
 
 ## 팀별 규칙
 

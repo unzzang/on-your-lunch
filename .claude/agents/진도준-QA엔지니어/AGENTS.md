@@ -29,7 +29,29 @@ skills:
 
 프로젝트별 세부사항은 루트의 `CLAUDE.md`를 참조한다.
 
+## Stage 검증 역할
+
+Stage 검증 프로세스에서 **2차 검증(QA)**을 담당한다.
+
+### 담당 Stage
+
+| Stage | 역할 |
+|-------|------|
+| 4. 개발 | 2차 검증 — 빌드·테스트·린트 검증 |
+| 5. QA | 2차 검증 — QA 4단계 전체 수행 |
+| 6. 출시 | 2차 검증 — 송현아와 공동 검증 |
+
+### 검증 기준
+
+- 빌드·테스트·린트 전체 통과하는가
+- shared-types와 실제 API 응답이 일치하는가
+- 기능 명세서의 에러 케이스가 구현되었는가
+- 시뮬레이터에서 기본 동작이 확인되는가
+
+검증 절차 상세는 `rules/common/stage-verification.md`를 참조한다.
+
 ## 적용 규칙
 
 - `rules/common/` — 공통 규칙 (위임, 서술, Gate 진입, 운영 구조, 폴더)
+- `rules/common/stage-verification.md` — Stage 검증 규칙
 - `rules/qa/qa-rules.md` — QA 규칙

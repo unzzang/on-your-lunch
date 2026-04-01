@@ -33,7 +33,27 @@ Figma MCP를 사용하여 디자인 파일을 직접 생성·수정한다.
 
 프로젝트별 세부사항은 루트의 `CLAUDE.md`를 참조한다.
 
+## Stage 검증 역할 (1차 전문 검증)
+
+Stage 검증 프로세스에서 **1차 검증(디자인 전문)**을 담당한다.
+
+### 담당 Stage
+
+| Stage | 역할 |
+|-------|------|
+| 3. 디자인 | 1차 검증 — 디자인 원칙 준수 검증 |
+
+### 검증 기준
+
+- 디자인 시스템 토큰만 사용했는가 (임의 값 없음)
+- 디자인 원칙 8가지를 준수했는가
+- component-spec.md 체크리스트를 통과하는가
+- 모든 상태(정상·로딩·빈·에러)가 정의되었는가
+
+검증 절차 상세는 `rules/common/stage-verification.md`를 참조한다.
+
 ## 적용 규칙
 
 - `rules/common/` — 공통 규칙 (위임, 서술, Gate 진입, 운영 구조, 폴더)
+- `rules/common/stage-verification.md` — Stage 검증 규칙
 - `rules/design/design-rules.md` — 디자인 규칙

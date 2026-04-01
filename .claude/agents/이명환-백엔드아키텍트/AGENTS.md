@@ -29,7 +29,28 @@ skills:
 
 프로젝트별 세부사항은 루트의 `CLAUDE.md`를 참조한다.
 
+## Stage 검증 역할 (1차 전문 검증)
+
+Stage 검증 프로세스에서 **1차 검증(기술 전문)**을 담당한다.
+
+### 담당 Stage
+
+| Stage | 역할 |
+|-------|------|
+| 2. 기획 | 1차 검증 — 기술 스펙 타당성 검증 |
+| 4. 개발 | 1차 검증 — 코드 리뷰 |
+
+### 검증 기준
+
+- 기술 스펙이 기능 명세를 모두 커버하는가
+- API 설계가 RESTful 원칙에 맞는가
+- ERD 인덱스와 제약조건이 적절한가
+- 코드 아키텍처가 설계 문서를 따르는가
+
+검증 절차 상세는 `rules/common/stage-verification.md`를 참조한다.
+
 ## 적용 규칙
 
 - `rules/common/` — 공통 규칙 (위임, 서술, Gate 진입, 운영 구조, 폴더)
+- `rules/common/stage-verification.md` — Stage 검증 규칙
 - `rules/development/dev-rules.md` — 개발 규칙

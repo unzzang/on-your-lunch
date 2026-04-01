@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=393, initial-scale=1.0">
+  <title>온유어런치 — 식당 상세</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/fill/style.css">
+  <style>
+    :root {
+      --color-primary: #D4501F;
+      --color-primary-hover: #B8441A;
+      --color-primary-disabled: #E8A78E;
+      --color-bg-primary: #FFFFFF;
+      --color-bg-secondary: #F9FAFB;
+      --color-bg-tertiary: #F3F4F6;
+      --color-border-default: #E5E7EB;
+      --color-text-primary: #111827;
+      --color-text-secondary: #6B7280;
+      --color-text-placeholder: #9CA3AF;
+      --color-text-inverse: #FFFFFF;
+      --color-overlay: rgba(0,0,0,0.5);
+      --color-toast-bg: #1F2937;
+      --color-destructive: #DC2626;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.10);
+      --color-category-korean: #FF8C00;
+      --color-category-chinese: #FF0000;
+      --color-category-japanese: #0066FF;
+      --color-category-western: #00AA00;
+      --color-category-asian: #9900CC;
+      --color-category-snack: #FFCC00;
+      --color-category-salad: #66CC00;
+      --color-rating: #FBBF24;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Pretendard Variable', -apple-system, system-ui, sans-serif; }
+    body { background: var(--color-bg-secondary); word-break: keep-all; }
+    .phone { width: 393px; margin: 0 auto; min-height: 852px; background: var(--color-bg-primary); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .status-bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font-size: 14px; font-weight: 600; color: var(--color-text-inverse); position: absolute; top: 0; left: 0; right: 0; z-index: 10; }
+
+    /* Hero Image */
+    .hero { position: relative; height: 280px; background: var(--color-bg-tertiary); overflow: hidden; }
+    .hero img { width: 100%; height: 100%; object-fit: cover; }
+    .hero__overlay { position: absolute; top: 0; left: 0; right: 0; height: 100px; background: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent); }
+    .hero__nav { position: absolute; top: 44px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 16px; z-index: 11; }
+    .hero__btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .hero__btn i { font-size: 24px; color: var(--color-text-inverse); }
+    .hero__dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+    .hero__dot { width: 8px; height: 8px; border-radius: var(--radius-full); background: rgba(255,255,255,0.5); }
+    .hero__dot--active { background: white; }
+
+    /* Content */
+    .detail-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+    .detail-header { padding: 20px 16px 0; }
+    .detail-header__row { display: flex; align-items: center; justify-content: space-between; }
+    .detail-header__name { font-size: 24px; font-weight: 700; color: var(--color-text-primary); }
+    .detail-header__fav { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; background: none; }
+    .detail-header__fav i { font-size: 28px; color: var(--color-primary); }
+    .detail-header__cat { font-size: 14px; color: var(--color-text-secondary); margin-top: 4px; }
+
+    /* Info Items */
+    .info-list { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .info-item { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--color-text-primary); }
+    .info-item i { font-size: 20px; color: var(--color-text-secondary); flex-shrink: 0; }
+    .info-item span { font-variant-numeric: tabular-nums; }
+    .info-item--link { cursor: pointer; color: var(--color-primary); }
+
+    /* My Record */
+    .my-record { margin: 0 16px; padding: 16px; background: var(--color-bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--color-border-default); }
+    .my-record__title { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 10px; letter-spacing: 0.5px; }
+    .my-record__stats { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+    .my-record__recent { font-size: 13px; color: var(--color-text-secondary); margin-top: 6px; line-height: 18px; }
+
+    /* Map Preview */
+    .map-section { margin: 16px; height: 160px; background: var(--color-bg-tertiary); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; cursor: pointer; border: 1px solid var(--color-border-default); }
+    .map-section i { font-size: 32px; color: var(--color-text-placeholder); }
+    .map-section span { font-size: 13px; color: var(--color-text-placeholder); }
+
+    /* Bottom Actions */
+    .bottom-actions { position: absolute; bottom: 0; left: 0; right: 0; display: flex; gap: 8px; padding: 12px 16px 32px; background: var(--color-bg-primary); border-top: 1px solid var(--color-border-default); }
+    .action-btn { flex: 1; height: 48px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all 0.15s; }
+    .action-btn--secondary { background: var(--color-bg-primary); color: var(--color-text-primary); border: 1px solid var(--color-border-default); }
+    .action-btn--secondary:hover { background: var(--color-bg-tertiary); }
+    .action-btn--primary { background: var(--color-primary); color: var(--color-text-inverse); }
+    .action-btn--primary:hover { background: var(--color-primary-hover); }
+    .action-btn i { font-size: 20px; }
+
+    /* Bottom Sheet */
+    .bottom-sheet-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--color-overlay); z-index: 100; display: none; }
+    .bottom-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: var(--color-bg-primary); border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 12px 24px 40px; z-index: 101; display: none; box-shadow: var(--shadow-lg); }
+    .bottom-sheet__handle { width: 32px; height: 4px; background: var(--color-border-default); border-radius: 2px; margin: 0 auto 20px; }
+    .bottom-sheet__title { font-size: 18px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 20px; }
+    .stars { display: flex; gap: 8px; margin-bottom: 16px; }
+    .star { font-size: 32px; color: var(--color-border-default); cursor: pointer; }
+    .star--active { color: var(--color-rating, #FBBF24); }
+    .memo-label { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 8px; }
+    .memo-input { width: 100%; height: 80px; padding: 12px 16px; border: 1px solid var(--color-border-default); border-radius: var(--radius-md); font-size: 14px; color: var(--color-text-primary); resize: none; font-family: inherit; outline: none; }
+    .memo-input:focus { border-color: var(--color-primary); }
+    .memo-input::placeholder { color: var(--color-text-placeholder); }
+    .memo-count { font-size: 12px; color: var(--color-text-placeholder); text-align: right; margin-top: 4px; }
+    .save-btn { width: 100%; height: 48px; background: var(--color-primary); color: var(--color-text-inverse); border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 16px; font-family: inherit; }
+    .save-btn:disabled { background: var(--color-primary-disabled); cursor: not-allowed; }
+
+    /* State switcher */
+    .state-switcher { position: fixed; top: 8px; right: 8px; z-index: 1000; display: flex; gap: 4px; }
+    .state-switcher button { padding: 4px 8px; font-size: 11px; border: 1px solid var(--color-border-default); border-radius: var(--radius-sm); background: white; cursor: pointer; font-family: inherit; }
+    .state-switcher button.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+
+    /* Skeleton */
+    .skeleton-detail { display: none; flex-direction: column; flex: 1; }
+    .skel-box { background: var(--color-bg-tertiary); border-radius: var(--radius-sm); position: relative; overflow: hidden; }
+    .skel-box::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { to { left: 100%; } }
+
+    .phone.is-loading .detail-content { display: none; }
+    .phone.is-loading .skeleton-detail { display: flex; }
+    .phone.is-loading .bottom-actions { display: none; }
+
+    .state-empty-detail, .state-error-detail { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 12px; text-align: center; padding: 16px; }
+    .state-empty-detail i, .state-error-detail i { font-size: 48px; color: var(--color-text-placeholder); }
+    .state-empty-detail p, .state-error-detail p { font-size: 16px; color: var(--color-text-secondary); }
+    .state-retry-btn { padding: 12px 24px; background: var(--color-primary); color: var(--color-text-inverse); border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+
+    .phone.is-empty .detail-content { display: none; }
+    .phone.is-empty .state-empty-detail { display: flex; }
+    .phone.is-empty .bottom-actions { display: none; }
+    .phone.is-error .detail-content { display: none; }
+    .phone.is-error .state-error-detail { display: flex; }
+    .phone.is-error .bottom-actions { display: none; }
+
+    /* Toast */
+    .toast { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--color-toast-bg); color: var(--color-text-inverse); padding: 12px 20px; border-radius: var(--radius-md); font-size: 14px; white-space: nowrap; z-index: 200; display: none; }
+  </style>
+</head>
+<body>
+  <div class="state-switcher">
+    <button class="active" onclick="setDetailState('')">정상</button>
+    <button onclick="setDetailState('is-loading')">로딩</button>
+    <button onclick="setDetailState('is-empty')">빈 상태</button>
+    <button onclick="setDetailState('is-error')">에러</button>
+    <button onclick="toggleSheet()">먹었어요</button>
+    <button onclick="toggleEditMode()">기록 수정</button>
+  </div>
+
+  <div class="phone" id="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="font-size:12px;">●●●● ▐▐▐▐ 🔋</span>
+    </div>
+
+    <!-- Hero Image -->
+    <div class="hero">
+      <img src="https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&h=300&fit=crop" alt="을지로 골목식당" loading="lazy">
+      <div class="hero__overlay"></div>
+      <div class="hero__nav">
+        <a class="hero__btn" href="home.html"><i class="ph ph-caret-left"></i></a>
+        <div class="hero__btn"><i class="ph ph-share-network"></i></div>
+      </div>
+      <div class="hero__dots">
+        <div class="hero__dot hero__dot--active"></div>
+        <div class="hero__dot"></div>
+        <div class="hero__dot"></div>
+      </div>
+    </div>
+
+    <!-- Normal Content -->
+    <div class="detail-content">
+      <!-- Header -->
+      <div class="detail-header">
+        <div class="detail-header__row">
+          <h1 class="detail-header__name">을지로 골목식당</h1>
+          <button class="detail-header__fav"><i class="ph-fill ph-heart"></i></button>
+        </div>
+        <p class="detail-header__cat">한식 · 백반</p>
+      </div>
+
+      <!-- Info -->
+      <div class="info-list">
+        <div class="info-item">
+          <i class="ph ph-map-pin"></i>
+          <span>도보 8분 · 서울 강남구 역삼로 123</span>
+        </div>
+        <div class="info-item">
+          <i class="ph ph-currency-krw"></i>
+          <span>8,000~12,000원</span>
+        </div>
+        <div class="info-item">
+          <i class="ph ph-clock"></i>
+          <span>11:00~15:00</span>
+        </div>
+        <div class="info-item info-item--link">
+          <i class="ph ph-phone"></i>
+          <span>02-1234-5678</span>
+        </div>
+      </div>
+
+      <!-- My Record -->
+      <div class="my-record">
+        <div class="my-record__title">내 기록</div>
+        <div class="my-record__stats">★ 4.0 · 3번 방문</div>
+        <div class="my-record__recent">최근: 2026-03-28 "된장찌개 맛있었어요"</div>
+      </div>
+
+      <!-- Map -->
+      <div class="map-section">
+        <i class="ph ph-map-trifold"></i>
+        <span>지도에서 위치 보기</span>
+      </div>
+    </div>
+
+    <!-- Skeleton -->
+    <div class="skeleton-detail">
+      <div style="padding:20px 16px;">
+        <div class="skel-box" style="height:28px;width:60%;margin-bottom:12px;"></div>
+        <div class="skel-box" style="height:16px;width:40%;margin-bottom:24px;"></div>
+        <div class="skel-box" style="height:16px;width:80%;margin-bottom:12px;"></div>
+        <div class="skel-box" style="height:16px;width:60%;margin-bottom:12px;"></div>
+        <div class="skel-box" style="height:16px;width:50%;margin-bottom:24px;"></div>
+        <div class="skel-box" style="height:100px;width:100%;border-radius:var(--radius-lg);margin-bottom:16px;"></div>
+        <div class="skel-box" style="height:160px;width:100%;border-radius:var(--radius-lg);"></div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="state-empty-detail">
+      <i class="ph ph-storefront"></i>
+      <p>식당 정보를 불러올 수 없어요</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="state-error-detail">
+      <i class="ph ph-wifi-slash"></i>
+      <p>인터넷 연결을 확인해주세요</p>
+      <button class="state-retry-btn">다시 시도</button>
+    </div>
+
+    <!-- Bottom Actions: 기록 없음 상태 -->
+    <div class="bottom-actions" id="actionsNew">
+      <button class="action-btn action-btn--secondary">
+        <i class="ph ph-map-trifold"></i>
+        길찾기
+      </button>
+      <button class="action-btn action-btn--primary" onclick="toggleSheet()">
+        <i class="ph ph-fork-knife"></i>
+        먹었어요
+      </button>
+    </div>
+    <!-- Bottom Actions: 오늘 기록 있음 상태 -->
+    <div class="bottom-actions" id="actionsEdit" style="display:none;">
+      <button class="action-btn action-btn--secondary">
+        <i class="ph ph-map-trifold"></i>
+        길찾기
+      </button>
+      <button class="action-btn action-btn--secondary" onclick="toggleSheet()">
+        <i class="ph ph-pencil-simple"></i>
+        기록 수정
+      </button>
+    </div>
+
+    <!-- Bottom Sheet Overlay -->
+    <div class="bottom-sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+
+    <!-- Bottom Sheet -->
+    <div class="bottom-sheet" id="sheet">
+      <div class="bottom-sheet__handle"></div>
+      <h3 class="bottom-sheet__title">을지로 골목식당에서 먹었군요!</h3>
+      <p style="font-size:14px;color:var(--color-text-secondary);margin-bottom:12px;">별점을 남겨주세요</p>
+      <div class="stars">
+        <span class="star star--active">★</span>
+        <span class="star star--active">★</span>
+        <span class="star star--active">★</span>
+        <span class="star star--active">★</span>
+        <span class="star">★</span>
+      </div>
+      <p class="memo-label">한줄 메모 (선택)</p>
+      <textarea class="memo-input" placeholder="오늘 된장찌개가 맛있었어요" maxlength="300"></textarea>
+      <p class="memo-count">0/300자</p>
+      <button class="save-btn">저장하기</button>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">기록이 저장되었어요!</div>
+  </div>
+
+  <script>
+    function setDetailState(state) {
+      const phone = document.getElementById('phone');
+      phone.className = 'phone' + (state ? ' ' + state : '');
+      document.querySelectorAll('.state-switcher button').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+    function toggleEditMode() {
+      const actNew = document.getElementById('actionsNew');
+      const actEdit = document.getElementById('actionsEdit');
+      const isEdit = actEdit.style.display === 'flex';
+      actNew.style.display = isEdit ? 'flex' : 'none';
+      actEdit.style.display = isEdit ? 'none' : 'flex';
+    }
+    function toggleSheet() {
+      const sheet = document.getElementById('sheet');
+      const overlay = document.getElementById('sheetOverlay');
+      const isVisible = sheet.style.display === 'block';
+      sheet.style.display = isVisible ? 'none' : 'block';
+      overlay.style.display = isVisible ? 'none' : 'block';
+    }
+  </script>
+</body>
+</html>

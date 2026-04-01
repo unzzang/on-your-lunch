@@ -56,7 +56,7 @@
 
 - **배경:** `color.bg.primary` (#FFFFFF)
 - **좌:** 로고 텍스트 "온유어런치"
-  - 텍스트: `typo.h2` (20px, SemiBold), `color.primary` (#FF6B35)
+  - 텍스트: `typo.h2` (20px, SemiBold), `color.primary` (#D4501F)
 - **우:** 알림 아이콘
   - Phosphor `bell` 24px, `color.text.secondary`
   - 터치 영역: 44×44px
@@ -77,7 +77,7 @@
 #### 카테고리 칩 (횡스크롤)
 
 - **활성 칩:**
-  - 배경: `color.primary` (#FF6B35)
+  - 배경: `color.primary` (#D4501F)
   - 텍스트: `typo.body2` (14px, Medium), `color.text.inverse` (#FFFFFF)
   - 모서리: `radius.full` (9999px)
   - 패딩: 좌우 `16px`, 상하 `8px`
@@ -127,7 +127,7 @@
     - 식당명: `typo.h3` (18px, SemiBold), `color.text.primary`
     - 즐겨찾기: Phosphor `heart` 24px
       - 비활성: `color.text.placeholder` (#9CA3AF)
-      - 활성: `color.primary` (#FF6B35), filled
+      - 활성: `color.primary` (#D4501F), filled
       - 터치 영역: 44×44px
   - **2행:**
     - 메타 정보: `typo.body2` (14px, Regular), `color.text.secondary`
@@ -166,7 +166,7 @@
 | 이력 | `calendar-blank` | 이력 |
 | 마이 | `user` | 마이 |
 
-- **활성 탭:** 아이콘 + 라벨 `color.primary` (#FF6B35), `typo.overline` (11px, Medium)
+- **활성 탭:** 아이콘 + 라벨 `color.primary` (#D4501F), `typo.overline` (11px, Medium)
 - **비활성 탭:** 아이콘 + 라벨 `color.text.placeholder` (#9CA3AF), `typo.overline`
 - **아이콘 크기:** 24px
 - **터치 영역:** 각 탭 최소 44×44px

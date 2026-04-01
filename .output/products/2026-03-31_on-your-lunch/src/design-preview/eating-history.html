@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=393, initial-scale=1.0">
+  <title>온유어런치 — 먹은 이력</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/fill/style.css">
+  <style>
+    :root {
+      --color-primary: #D4501F;
+      --color-primary-hover: #B8441A;
+      --color-primary-disabled: #E8A78E;
+      --color-bg-primary: #FFFFFF;
+      --color-bg-secondary: #F9FAFB;
+      --color-bg-tertiary: #F3F4F6;
+      --color-border-default: #E5E7EB;
+      --color-text-primary: #111827;
+      --color-text-secondary: #6B7280;
+      --color-text-placeholder: #9CA3AF;
+      --color-text-inverse: #FFFFFF;
+      --color-overlay: rgba(0,0,0,0.5);
+      --color-toast-bg: #1F2937;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+      --color-category-korean: #FF8C00;
+      --color-category-chinese: #FF0000;
+      --color-category-japanese: #0066FF;
+      --color-category-western: #00AA00;
+      --color-category-asian: #9900CC;
+      --color-category-snack: #FFCC00;
+      --color-category-salad: #66CC00;
+      --color-rating: #FBBF24;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Pretendard Variable', -apple-system, system-ui, sans-serif; }
+    body { background: var(--color-bg-secondary); word-break: keep-all; }
+    .phone { width: 393px; margin: 0 auto; min-height: 852px; background: var(--color-bg-primary); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .status-bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font-size: 14px; font-weight: 600; color: var(--color-text-primary); background: var(--color-bg-primary); }
+
+    /* App Bar */
+    .app-bar { height: 56px; background: var(--color-bg-primary); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+    .app-bar__title { font-size: 20px; font-weight: 700; color: var(--color-text-primary); }
+    .app-bar__action { display: flex; align-items: center; gap: 4px; padding: 8px 14px; background: var(--color-primary); color: var(--color-text-inverse); border: none; border-radius: var(--radius-full); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .app-bar__action i { font-size: 16px; }
+
+    /* Calendar */
+    .calendar { padding: 0 16px 16px; background: var(--color-bg-primary); }
+    .calendar__nav { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 12px 0 16px; }
+    .calendar__nav-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; background: none; border-radius: var(--radius-full); }
+    .calendar__nav-btn:hover { background: var(--color-bg-tertiary); }
+    .calendar__nav-btn i { font-size: 20px; color: var(--color-text-primary); }
+    .calendar__month { font-size: 18px; font-weight: 600; color: var(--color-text-primary); min-width: 140px; text-align: center; }
+    .calendar__weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 8px; }
+    .calendar__weekday { font-size: 12px; font-weight: 500; color: var(--color-text-placeholder); padding: 8px 0; }
+    .calendar__weekday:first-child { color: var(--color-primary); }
+    .calendar__days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .calendar__day { display: flex; flex-direction: column; align-items: center; padding: 6px 0; cursor: pointer; border-radius: var(--radius-md); min-height: 48px; position: relative; }
+    .calendar__day:hover { background: var(--color-bg-secondary); }
+    .calendar__day-num { font-size: 14px; font-weight: 400; color: var(--color-text-primary); }
+    .calendar__day--empty .calendar__day-num { visibility: hidden; }
+    .calendar__day--today .calendar__day-num { background: var(--color-primary); color: var(--color-text-inverse); width: 28px; height: 28px; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; font-weight: 600; }
+    .calendar__day--selected { background: var(--color-bg-secondary); border: 2px solid var(--color-primary); }
+    .calendar__day--sunday .calendar__day-num { color: var(--color-primary); }
+    .calendar__dots { display: flex; gap: 3px; margin-top: 4px; }
+    .calendar__dot { width: 6px; height: 6px; border-radius: var(--radius-full); }
+    .dot--korean { background: var(--color-category-korean, #FF8C00); }
+    .dot--chinese { background: var(--color-category-chinese, #FF0000); }
+    .dot--japanese { background: var(--color-category-japanese, #0066FF); }
+    .dot--western { background: var(--color-category-western, #00AA00); }
+    .dot--asian { background: var(--color-category-asian, #9900CC); }
+    .dot--snack { background: var(--color-category-snack, #FFCC00); }
+    .dot--salad { background: var(--color-category-salad, #66CC00); }
+
+    /* Divider */
+    .section-divider { height: 8px; background: var(--color-bg-secondary); }
+
+    /* Records List */
+    .records { flex: 1; overflow-y: auto; }
+    .records__header { padding: 16px; font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+    .record-card { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--color-border-default); cursor: pointer; }
+    .record-card:hover { background: var(--color-bg-secondary); }
+    .record-card__icon { width: 48px; height: 48px; background: var(--color-bg-tertiary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .record-card__icon i { font-size: 24px; color: var(--color-primary); }
+    .record-card__content { flex: 1; min-width: 0; }
+    .record-card__name { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+    .record-card__meta { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+    .record-card__memo { font-size: 13px; color: var(--color-text-secondary); margin-top: 4px; font-style: italic; }
+    .record-card__stars { color: var(--color-rating, #FBBF24); font-size: 13px; }
+
+    /* Empty/Error States */
+    .state-empty, .state-error { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 48px 16px; gap: 12px; text-align: center; flex: 1; }
+    .state-empty i, .state-error i { font-size: 48px; color: var(--color-text-placeholder); }
+    .state-empty p, .state-error p { font-size: 16px; color: var(--color-text-secondary); line-height: 24px; }
+    .state-empty .sub, .state-error .sub { font-size: 14px; color: var(--color-text-placeholder); }
+    .state-btn { padding: 12px 24px; background: var(--color-primary); color: var(--color-text-inverse); border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; font-family: inherit; }
+
+    /* Skeleton */
+    .skeleton { display: none; flex-direction: column; gap: 12px; padding: 16px; flex: 1; }
+    .skel-box { background: var(--color-bg-tertiary); border-radius: var(--radius-sm); position: relative; overflow: hidden; }
+    .skel-box::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { to { left: 100%; } }
+    .skel-calendar { height: 280px; border-radius: var(--radius-lg); }
+    .skel-record { display: flex; gap: 12px; padding: 12px 0; }
+    .skel-record-icon { width: 48px; height: 48px; border-radius: var(--radius-md); }
+    .skel-record-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .skel-line { height: 16px; }
+    .skel-line--w60 { width: 60%; }
+    .skel-line--w80 { width: 80%; }
+
+    /* State toggles */
+    .phone.is-loading .calendar { display: none; }
+    .phone.is-loading .section-divider { display: none; }
+    .phone.is-loading .records { display: none; }
+    .phone.is-loading .skeleton { display: flex; }
+
+    .phone.is-empty .records { display: none; }
+    .phone.is-empty .state-empty { display: flex; }
+
+    .phone.is-error .calendar { display: none; }
+    .phone.is-error .section-divider { display: none; }
+    .phone.is-error .records { display: none; }
+    .phone.is-error .state-error { display: flex; }
+
+    /* Bottom Tab */
+    .tab-bar { background: var(--color-bg-primary); border-top: 1px solid var(--color-border-default); display: flex; justify-content: space-around; padding: 8px 24px 28px; }
+    .tab { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; min-width: 44px; min-height: 44px; justify-content: center; text-decoration: none; }
+    .tab i { font-size: 24px; }
+    .tab span { font-size: 11px; font-weight: 500; }
+    .tab--active i, .tab--active span { color: var(--color-primary); }
+    .tab--inactive i, .tab--inactive span { color: var(--color-text-placeholder); }
+
+    /* State Switcher */
+    .state-switcher { position: fixed; top: 8px; right: 8px; z-index: 1000; display: flex; gap: 4px; }
+    .state-switcher button { padding: 4px 8px; font-size: 11px; border: 1px solid var(--color-border-default); border-radius: var(--radius-sm); background: white; cursor: pointer; font-family: inherit; }
+    .state-switcher button.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+  </style>
+</head>
+<body>
+  <div class="state-switcher">
+    <button class="active" onclick="setState('')">정상</button>
+    <button onclick="setState('is-loading')">로딩</button>
+    <button onclick="setState('is-empty')">빈 상태</button>
+    <button onclick="setState('is-error')">에러</button>
+  </div>
+
+  <div class="phone" id="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="font-size:12px;">●●●● ▐▐▐▐ 🔋</span>
+    </div>
+
+    <!-- App Bar -->
+    <div class="app-bar">
+      <span class="app-bar__title">먹은 이력</span>
+      <button class="app-bar__action"><i class="ph ph-plus"></i> 기록</button>
+    </div>
+
+    <!-- Calendar -->
+    <div class="calendar">
+      <div class="calendar__nav">
+        <button class="calendar__nav-btn"><i class="ph ph-caret-left"></i></button>
+        <span class="calendar__month">2026년 3월</span>
+        <button class="calendar__nav-btn"><i class="ph ph-caret-right"></i></button>
+      </div>
+      <div class="calendar__weekdays">
+        <span class="calendar__weekday">일</span>
+        <span class="calendar__weekday">월</span>
+        <span class="calendar__weekday">화</span>
+        <span class="calendar__weekday">수</span>
+        <span class="calendar__weekday">목</span>
+        <span class="calendar__weekday">금</span>
+        <span class="calendar__weekday">토</span>
+      </div>
+      <div class="calendar__days">
+        <!-- Row 1: March 2026 starts on Sunday -->
+        <div class="calendar__day calendar__day--sunday">
+          <span class="calendar__day-num">1</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">2</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--korean"></span></div>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">3</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">4</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--japanese"></span></div>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">5</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">6</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--western"></span></div>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">7</span>
+        </div>
+        <!-- Row 2 -->
+        <div class="calendar__day calendar__day--sunday">
+          <span class="calendar__day-num">8</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">9</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">10</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--korean"></span></div>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">11</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">12</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--chinese"></span></div>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">13</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--korean"></span></div>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">14</span>
+        </div>
+        <!-- Row 3 -->
+        <div class="calendar__day calendar__day--sunday">
+          <span class="calendar__day-num">15</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">16</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">17</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--asian"></span></div>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">18</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">19</span>
+          <div class="calendar__dots">
+            <span class="calendar__dot dot--korean"></span>
+            <span class="calendar__dot dot--western"></span>
+          </div>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">20</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">21</span>
+        </div>
+        <!-- Row 4 -->
+        <div class="calendar__day calendar__day--sunday">
+          <span class="calendar__day-num">22</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">23</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">24</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--snack"></span></div>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">25</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">26</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--japanese"></span></div>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">27</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--korean"></span></div>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">28</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--korean"></span></div>
+        </div>
+        <!-- Row 5 -->
+        <div class="calendar__day calendar__day--sunday">
+          <span class="calendar__day-num">29</span>
+        </div>
+        <div class="calendar__day">
+          <span class="calendar__day-num">30</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--western"></span></div>
+        </div>
+        <div class="calendar__day calendar__day--today calendar__day--selected">
+          <span class="calendar__day-num">31</span>
+          <div class="calendar__dots"><span class="calendar__dot dot--korean"></span></div>
+        </div>
+        <div class="calendar__day calendar__day--empty"><span class="calendar__day-num">-</span></div>
+        <div class="calendar__day calendar__day--empty"><span class="calendar__day-num">-</span></div>
+        <div class="calendar__day calendar__day--empty"><span class="calendar__day-num">-</span></div>
+        <div class="calendar__day calendar__day--empty"><span class="calendar__day-num">-</span></div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Records -->
+    <div class="records">
+      <div class="records__header">3월 31일 (오늘)</div>
+      <div class="record-card" onclick="location.href='restaurant-detail.html'">
+        <div class="record-card__icon"><i class="ph ph-fork-knife"></i></div>
+        <div class="record-card__content">
+          <div class="record-card__name">을지로 골목식당</div>
+          <div class="record-card__meta">한식 · <span class="record-card__stars">★★★★☆</span> 4.0</div>
+          <div class="record-card__memo">"된장찌개 맛있었어요"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skeleton -->
+    <div class="skeleton">
+      <div class="skel-box skel-calendar"></div>
+      <div class="skel-record">
+        <div class="skel-box skel-record-icon"></div>
+        <div class="skel-record-lines">
+          <div class="skel-box skel-line skel-line--w60"></div>
+          <div class="skel-box skel-line skel-line--w80"></div>
+        </div>
+      </div>
+      <div class="skel-record">
+        <div class="skel-box skel-record-icon"></div>
+        <div class="skel-record-lines">
+          <div class="skel-box skel-line skel-line--w60"></div>
+          <div class="skel-box skel-line skel-line--w80"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="state-empty">
+      <i class="ph ph-calendar-blank"></i>
+      <p>아직 기록이 없어요</p>
+      <p class="sub">점심 먹은 후 기록해보세요!</p>
+      <button class="state-btn">기록하러 가기</button>
+    </div>
+
+    <!-- Error State -->
+    <div class="state-error">
+      <i class="ph ph-wifi-slash"></i>
+      <p>인터넷 연결을 확인해주세요</p>
+      <button class="state-btn">다시 시도</button>
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <div class="tab-bar">
+      <a class="tab tab--inactive" href="home.html">
+        <i class="ph ph-house"></i>
+        <span>홈</span>
+      </a>
+      <a class="tab tab--inactive" href="explore.html">
+        <i class="ph ph-magnifying-glass"></i>
+        <span>탐색</span>
+      </a>
+      <a class="tab tab--active" href="eating-history.html">
+        <i class="ph-fill ph-calendar-blank"></i>
+        <span>이력</span>
+      </a>
+      <a class="tab tab--inactive" href="mypage.html">
+        <i class="ph ph-user"></i>
+        <span>마이</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function setState(state) {
+      const phone = document.getElementById('phone');
+      phone.className = 'phone' + (state ? ' ' + state : '');
+      document.querySelectorAll('.state-switcher button').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=393, initial-scale=1.0">
+  <title>온유어런치 — 탐색</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/fill/style.css">
+  <style>
+    :root {
+      --color-primary: #D4501F;
+      --color-primary-hover: #B8441A;
+      --color-primary-disabled: #E8A78E;
+      --color-bg-primary: #FFFFFF;
+      --color-bg-secondary: #F9FAFB;
+      --color-bg-tertiary: #F3F4F6;
+      --color-border-default: #E5E7EB;
+      --color-text-primary: #111827;
+      --color-text-secondary: #6B7280;
+      --color-text-placeholder: #9CA3AF;
+      --color-text-inverse: #FFFFFF;
+      --color-overlay: rgba(0,0,0,0.5);
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+      --color-category-korean: #FF8C00;
+      --color-category-chinese: #FF0000;
+      --color-category-japanese: #0066FF;
+      --color-category-western: #00AA00;
+      --color-category-asian: #9900CC;
+      --color-category-snack: #FFCC00;
+      --color-category-salad: #66CC00;
+      --color-rating: #FBBF24;
+      --color-toast-bg: #1F2937;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Pretendard Variable', -apple-system, system-ui, sans-serif; }
+    body { background: var(--color-bg-secondary); word-break: keep-all; }
+    .phone { width: 393px; margin: 0 auto; min-height: 852px; background: var(--color-bg-primary); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .status-bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font-size: 14px; font-weight: 600; color: var(--color-text-primary); background: var(--color-bg-primary); }
+
+    /* Search Bar */
+    .search-bar { padding: 0 16px 12px; background: var(--color-bg-primary); }
+    .search-bar__input { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--color-bg-tertiary); border-radius: var(--radius-md); border: 1px solid transparent; cursor: text; }
+    .search-bar__input i { font-size: 20px; color: var(--color-text-placeholder); }
+    .search-bar__input span { font-size: 15px; color: var(--color-text-placeholder); }
+
+    /* Filter Chips */
+    .filter-row { display: flex; align-items: center; gap: 8px; padding: 0 16px 12px; overflow-x: auto; background: var(--color-bg-primary); }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .chip { flex-shrink: 0; padding: 8px 16px; border-radius: var(--radius-full); font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: all 0.15s; }
+    .chip--active { background: var(--color-primary); color: var(--color-text-inverse); }
+    .chip--inactive { background: var(--color-bg-tertiary); color: var(--color-text-secondary); }
+    .chip--inactive:hover { background: var(--color-border-default); }
+    .chip--fav { display: flex; align-items: center; gap: 4px; }
+    .chip--fav i { font-size: 16px; }
+
+    /* Sort Row (list view only) */
+    .sort-row { display: flex; justify-content: flex-end; padding: 4px 16px 8px; background: var(--color-bg-primary); }
+    .sort-select { font-size: 13px; color: var(--color-text-secondary); border: none; background: none; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 4px; }
+    .sort-select i { font-size: 16px; }
+
+    /* View Content */
+    .view-content { flex: 1; overflow-y: auto; position: relative; }
+
+    /* Map View */
+    .map-view { display: flex; flex-direction: column; height: 100%; }
+    .map-area { flex: 1; background: var(--color-bg-tertiary); display: flex; align-items: center; justify-content: center; position: relative; min-height: 360px; }
+    .map-area__placeholder { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .map-area__placeholder i { font-size: 48px; color: var(--color-text-placeholder); }
+    .map-area__placeholder span { font-size: 14px; color: var(--color-text-placeholder); }
+
+    /* Map Pins */
+    .map-pin { position: absolute; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+    .map-pin__dot { width: 32px; height: 32px; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; box-shadow: var(--shadow-md); }
+    .map-pin__label { font-size: 11px; font-weight: 600; color: var(--color-text-primary); margin-top: 2px; background: white; padding: 2px 6px; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); white-space: nowrap; }
+    .pin--korean .map-pin__dot { background: var(--color-category-korean); }
+    .pin--japanese .map-pin__dot { background: var(--color-category-japanese); }
+    .pin--western .map-pin__dot { background: var(--color-category-western); }
+    .pin--chinese .map-pin__dot { background: var(--color-category-chinese); }
+    .pin--company { background: none; }
+    .pin--company .map-pin__dot { background: var(--color-text-primary); font-size: 16px; }
+
+    /* Mini Card (map view) */
+    .mini-card { padding: 12px 16px; background: var(--color-bg-primary); border-top: 1px solid var(--color-border-default); display: flex; gap: 12px; align-items: center; cursor: pointer; }
+    .mini-card__img { width: 64px; height: 64px; border-radius: var(--radius-md); background: var(--color-bg-tertiary); overflow: hidden; flex-shrink: 0; }
+    .mini-card__img img { width: 100%; height: 100%; object-fit: cover; }
+    .mini-card__info { flex: 1; min-width: 0; }
+    .mini-card__name { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+    .mini-card__meta { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .mini-card__fav { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: none; background: none; cursor: pointer; }
+    .mini-card__fav i { font-size: 24px; color: var(--color-text-placeholder); }
+    .mini-card__fav--active i { color: var(--color-primary); }
+
+    /* View Toggle Button */
+    .view-toggle { position: absolute; bottom: 16px; right: 16px; padding: 10px 16px; background: var(--color-bg-primary); border: 1px solid var(--color-border-default); border-radius: var(--radius-full); box-shadow: var(--shadow-md); display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--color-text-primary); z-index: 5; }
+    .view-toggle i { font-size: 18px; }
+
+    /* List View */
+    .list-view { display: none; flex-direction: column; }
+    .list-item { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--color-border-default); cursor: pointer; }
+    .list-item:hover { background: var(--color-bg-secondary); }
+    .list-item__img { width: 80px; height: 80px; border-radius: var(--radius-md); background: var(--color-bg-tertiary); overflow: hidden; flex-shrink: 0; }
+    .list-item__img img { width: 100%; height: 100%; object-fit: cover; }
+    .list-item__content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+    .list-item__name { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+    .list-item__meta { font-size: 13px; color: var(--color-text-secondary); margin-top: 3px; font-variant-numeric: tabular-nums; }
+    .list-item__rating { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+    .list-item__rating span { color: var(--color-rating, #FBBF24); }
+    .list-item__fav { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: none; background: none; cursor: pointer; align-self: center; }
+    .list-item__fav i { font-size: 24px; color: var(--color-text-placeholder); }
+    .list-item__fav--active i { color: var(--color-primary); }
+    .list-item--closed { opacity: 0.5; }
+    .list-item__badge { display: inline-block; padding: 2px 6px; background: var(--color-bg-tertiary); border-radius: var(--radius-sm); font-size: 11px; color: var(--color-text-placeholder); font-weight: 500; margin-left: 6px; }
+
+    /* States */
+    .state-empty, .state-error { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 64px 16px; gap: 12px; text-align: center; flex: 1; }
+    .state-empty i, .state-error i { font-size: 48px; color: var(--color-text-placeholder); }
+    .state-empty p, .state-error p { font-size: 16px; color: var(--color-text-secondary); }
+    .state-empty .sub { font-size: 14px; color: var(--color-text-placeholder); }
+    .state-btn { padding: 10px 20px; border: 1px solid var(--color-border-default); border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 8px; background: var(--color-bg-primary); color: var(--color-text-primary); font-family: inherit; }
+    .state-btn-primary { padding: 12px 24px; background: var(--color-primary); color: var(--color-text-inverse); border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; font-family: inherit; }
+
+    /* Skeleton */
+    .skeleton { display: none; flex-direction: column; gap: 0; flex: 1; }
+    .skel-box { background: var(--color-bg-tertiary); border-radius: var(--radius-sm); position: relative; overflow: hidden; }
+    .skel-box::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { to { left: 100%; } }
+    .skel-list-item { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--color-border-default); }
+    .skel-list-img { width: 80px; height: 80px; border-radius: var(--radius-md); }
+    .skel-list-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+    .skel-line { height: 16px; }
+    .skel-line--w60 { width: 60%; }
+    .skel-line--w80 { width: 80%; }
+    .skel-line--w40 { width: 40%; }
+
+    .phone.is-loading .view-content { display: none; }
+    .phone.is-loading .skeleton { display: flex; }
+    .phone.is-empty .view-content { display: none; }
+    .phone.is-empty .state-empty { display: flex; }
+    .phone.is-error .view-content { display: none; }
+    .phone.is-error .state-error { display: flex; }
+
+    /* Bottom Tab */
+    .tab-bar { background: var(--color-bg-primary); border-top: 1px solid var(--color-border-default); display: flex; justify-content: space-around; padding: 8px 24px 28px; }
+    .tab { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; min-width: 44px; min-height: 44px; justify-content: center; text-decoration: none; }
+    .tab i { font-size: 24px; }
+    .tab span { font-size: 11px; font-weight: 500; }
+    .tab--active i, .tab--active span { color: var(--color-primary); }
+    .tab--inactive i, .tab--inactive span { color: var(--color-text-placeholder); }
+
+    /* State Switcher */
+    .state-switcher { position: fixed; top: 8px; right: 8px; z-index: 1000; display: flex; gap: 4px; flex-wrap: wrap; max-width: 300px; }
+    .state-switcher button { padding: 4px 8px; font-size: 11px; border: 1px solid var(--color-border-default); border-radius: var(--radius-sm); background: white; cursor: pointer; font-family: inherit; }
+    .state-switcher button.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+  </style>
+</head>
+<body>
+  <div class="state-switcher">
+    <button class="active" onclick="setState('')">정상(지도)</button>
+    <button onclick="toggleView()">리스트 뷰</button>
+    <button onclick="setState('is-loading')">로딩</button>
+    <button onclick="setState('is-empty')">빈 상태</button>
+    <button onclick="setState('is-error')">에러</button>
+    <button onclick="showFavEmpty()">즐겨찾기 빈</button>
+  </div>
+
+  <div class="phone" id="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="font-size:12px;">●●●● ▐▐▐▐ 🔋</span>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <div class="search-bar__input">
+        <i class="ph ph-magnifying-glass"></i>
+        <span>식당명, 메뉴 검색</span>
+      </div>
+    </div>
+
+    <!-- Filter Chips -->
+    <div class="filter-row">
+      <button class="chip chip--active">전체</button>
+      <button class="chip chip--inactive">한식</button>
+      <button class="chip chip--inactive">중식</button>
+      <button class="chip chip--inactive">일식</button>
+      <button class="chip chip--inactive">양식</button>
+      <button class="chip chip--inactive">아시안</button>
+      <button class="chip chip--inactive">분식</button>
+      <button class="chip chip--inactive">샐러드</button>
+      <button class="chip chip--inactive chip--fav"><i class="ph ph-heart"></i> 즐겨찾기</button>
+    </div>
+
+    <!-- Sort Row (list view only) -->
+    <div class="sort-row" id="sortRow" style="display:none;">
+      <button class="sort-select">거리순 <i class="ph ph-caret-down"></i></button>
+    </div>
+
+    <!-- View Content -->
+    <div class="view-content" id="viewContent">
+      <!-- Map View -->
+      <div class="map-view" id="mapView">
+        <div class="map-area">
+          <div class="map-area__placeholder">
+            <i class="ph ph-map-trifold"></i>
+            <span>카카오맵 지도 영역</span>
+          </div>
+          <!-- Simulated Pins -->
+          <div class="map-pin pin--company" style="top:45%;left:30%;">
+            <div class="map-pin__dot">🏢</div>
+            <span class="map-pin__label">내 회사</span>
+          </div>
+          <div class="map-pin pin--korean" style="top:30%;left:55%;">
+            <div class="map-pin__dot"><i class="ph ph-map-pin" style="font-size:16px;"></i></div>
+            <span class="map-pin__label">을지로 골목식당</span>
+          </div>
+          <div class="map-pin pin--western" style="top:55%;left:60%;">
+            <div class="map-pin__dot"><i class="ph ph-map-pin" style="font-size:16px;"></i></div>
+            <span class="map-pin__label">파스타공방</span>
+          </div>
+          <div class="map-pin pin--japanese" style="top:35%;left:75%;">
+            <div class="map-pin__dot"><i class="ph ph-map-pin" style="font-size:16px;"></i></div>
+            <span class="map-pin__label">스시히로</span>
+          </div>
+          <div class="map-pin pin--chinese" style="top:65%;left:40%;">
+            <div class="map-pin__dot"><i class="ph ph-map-pin" style="font-size:16px;"></i></div>
+            <span class="map-pin__label">명동짬뽕</span>
+          </div>
+          <!-- View Toggle -->
+          <button class="view-toggle" onclick="toggleView()">
+            <i class="ph ph-list"></i> 목록
+          </button>
+        </div>
+        <!-- Mini Card -->
+        <div class="mini-card" onclick="location.href='restaurant-detail.html'">
+          <div class="mini-card__img">
+            <img src="https://images.unsplash.com/photo-1567521464027-f127ff144326?w=100&h=100&fit=crop" alt="을지로 골목식당">
+          </div>
+          <div class="mini-card__info">
+            <div class="mini-card__name">을지로 골목식당</div>
+            <div class="mini-card__meta">한식 · 도보 8분 · ~1만원</div>
+          </div>
+          <button class="mini-card__fav mini-card__fav--active"><i class="ph-fill ph-heart"></i></button>
+        </div>
+      </div>
+
+      <!-- List View -->
+      <div class="list-view" id="listView">
+        <div class="list-item" onclick="location.href='restaurant-detail.html'">
+          <div class="list-item__img">
+            <img src="https://images.unsplash.com/photo-1567521464027-f127ff144326?w=100&h=100&fit=crop" alt="">
+          </div>
+          <div class="list-item__content">
+            <div class="list-item__name">을지로 골목식당</div>
+            <div class="list-item__meta">한식 · 도보 3분 · ~1만원</div>
+            <div class="list-item__rating"><span>★</span> 4.0 (3회)</div>
+          </div>
+          <button class="list-item__fav list-item__fav--active"><i class="ph-fill ph-heart"></i></button>
+        </div>
+        <div class="list-item" onclick="location.href='restaurant-detail.html'">
+          <div class="list-item__img">
+            <img src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=100&h=100&fit=crop" alt="">
+          </div>
+          <div class="list-item__content">
+            <div class="list-item__name">파스타공방</div>
+            <div class="list-item__meta">양식 · 도보 5분 · ~1.5만원</div>
+          </div>
+          <button class="list-item__fav"><i class="ph ph-heart"></i></button>
+        </div>
+        <div class="list-item" onclick="location.href='restaurant-detail.html'">
+          <div class="list-item__img">
+            <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=100&h=100&fit=crop" alt="">
+          </div>
+          <div class="list-item__content">
+            <div class="list-item__name">스시히로</div>
+            <div class="list-item__meta">일식 · 도보 8분 · ~2만원</div>
+            <div class="list-item__rating"><span>★</span> 4.5 (1회)</div>
+          </div>
+          <button class="list-item__fav list-item__fav--active"><i class="ph-fill ph-heart"></i></button>
+        </div>
+        <div class="list-item" onclick="location.href='restaurant-detail.html'">
+          <div class="list-item__img">
+            <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=100&h=100&fit=crop" alt="">
+          </div>
+          <div class="list-item__content">
+            <div class="list-item__name">명동짬뽕</div>
+            <div class="list-item__meta">중식 · 도보 6분 · ~1만원</div>
+          </div>
+          <button class="list-item__fav"><i class="ph ph-heart"></i></button>
+        </div>
+        <div class="list-item list-item--closed" onclick="location.href='restaurant-detail.html'">
+          <div class="list-item__img">
+            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=100&h=100&fit=crop" alt="">
+          </div>
+          <div class="list-item__content">
+            <div class="list-item__name">서울김밥 <span class="list-item__badge">폐업</span></div>
+            <div class="list-item__meta">분식 · 도보 4분 · ~0.7만원</div>
+          </div>
+          <button class="list-item__fav"><i class="ph ph-heart"></i></button>
+        </div>
+        <!-- View Toggle -->
+        <div style="position:sticky;bottom:16px;display:flex;justify-content:flex-end;padding:0 16px;pointer-events:none;">
+          <button class="view-toggle" onclick="toggleView()" style="pointer-events:auto;">
+            <i class="ph ph-map-trifold"></i> 지도
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skeleton -->
+    <div class="skeleton">
+      <div class="skel-list-item">
+        <div class="skel-box skel-list-img"></div>
+        <div class="skel-list-lines">
+          <div class="skel-box skel-line skel-line--w60"></div>
+          <div class="skel-box skel-line skel-line--w80"></div>
+          <div class="skel-box skel-line skel-line--w40"></div>
+        </div>
+      </div>
+      <div class="skel-list-item">
+        <div class="skel-box skel-list-img"></div>
+        <div class="skel-list-lines">
+          <div class="skel-box skel-line skel-line--w60"></div>
+          <div class="skel-box skel-line skel-line--w80"></div>
+          <div class="skel-box skel-line skel-line--w40"></div>
+        </div>
+      </div>
+      <div class="skel-list-item">
+        <div class="skel-box skel-list-img"></div>
+        <div class="skel-list-lines">
+          <div class="skel-box skel-line skel-line--w60"></div>
+          <div class="skel-box skel-line skel-line--w80"></div>
+          <div class="skel-box skel-line skel-line--w40"></div>
+        </div>
+      </div>
+      <div class="skel-list-item">
+        <div class="skel-box skel-list-img"></div>
+        <div class="skel-list-lines">
+          <div class="skel-box skel-line skel-line--w60"></div>
+          <div class="skel-box skel-line skel-line--w80"></div>
+          <div class="skel-box skel-line skel-line--w40"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="state-empty">
+      <i class="ph ph-bowl-food"></i>
+      <p>조건에 맞는 식당이 없어요</p>
+      <button class="state-btn">필터 초기화</button>
+    </div>
+
+    <!-- Favorite Empty State -->
+    <div class="state-empty" id="stateFavEmpty">
+      <i class="ph ph-heart"></i>
+      <p>즐겨찾기한 식당이 없어요</p>
+      <p class="sub">마음에 드는 식당에 하트를 눌러보세요</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="state-error">
+      <i class="ph ph-wifi-slash"></i>
+      <p>인터넷 연결을 확인해주세요</p>
+      <button class="state-btn-primary">다시 시도</button>
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <div class="tab-bar">
+      <a class="tab tab--inactive" href="home.html">
+        <i class="ph ph-house"></i>
+        <span>홈</span>
+      </a>
+      <a class="tab tab--active" href="explore.html">
+        <i class="ph-fill ph-magnifying-glass"></i>
+        <span>탐색</span>
+      </a>
+      <a class="tab tab--inactive" href="eating-history.html">
+        <i class="ph ph-calendar-blank"></i>
+        <span>이력</span>
+      </a>
+      <a class="tab tab--inactive" href="mypage.html">
+        <i class="ph ph-user"></i>
+        <span>마이</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    let isListView = false;
+    function setState(state) {
+      const phone = document.getElementById('phone');
+      phone.className = 'phone' + (state ? ' ' + state : '');
+      document.querySelectorAll('.state-switcher button').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+    function showFavEmpty() {
+      document.getElementById('phone').className = 'phone';
+      document.getElementById('viewContent').style.display = 'none';
+      document.getElementById('stateFavEmpty').style.display = 'flex';
+    }
+    function toggleView() {
+      isListView = !isListView;
+      document.getElementById('mapView').style.display = isListView ? 'none' : 'flex';
+      document.getElementById('listView').style.display = isListView ? 'flex' : 'none';
+      document.getElementById('sortRow').style.display = isListView ? 'flex' : 'none';
+    }
+  </script>
+</body>
+</html>

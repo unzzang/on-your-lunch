@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=393, initial-scale=1.0">
+  <title>온유어런치 — 온보딩</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/fill/style.css">
+  <style>
+    :root {
+      --color-primary: #D4501F;
+      --color-primary-hover: #B8441A;
+      --color-primary-disabled: #E8A78E;
+      --color-bg-primary: #FFFFFF;
+      --color-bg-secondary: #F9FAFB;
+      --color-bg-tertiary: #F3F4F6;
+      --color-border-default: #E5E7EB;
+      --color-text-primary: #111827;
+      --color-text-secondary: #6B7280;
+      --color-text-placeholder: #9CA3AF;
+      --color-text-inverse: #FFFFFF;
+      --color-toast-bg: #1F2937;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+      --color-category-korean: #FF8C00;
+      --color-category-chinese: #FF0000;
+      --color-category-japanese: #0066FF;
+      --color-category-western: #00AA00;
+      --color-category-asian: #9900CC;
+      --color-category-snack: #FFCC00;
+      --color-category-salad: #66CC00;
+      --color-rating: #FBBF24;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Pretendard Variable', -apple-system, system-ui, sans-serif; }
+    body { background: var(--color-bg-secondary); word-break: keep-all; }
+    .phone { width: 393px; margin: 0 auto; min-height: 852px; background: var(--color-bg-primary); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .status-bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+
+    /* Screen container */
+    .screen { display: none; flex-direction: column; flex: 1; }
+    .screen.active { display: flex; }
+
+    /* Splash */
+    .splash { align-items: center; justify-content: center; gap: 12px; background: var(--color-bg-primary); }
+    .splash__logo { font-size: 32px; font-weight: 700; color: var(--color-primary); }
+    .splash__tagline { font-size: 16px; color: var(--color-text-secondary); }
+
+    /* Intro/Login */
+    .intro { padding: 0 24px; }
+    .intro__illustration { height: 300px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; margin-top: 40px; }
+    .intro__illustration i { font-size: 80px; color: var(--color-primary); opacity: 0.7; }
+    .intro__illustration-sub { font-size: 14px; color: var(--color-text-placeholder); }
+    .intro__title { font-size: 24px; font-weight: 700; color: var(--color-text-primary); text-align: center; line-height: 34px; margin-top: 24px; text-wrap: balance; }
+    .intro__subtitle { font-size: 16px; color: var(--color-text-secondary); text-align: center; margin-top: 8px; }
+    .intro__spacer { flex: 1; }
+    .google-btn { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; height: 48px; background: var(--color-bg-primary); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); cursor: pointer; font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin-top: 32px; box-shadow: var(--shadow-sm); }
+    .google-btn svg { width: 20px; height: 20px; }
+    .intro__terms { font-size: 12px; color: var(--color-text-placeholder); text-align: center; margin-top: 16px; margin-bottom: 40px; }
+    .intro__terms a { color: var(--color-text-secondary); text-decoration: underline; }
+
+    /* Terms */
+    .terms-screen { padding: 0 24px; }
+    .terms-header { font-size: 20px; font-weight: 700; color: var(--color-text-primary); padding: 16px 0; }
+    .terms-all { display: flex; align-items: center; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--color-border-default); cursor: pointer; }
+    .terms-all__label { font-size: 18px; font-weight: 600; color: var(--color-text-primary); }
+    .terms-item { display: flex; align-items: center; gap: 12px; padding: 14px 0; cursor: pointer; }
+    .terms-item__label { flex: 1; font-size: 14px; color: var(--color-text-primary); }
+    .terms-item__label span { font-size: 12px; color: var(--color-text-secondary); }
+    .terms-item__arrow { font-size: 20px; color: var(--color-text-placeholder); }
+    .checkbox { width: 24px; height: 24px; border-radius: var(--radius-sm); border: 2px solid var(--color-border-default); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+    .checkbox.checked { background: var(--color-primary); border-color: var(--color-primary); }
+    .checkbox.checked::after { content: ''; display: block; width: 6px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -2px; }
+
+    /* Steps */
+    .step-screen { padding: 0 24px; flex: 1; display: flex; flex-direction: column; }
+    .step-back { display: flex; align-items: center; gap: 4px; font-size: 14px; color: var(--color-text-secondary); cursor: pointer; padding: 12px 0; border: none; background: none; }
+    .step-back i { font-size: 20px; }
+    .progress-bar { display: flex; gap: 4px; margin-bottom: 24px; }
+    .progress-bar__seg { flex: 1; height: 4px; border-radius: 2px; background: var(--color-bg-tertiary); }
+    .progress-bar__seg--filled { background: var(--color-primary); }
+    .step-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 16px; }
+    .step-title { font-size: 20px; font-weight: 700; color: var(--color-text-primary); line-height: 30px; text-wrap: balance; }
+    .step-subtitle { font-size: 14px; color: var(--color-text-secondary); margin-top: 8px; line-height: 20px; }
+
+    /* Step 1: Location */
+    .search-input { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--color-bg-tertiary); border-radius: var(--radius-md); margin-top: 24px; border: 1px solid transparent; }
+    .search-input i { font-size: 20px; color: var(--color-text-placeholder); }
+    .search-input input { flex: 1; border: none; background: none; font-size: 15px; color: var(--color-text-primary); outline: none; font-family: inherit; }
+    .search-input input::placeholder { color: var(--color-text-placeholder); }
+    .search-input:focus-within { border-color: var(--color-border-focus, var(--color-primary)); }
+    .map-placeholder { height: 200px; background: var(--color-bg-tertiary); border-radius: var(--radius-lg); margin-top: 16px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; }
+    .map-placeholder i { font-size: 32px; color: var(--color-text-placeholder); }
+    .map-placeholder span { font-size: 13px; color: var(--color-text-placeholder); }
+    .address-display { display: flex; align-items: flex-start; gap: 8px; margin-top: 16px; padding: 12px; background: var(--color-bg-secondary); border-radius: var(--radius-md); }
+    .address-display i { font-size: 20px; color: var(--color-primary); margin-top: 2px; flex-shrink: 0; }
+    .address-display__text { font-size: 14px; color: var(--color-text-primary); line-height: 20px; }
+    .address-display__sub { font-size: 13px; color: var(--color-text-secondary); }
+
+    /* Step 2: Preferences */
+    .section-label { font-size: 16px; font-weight: 600; color: var(--color-text-primary); margin-top: 28px; margin-bottom: 12px; }
+    .pref-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pref-chip { padding: 10px 20px; border-radius: var(--radius-full); font-size: 14px; font-weight: 500; border: 1px solid var(--color-border-default); background: var(--color-bg-primary); color: var(--color-text-primary); cursor: pointer; transition: all 0.15s; }
+    .pref-chip--active { background: var(--color-primary); color: var(--color-text-inverse); border-color: var(--color-primary); }
+    .pref-divider { height: 1px; background: var(--color-border-default); margin: 24px 0; }
+    .price-chips { display: flex; gap: 8px; }
+    .price-chip { flex: 1; padding: 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; border: 1px solid var(--color-border-default); background: var(--color-bg-primary); color: var(--color-text-primary); cursor: pointer; text-align: center; transition: all 0.15s; }
+    .price-chip--active { background: var(--color-primary); color: var(--color-text-inverse); border-color: var(--color-primary); }
+
+    /* Step 3: Exclusions */
+    .exclusion-section { margin-top: 24px; }
+    .exclusion-label { font-size: 14px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 10px; }
+    .skip-link { font-size: 14px; color: var(--color-text-secondary); text-align: center; cursor: pointer; margin-top: auto; padding: 12px; text-decoration: underline; }
+
+    /* Common Buttons */
+    .btn-primary { width: 100%; height: 48px; background: var(--color-primary); color: var(--color-text-inverse); border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.15s; margin-top: auto; margin-bottom: 40px; font-family: inherit; }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-primary:disabled { background: var(--color-primary-disabled); cursor: not-allowed; }
+    .btn-primary--bottom { margin-top: 24px; }
+    .spacer { flex: 1; }
+
+    /* Toast */
+    .toast { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--color-toast-bg); color: var(--color-text-inverse); padding: 12px 20px; border-radius: var(--radius-md); font-size: 14px; white-space: nowrap; display: none; z-index: 100; }
+
+    /* Loading overlay */
+    .loading-overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); z-index: 50; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
+    .loading-overlay.active { display: flex; }
+    .spinner { width: 32px; height: 32px; border: 3px solid var(--color-bg-tertiary); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-overlay__text { font-size: 14px; color: var(--color-text-secondary); }
+
+    /* Error State */
+    .error-state { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 12px; text-align: center; padding: 16px; }
+    .error-state.active { display: flex; }
+    .error-state i { font-size: 48px; color: var(--color-text-placeholder); }
+    .error-state p { font-size: 16px; color: var(--color-text-secondary); }
+    .error-state__btn { padding: 12px 24px; background: var(--color-primary); color: var(--color-text-inverse); border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; font-family: inherit; }
+
+    /* Screen Nav */
+    .screen-nav { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; z-index: 1000; background: white; padding: 4px; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--color-border-default); }
+    .screen-nav button { padding: 4px 8px; font-size: 10px; border: 1px solid var(--color-border-default); border-radius: var(--radius-sm); background: white; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .screen-nav button.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+  </style>
+</head>
+<body>
+  <!-- Screen Nav -->
+  <div class="screen-nav">
+    <button class="active" onclick="showScreen('splash')">스플래시</button>
+    <button onclick="showScreen('intro')">로그인</button>
+    <button onclick="showScreen('terms')">약관</button>
+    <button onclick="showScreen('step1')">Step1</button>
+    <button onclick="showScreen('step2')">Step2</button>
+    <button onclick="showScreen('step3')">Step3</button>
+    <button onclick="showLoading()">로딩</button>
+    <button onclick="showError()">에러</button>
+  </div>
+
+  <div class="phone" id="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="font-size:12px;">●●●● ▐▐▐▐ 🔋</span>
+    </div>
+
+    <!-- 1. Splash Screen -->
+    <div class="screen splash active" id="screen-splash">
+      <span class="splash__logo">온유어런치</span>
+      <span class="splash__tagline">매일 점심, 고민 끝.</span>
+    </div>
+
+    <!-- 2. Intro / Login Screen -->
+    <div class="screen intro" id="screen-intro">
+      <div class="intro__illustration">
+        <i class="ph ph-fork-knife"></i>
+        <i class="ph ph-users-three" style="font-size:60px; color: var(--color-primary); opacity:0.5;"></i>
+        <span class="intro__illustration-sub">점심 고민하는 직장인들</span>
+      </div>
+      <h1 class="intro__title">매일 점심 뭐 먹지?<br>온유어런치가 골라줄게요!</h1>
+      <p class="intro__subtitle">회사 근처 맛집, 3초만에 추천</p>
+      <div class="intro__spacer"></div>
+      <button class="google-btn" onclick="showScreen('terms')">
+        <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Google로 시작하기
+      </button>
+      <p class="intro__terms">계속하면 <a href="#">이용약관</a>에 동의하게 됩니다</p>
+    </div>
+
+    <!-- 3. Terms Screen -->
+    <div class="screen terms-screen" id="screen-terms">
+      <h2 class="terms-header">약관 동의</h2>
+      <div class="terms-all" onclick="toggleAll()">
+        <div class="checkbox checked" id="cb-all"></div>
+        <span class="terms-all__label">전체 동의</span>
+      </div>
+      <div class="terms-item" onclick="toggleCheck('cb1')">
+        <div class="checkbox checked" id="cb1"></div>
+        <span class="terms-item__label">서비스 이용약관 <span>(필수)</span></span>
+        <i class="ph ph-caret-right terms-item__arrow"></i>
+      </div>
+      <div class="terms-item" onclick="toggleCheck('cb2')">
+        <div class="checkbox checked" id="cb2"></div>
+        <span class="terms-item__label">개인정보 처리방침 <span>(필수)</span></span>
+        <i class="ph ph-caret-right terms-item__arrow"></i>
+      </div>
+      <div class="terms-item" onclick="toggleCheck('cb3')">
+        <div class="checkbox checked" id="cb3"></div>
+        <span class="terms-item__label">위치정보 이용약관 <span>(필수)</span></span>
+        <i class="ph ph-caret-right terms-item__arrow"></i>
+      </div>
+      <div class="terms-item" onclick="toggleCheck('cb4')">
+        <div class="checkbox" id="cb4"></div>
+        <span class="terms-item__label">마케팅 수신 동의 <span>(선택)</span></span>
+        <i class="ph ph-caret-right terms-item__arrow"></i>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn-primary" onclick="showScreen('step1')">동의하고 시작하기</button>
+    </div>
+
+    <!-- 4. Step 1: Location -->
+    <div class="screen step-screen" id="screen-step1">
+      <button class="step-back" onclick="showScreen('terms')"><i class="ph ph-caret-left"></i> 뒤로</button>
+      <div class="progress-bar">
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+        <div class="progress-bar__seg"></div>
+        <div class="progress-bar__seg"></div>
+        <div class="progress-bar__seg"></div>
+        <div class="progress-bar__seg"></div>
+      </div>
+      <span class="step-label">Step 1/3</span>
+      <h2 class="step-title">회사가 어디인가요?</h2>
+      <p class="step-subtitle">추천할 때 이 위치 기준으로 가까운 식당을 찾아드려요.</p>
+      <div class="search-input">
+        <i class="ph ph-magnifying-glass"></i>
+        <input type="text" placeholder="건물명 또는 주소 검색" value="강남파이낸스센터">
+      </div>
+      <div class="map-placeholder">
+        <i class="ph ph-map-pin"></i>
+        <span>카카오맵 지도 영역</span>
+      </div>
+      <div class="address-display">
+        <i class="ph ph-map-pin"></i>
+        <div>
+          <div class="address-display__text">서울 강남구 역삼로 152</div>
+          <div class="address-display__sub">강남파이낸스센터</div>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn-primary" onclick="showScreen('step2')">다음</button>
+    </div>
+
+    <!-- 5. Step 2: Preferences -->
+    <div class="screen step-screen" id="screen-step2" style="overflow-y:auto;">
+      <button class="step-back" onclick="showScreen('step1')"><i class="ph ph-caret-left"></i> 뒤로</button>
+      <div class="progress-bar">
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+        <div class="progress-bar__seg"></div>
+        <div class="progress-bar__seg"></div>
+      </div>
+      <span class="step-label">Step 2/3</span>
+      <h2 class="step-title">어떤 음식을 좋아하세요?</h2>
+      <p class="step-subtitle">1개 이상 선택해주세요.</p>
+      <div style="margin-top:24px;">
+        <div class="pref-chips">
+          <button class="pref-chip pref-chip--active">한식</button>
+          <button class="pref-chip">중식</button>
+          <button class="pref-chip pref-chip--active">일식</button>
+          <button class="pref-chip">양식</button>
+          <button class="pref-chip">아시안</button>
+          <button class="pref-chip">분식/간편식</button>
+          <button class="pref-chip pref-chip--active">샐러드/건강식</button>
+        </div>
+      </div>
+      <div class="pref-divider"></div>
+      <div class="section-label">점심 예산은?</div>
+      <div class="price-chips">
+        <button class="price-chip">1만원 이하</button>
+        <button class="price-chip price-chip--active">1~2만원</button>
+        <button class="price-chip">2만원 이상</button>
+      </div>
+      <div class="spacer" style="min-height:40px;"></div>
+      <button class="btn-primary" onclick="showScreen('step3')">다음</button>
+    </div>
+
+    <!-- 6. Step 3: Exclusions -->
+    <div class="screen step-screen" id="screen-step3" style="overflow-y:auto;">
+      <button class="step-back" onclick="showScreen('step2')"><i class="ph ph-caret-left"></i> 뒤로</button>
+      <div class="progress-bar">
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+        <div class="progress-bar__seg progress-bar__seg--filled"></div>
+      </div>
+      <span class="step-label">Step 3/3</span>
+      <h2 class="step-title">빼고 싶은 음식이 있나요?</h2>
+      <p class="step-subtitle">없으면 건너뛰어도 돼요!</p>
+
+      <div class="exclusion-section">
+        <div class="exclusion-label">알레르기</div>
+        <div class="pref-chips">
+          <button class="pref-chip pref-chip--active">갑각류</button>
+          <button class="pref-chip">견과류</button>
+          <button class="pref-chip">유제품</button>
+          <button class="pref-chip">밀</button>
+          <button class="pref-chip">달걀</button>
+          <button class="pref-chip">대두</button>
+        </div>
+      </div>
+
+      <div class="exclusion-section">
+        <div class="exclusion-label">싫어하는 음식</div>
+        <div class="pref-chips">
+          <button class="pref-chip">한식</button>
+          <button class="pref-chip">중식</button>
+          <button class="pref-chip">일식</button>
+          <button class="pref-chip">양식</button>
+          <button class="pref-chip">아시안</button>
+          <button class="pref-chip">분식/간편식</button>
+          <button class="pref-chip">샐러드/건강식</button>
+        </div>
+      </div>
+
+      <div class="spacer" style="min-height:24px;"></div>
+      <div class="skip-link">건너뛰기</div>
+      <button class="btn-primary btn-primary--bottom" style="margin-top:12px;">완료!</button>
+    </div>
+
+    <!-- Loading Overlay (Google 로그인, 위치 검색 등) -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+      <span class="loading-overlay__text">로그인 중이에요...</span>
+    </div>
+
+    <!-- Error State (네트워크/서버 오류) -->
+    <div class="error-state" id="errorState">
+      <i class="ph ph-wifi-slash"></i>
+      <p>인터넷 연결을 확인해주세요</p>
+      <button class="error-state__btn" onclick="hideError()">다시 시도</button>
+    </div>
+  </div>
+
+  <script>
+    function showScreen(name) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + name).classList.add('active');
+      document.querySelectorAll('.screen-nav button').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+    function toggleCheck(id) {
+      document.getElementById(id).classList.toggle('checked');
+    }
+    function toggleAll() {
+      const all = document.getElementById('cb-all');
+      const isChecked = all.classList.contains('checked');
+      ['cb-all','cb1','cb2','cb3','cb4'].forEach(id => {
+        if (isChecked) document.getElementById(id).classList.remove('checked');
+        else document.getElementById(id).classList.add('checked');
+      });
+    }
+    function showLoading() {
+      document.getElementById('loadingOverlay').classList.add('active');
+    }
+    function showError() {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('errorState').classList.add('active');
+    }
+    function hideError() {
+      document.getElementById('errorState').classList.remove('active');
+      document.getElementById('screen-splash').classList.add('active');
+    }
+  </script>
+</body>
+</html>

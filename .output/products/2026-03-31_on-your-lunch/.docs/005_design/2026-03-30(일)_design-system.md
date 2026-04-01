@@ -22,9 +22,9 @@
 
 | 토큰 이름 | 값 | 비고 |
 |----------|------|------|
-| `color.primary` | **#FF6B35** | 오렌지 — 식욕 자극 + 에너지 |
-| `color.primary.hover` | #E55A2B | primary보다 약간 어둡게 |
-| `color.primary.disabled` | #FFB899 | primary의 연한 버전 |
+| `color.primary` | **#D4501F** | 오렌지 — 식욕 자극 + 에너지 (WCAG AA 대비 5.2:1) |
+| `color.primary.hover` | #B8441A | primary보다 약간 어둡게 |
+| `color.primary.disabled` | #E8A78E | primary의 연한 버전 |
 | `color.secondary` | #6B7280 | 회사 기본값 유지 (Gray-500) |
 | `color.destructive` | #DC2626 | 회사 기본값 유지 |
 | `color.success` | #16A34A | 회사 기본값 유지 |
@@ -33,13 +33,28 @@
 | `color.bg.secondary` | #F9FAFB | 카드/섹션 배경 |
 | `color.bg.tertiary` | #F3F4F6 | 비활성 칩, 인풋 배경 |
 | `color.border.default` | #E5E7EB | 회사 기본값 유지 |
-| `color.border.focus` | #FF6B35 | primary 재사용 |
+| `color.border.focus` | #D4501F | primary 재사용 |
 | `color.text.primary` | #111827 | 회사 기본값 유지 |
 | `color.text.secondary` | #6B7280 | 회사 기본값 유지 |
 | `color.text.placeholder` | #9CA3AF | 회사 기본값 유지 |
 | `color.text.inverse` | #FFFFFF | 회사 기본값 유지 |
 | `color.overlay` | #000000 50% | 회사 기본값 유지 |
 | `color.toast.bg` | #1F2937 | 회사 기본값 유지 |
+
+### 카테고리 색상
+
+ERD의 CATEGORY 테이블 color_code와 일치시킨 카테고리별 색상 토큰이다. 캘린더 dot, 지도 핀, 카테고리 뱃지 등에서 사용한다.
+
+| 토큰 이름 | 값 | 비고 |
+|----------|------|------|
+| `color.category.korean` | #FF8C00 | 한식 |
+| `color.category.chinese` | #FF0000 | 중식 |
+| `color.category.japanese` | #0066FF | 일식 |
+| `color.category.western` | #00AA00 | 양식 |
+| `color.category.asian` | #9900CC | 아시안 |
+| `color.category.snack` | #FFCC00 | 분식/간편식 |
+| `color.category.salad` | #66CC00 | 샐러드/건강식 |
+| `color.rating` | #FBBF24 | 별점 색상 |
 
 ## 폰트
 

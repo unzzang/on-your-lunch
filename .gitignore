@@ -1,12 +1,12 @@
 .DS_Store
 
-.documents
-.infra
-.kits
-.efforts
-.output
+# .documents
+# .infra
+# .kits
+# .efforts
+# .output
 
-company.md
+# COMPANY.md
 
 node_modules
 backup

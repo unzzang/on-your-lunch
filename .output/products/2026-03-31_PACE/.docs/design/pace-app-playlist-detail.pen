@@ -1,0 +1,2321 @@
+{
+  "version": "2.9",
+  "children": [
+    {
+      "type": "frame",
+      "id": "iHSrC",
+      "x": 0,
+      "y": 0,
+      "name": "Playlist Detail Screen",
+      "clip": true,
+      "width": 375,
+      "height": 1458,
+      "fill": "#121212",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "uHupJ",
+          "x": 0,
+          "y": 0,
+          "name": "Scroll Content",
+          "clip": true,
+          "width": 375,
+          "fill": "#121212",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "LIcRY",
+              "name": "Status Bar",
+              "width": "fill_container",
+              "height": 44,
+              "padding": [
+                0,
+                16
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "AcNrE",
+                  "name": "timeLabel",
+                  "fill": "#F0F2F5",
+                  "content": "9:41",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "cZ2uI",
+                  "name": "statusIcons",
+                  "gap": 5,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "7XdIT",
+                      "name": "signalIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "signal",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "PRuQn",
+                      "name": "wifiIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "wifi",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "IMZHb",
+                      "name": "batteryIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "battery-full",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ElEwL",
+              "name": "Nav Bar",
+              "width": "fill_container",
+              "height": 44,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "839vM",
+                  "name": "backIcon",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "chevron-left",
+                  "iconFontFamily": "lucide",
+                  "fill": "#F0F2F5"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Qe7Rx",
+              "name": "Hero Section",
+              "width": "fill_container",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 180,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#1DB95480",
+                    "position": 0
+                  },
+                  {
+                    "color": "#121212",
+                    "position": 1
+                  }
+                ]
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                16,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Y35ca",
+                  "name": "Cover Image",
+                  "clip": true,
+                  "width": 240,
+                  "height": 240,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1773725773627.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "KLO7o",
+                  "name": "Hero Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WxpZ3",
+                      "name": "titleText",
+                      "fill": "#F0F2F5",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "수능 국영수 7시간 루틴",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 24,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "vFA3k",
+                      "name": "creatorText",
+                      "fill": "#8B90A0",
+                      "content": "PACE",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "iu4GZ",
+                      "name": "metaText",
+                      "fill": "#6A6A6A",
+                      "content": "7시간 · 12세션 · 2.4K 재생",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "vDO7m",
+              "name": "Action Bar",
+              "width": "fill_container",
+              "height": 56,
+              "padding": [
+                0,
+                16
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "HZpDG",
+                  "name": "Action Left",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qppfI",
+                      "name": "Play Button",
+                      "width": 56,
+                      "height": 56,
+                      "fill": "#4A90D9",
+                      "cornerRadius": 28,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "1HZPn",
+                          "x": 18,
+                          "y": 16,
+                          "name": "playIcon",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "play",
+                          "iconFontFamily": "lucide",
+                          "fill": "#F0F2F5"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qeHH3",
+                  "name": "Action Right",
+                  "gap": 24,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "Rxk30",
+                      "name": "heartIcon",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "heart",
+                      "iconFontFamily": "lucide",
+                      "fill": "#8B90A0"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "RnZG8",
+                      "name": "downloadIcon",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "download",
+                      "iconFontFamily": "lucide",
+                      "fill": "#8B90A0"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "3VXzP",
+                      "name": "moreIcon",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "ellipsis",
+                      "iconFontFamily": "lucide",
+                      "fill": "#8B90A0"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Hdf6S",
+              "name": "Track List",
+              "width": "fill_container",
+              "layout": "vertical",
+              "padding": [
+                8,
+                16,
+                0,
+                16
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "9hXzu",
+                  "name": "Track 1",
+                  "width": "fill_container",
+                  "height": 56,
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "De0yz",
+                      "name": "t1num",
+                      "fill": "#8B90A0",
+                      "textGrowth": "fixed-width-height",
+                      "width": 20,
+                      "height": 20,
+                      "content": "1",
+                      "textAlign": "center",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "hxXuH",
+                      "name": "t1icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "book-open",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "C8lVn",
+                      "name": "t1info",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "03w4x",
+                          "name": "t1name",
+                          "fill": "#F0F2F5",
+                          "content": "국어 독서",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "YDkeL",
+                      "name": "t1time",
+                      "fill": "#8B90A0",
+                      "content": "50분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "2jt09",
+                  "name": "Track 2 - Rest",
+                  "width": "fill_container",
+                  "height": 56,
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "piXd5",
+                      "name": "t2num",
+                      "fill": "#6A6A6A",
+                      "textGrowth": "fixed-width-height",
+                      "width": 20,
+                      "height": 20,
+                      "content": "2",
+                      "textAlign": "center",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "4T28y",
+                      "name": "t2icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "coffee",
+                      "iconFontFamily": "lucide",
+                      "fill": "#565B6E"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "CFlzJ",
+                      "name": "t2info",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "DopKt",
+                          "name": "t2name",
+                          "fill": "#6A6A6A",
+                          "content": "휴식",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "xmZgU",
+                      "name": "t2time",
+                      "fill": "#6A6A6A",
+                      "content": "10분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "eSaAY",
+                  "name": "Track 3",
+                  "width": "fill_container",
+                  "height": 56,
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "X2pKG",
+                      "name": "t3num",
+                      "fill": "#8B90A0",
+                      "textGrowth": "fixed-width-height",
+                      "width": 20,
+                      "height": 20,
+                      "content": "3",
+                      "textAlign": "center",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "IyqUl",
+                      "name": "t3icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "calculator",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mHSc1",
+                      "name": "t3info",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WSkRC",
+                          "name": "t3name",
+                          "fill": "#F0F2F5",
+                          "content": "수학 미적분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "2Bfum",
+                      "name": "t3time",
+                      "fill": "#8B90A0",
+                      "content": "50분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "W5MNx",
+                  "name": "Track 4 - Rest",
+                  "width": "fill_container",
+                  "height": 56,
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iFPLU",
+                      "name": "t4num",
+                      "fill": "#6A6A6A",
+                      "textGrowth": "fixed-width-height",
+                      "width": 20,
+                      "height": 20,
+                      "content": "4",
+                      "textAlign": "center",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "QOsgd",
+                      "name": "t4icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "coffee",
+                      "iconFontFamily": "lucide",
+                      "fill": "#565B6E"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bh4A9",
+                      "name": "t4info",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bTvNc",
+                          "name": "t4name",
+                          "fill": "#6A6A6A",
+                          "content": "휴식",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "HLiBt",
+                      "name": "t4time",
+                      "fill": "#6A6A6A",
+                      "content": "10분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yaJxq",
+                  "name": "Track 5",
+                  "width": "fill_container",
+                  "height": 56,
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WkjVL",
+                      "name": "t5num",
+                      "fill": "#8B90A0",
+                      "textGrowth": "fixed-width-height",
+                      "width": 20,
+                      "height": 20,
+                      "content": "5",
+                      "textAlign": "center",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "AtzFB",
+                      "name": "t5icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "globe",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "i14xU",
+                      "name": "t5info",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "69Vcy",
+                          "name": "t5name",
+                          "fill": "#F0F2F5",
+                          "content": "영어 독해",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "7ENE5",
+                      "name": "t5time",
+                      "fill": "#8B90A0",
+                      "content": "50분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "weali",
+                  "name": "Track 6 - Lunch",
+                  "width": "fill_container",
+                  "height": 56,
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "m2k7f",
+                      "name": "t6num",
+                      "fill": "#6A6A6A",
+                      "textGrowth": "fixed-width-height",
+                      "width": 20,
+                      "height": 20,
+                      "content": "6",
+                      "textAlign": "center",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "71NEK",
+                      "name": "t6icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "utensils",
+                      "iconFontFamily": "lucide",
+                      "fill": "#565B6E"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mGilR",
+                      "name": "t6info",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Hpjyp",
+                          "name": "t6name",
+                          "fill": "#6A6A6A",
+                          "content": "점심 휴식",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "7IFrn",
+                      "name": "t6time",
+                      "fill": "#6A6A6A",
+                      "content": "60분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "2KNVK",
+                  "name": "Track 7",
+                  "width": "fill_container",
+                  "height": 56,
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "fMFP8",
+                      "name": "t7num",
+                      "fill": "#8B90A0",
+                      "textGrowth": "fixed-width-height",
+                      "width": 20,
+                      "height": 20,
+                      "content": "7",
+                      "textAlign": "center",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "P1UHA",
+                      "name": "t7icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "book-open",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "iyzX8",
+                      "name": "t7info",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "y8yx0",
+                          "name": "t7name",
+                          "fill": "#F0F2F5",
+                          "content": "국어 문학",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "JW68K",
+                      "name": "t7time",
+                      "fill": "#8B90A0",
+                      "content": "50분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Zk8Co",
+                  "name": "Track 8 - Rest",
+                  "width": "fill_container",
+                  "height": 56,
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Yt4Uk",
+                      "name": "t8num",
+                      "fill": "#6A6A6A",
+                      "textGrowth": "fixed-width-height",
+                      "width": 20,
+                      "height": 20,
+                      "content": "8",
+                      "textAlign": "center",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "tH8gm",
+                      "name": "t8icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "coffee",
+                      "iconFontFamily": "lucide",
+                      "fill": "#565B6E"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nm57W",
+                      "name": "t8info",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "1WhPf",
+                          "name": "t8name",
+                          "fill": "#6A6A6A",
+                          "content": "휴식",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "NmFh6",
+                      "name": "t8time",
+                      "fill": "#6A6A6A",
+                      "content": "10분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Jx8vH",
+                  "name": "Track 9",
+                  "width": "fill_container",
+                  "height": 56,
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "fZXgg",
+                      "name": "t9num",
+                      "fill": "#8B90A0",
+                      "textGrowth": "fixed-width-height",
+                      "width": 20,
+                      "height": 20,
+                      "content": "9",
+                      "textAlign": "center",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "Pxgm7",
+                      "name": "t9icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "calculator",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "8QiUk",
+                      "name": "t9info",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "3zU4V",
+                          "name": "t9name",
+                          "fill": "#F0F2F5",
+                          "content": "수학 확률과 통계",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "caPo5",
+                      "name": "t9time",
+                      "fill": "#8B90A0",
+                      "content": "50분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Q0jcC",
+                  "name": "Track 10 - Rest",
+                  "width": "fill_container",
+                  "height": 56,
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "URJOC",
+                      "name": "t10num",
+                      "fill": "#6A6A6A",
+                      "textGrowth": "fixed-width-height",
+                      "width": 20,
+                      "height": 20,
+                      "content": "10",
+                      "textAlign": "center",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "nCgRx",
+                      "name": "t10icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "coffee",
+                      "iconFontFamily": "lucide",
+                      "fill": "#565B6E"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Lv1bA",
+                      "name": "t10info",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "2Edu9",
+                          "name": "t10name",
+                          "fill": "#6A6A6A",
+                          "content": "휴식",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "NlU7Y",
+                      "name": "t10time",
+                      "fill": "#6A6A6A",
+                      "content": "10분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zxYNo",
+              "name": "Recommendation Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "padding": [
+                24,
+                16,
+                16,
+                16
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "h35Ex",
+                  "name": "recTitle",
+                  "fill": "#F0F2F5",
+                  "content": "이건 어떠신가요?",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "lMvtg",
+                  "name": "Rec Cards Row",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "WsAxO",
+                      "name": "Rec Card 1",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "PiZ8m",
+                          "name": "Rec Card 1 Image",
+                          "clip": true,
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "./images/generated-1773725931398.png",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "X0Wgm",
+                          "name": "card1title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "공무원 행정법 루틴",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Cp3Uq",
+                          "name": "card1meta",
+                          "fill": "#6A6A6A",
+                          "content": "5시간 · 8세션",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ygYKy",
+                      "name": "Rec Card 2",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "KOK44",
+                          "name": "Rec Card 2 Image",
+                          "clip": true,
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "./images/generated-1773725959040.png",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "vAkgK",
+                          "name": "card2title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "LEET 논리 집중 루틴",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wwejp",
+                          "name": "card2meta",
+                          "fill": "#6A6A6A",
+                          "content": "6시간 · 10세션",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "HIJ3z",
+          "x": 0,
+          "y": 1346,
+          "name": "Bottom Fixed Area",
+          "width": 375,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "7IfzG",
+              "name": "Mini Player",
+              "width": "fill_container",
+              "height": 56,
+              "fill": "#242424",
+              "cornerRadius": [
+                8,
+                8,
+                0,
+                0
+              ],
+              "gap": 8,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "1QTHD",
+                  "name": "mpDot",
+                  "clip": true,
+                  "width": 40,
+                  "height": 40,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1773725992935.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 4
+                },
+                {
+                  "type": "frame",
+                  "id": "zgQQj",
+                  "name": "mpInfo",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Iiy7y",
+                      "name": "mpTitle",
+                      "fill": "#F0F2F5",
+                      "content": "국어 독서",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "nMCZY",
+                      "name": "mpTime",
+                      "fill": "#8B90A0",
+                      "content": "50분 중 23:40 남음",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "IfWrK",
+                  "name": "mpPlay",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "play",
+                  "iconFontFamily": "lucide",
+                  "fill": "#F0F2F5"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nKy0I",
+              "name": "Bottom Nav",
+              "width": "fill_container",
+              "height": 56,
+              "fill": "#1A1A1A",
+              "padding": [
+                4,
+                0
+              ],
+              "justifyContent": "space_around",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Zkp2G",
+                  "name": "navHome",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "jkN5q",
+                      "name": "navHomeIcon",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "house",
+                      "iconFontFamily": "lucide",
+                      "fill": "#4A90D9"
+                    },
+                    {
+                      "type": "text",
+                      "id": "eJOtU",
+                      "name": "navHomeLabel",
+                      "fill": "#4A90D9",
+                      "content": "Home",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 10,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "I2f8Z",
+                  "name": "navSearch",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "mWbMk",
+                      "name": "navSearchIcon",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "search",
+                      "iconFontFamily": "lucide",
+                      "fill": "#8B90A0"
+                    },
+                    {
+                      "type": "text",
+                      "id": "t0AJ7",
+                      "name": "navSearchLabel",
+                      "fill": "#8B90A0",
+                      "content": "Search",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 10,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "CEkJH",
+                  "name": "navLib",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "jInnn",
+                      "name": "navLibIcon",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "library",
+                      "iconFontFamily": "lucide",
+                      "fill": "#8B90A0"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MuMT0",
+                      "name": "navLibLabel",
+                      "fill": "#8B90A0",
+                      "content": "Library",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 10,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "1B0LS",
+      "x": 415,
+      "y": 0,
+      "name": "Playlist Detail — 기본 상태",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#121212",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "00uAX",
+          "name": "Top Bar",
+          "width": "fill_container",
+          "height": 44,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "2rIsI",
+              "name": "plBack",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "chevron-left",
+              "iconFontFamily": "lucide",
+              "fill": "#F0F2F5"
+            },
+            {
+              "type": "icon_font",
+              "id": "s2c4O",
+              "name": "plTopMore",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "ellipsis",
+              "iconFontFamily": "lucide",
+              "fill": "#F0F2F5"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qBUgs",
+          "name": "Hero",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            24,
+            24,
+            0,
+            24
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "MzTw2",
+              "name": "Cover Image",
+              "width": 200,
+              "height": 200,
+              "fill": "#2A3A50",
+              "cornerRadius": 12
+            },
+            {
+              "type": "frame",
+              "id": "xRPsI",
+              "name": "Info",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XP6Av",
+                  "name": "plTitle",
+                  "fill": "#F0F2F5",
+                  "content": "수능 국영수 7시간 루틴",
+                  "textAlign": "center",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "MgooC",
+                  "name": "plMeta",
+                  "fill": "#8B90A0",
+                  "content": "PACE · 7시간 · 5개 세션",
+                  "textAlign": "center",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "vUIX8",
+                  "name": "plDesc",
+                  "fill": "#8B90A0",
+                  "textGrowth": "fixed-width",
+                  "width": 300,
+                  "content": "수능을 위한 국어·영어·수학 집중 루틴. 포모도로 기법 기반으로 집중력을 극대화합니다.",
+                  "textAlign": "center",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Vj8Fy",
+              "name": "Action Row",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "PPnpW",
+                  "name": "plLikeBtn",
+                  "width": 28,
+                  "height": 28,
+                  "iconFontName": "heart",
+                  "iconFontFamily": "lucide",
+                  "fill": "#8B90A0"
+                },
+                {
+                  "type": "frame",
+                  "id": "LwgYs",
+                  "name": "Play Button",
+                  "width": 56,
+                  "height": 56,
+                  "fill": "#4A90D9",
+                  "cornerRadius": 28,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "8edRu",
+                      "name": "plPlayIcon",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "play",
+                      "iconFontFamily": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "jtRY8",
+                  "name": "plMoreBtn",
+                  "width": 28,
+                  "height": 28,
+                  "iconFontName": "ellipsis",
+                  "iconFontFamily": "lucide",
+                  "fill": "#8B90A0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "PGfF6",
+          "name": "Track List Header",
+          "width": "fill_container",
+          "padding": [
+            20,
+            16,
+            8,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "nKNcS",
+              "name": "plTrackTitle",
+              "fill": "#F0F2F5",
+              "content": "세션 목록",
+              "fontFamily": "DM Sans",
+              "fontSize": 16,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "cVqzG",
+              "name": "plEditBtn",
+              "fill": "#4A90D9",
+              "content": "편집",
+              "fontFamily": "DM Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Grj0U",
+          "name": "Track List",
+          "width": "fill_container",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "r5w8J",
+              "name": "Track 1",
+              "width": "fill_container",
+              "height": 64,
+              "gap": 12,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "HXPoA",
+                  "name": "plTrack1Num",
+                  "fill": "#8B90A0",
+                  "content": "1",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "s4roB",
+                  "name": "trackText",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "dNiPa",
+                      "name": "plTrack1Title",
+                      "fill": "#F0F2F5",
+                      "content": "1교시 · 수학 개념",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "dggwX",
+                      "name": "plTrack1Sub",
+                      "fill": "#8B90A0",
+                      "content": "50분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "gPQuo",
+                  "name": "plTrack1More",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "ellipsis",
+                  "iconFontFamily": "lucide",
+                  "fill": "#6A6A6A"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "m7koe",
+              "name": "Track 2",
+              "width": "fill_container",
+              "height": 64,
+              "gap": 12,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "wWe3v",
+                  "name": "plTrack2Num",
+                  "fill": "#8B90A0",
+                  "content": "2",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "9fm5c",
+                  "name": "trackText",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "DjTcs",
+                      "name": "plTrack2Title",
+                      "fill": "#8B90A0",
+                      "content": "휴식",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "WEOr4",
+                      "name": "plTrack2Sub",
+                      "fill": "#6A6A6A",
+                      "content": "10분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "8ykmY",
+                  "name": "plTrack2More",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "ellipsis",
+                  "iconFontFamily": "lucide",
+                  "fill": "#6A6A6A"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Lpolh",
+              "name": "Track 3",
+              "width": "fill_container",
+              "height": 64,
+              "gap": 12,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "oP1Rs",
+                  "name": "plTrack3Num",
+                  "fill": "#8B90A0",
+                  "content": "3",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "F86YH",
+                  "name": "trackText",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "OMENS",
+                      "name": "plTrack3Title",
+                      "fill": "#F0F2F5",
+                      "content": "2교시 · 영어 독해",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "67ryR",
+                      "name": "plTrack3Sub",
+                      "fill": "#8B90A0",
+                      "content": "50분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "Bx3aq",
+                  "name": "plTrack3More",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "ellipsis",
+                  "iconFontFamily": "lucide",
+                  "fill": "#6A6A6A"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "t9JCw",
+          "name": "Bottom Fixed",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "justifyContent": "end",
+          "children": [
+            {
+              "type": "frame",
+              "id": "K1PJg",
+              "name": "Mini Player",
+              "width": "fill_container",
+              "height": 56,
+              "fill": "#242424",
+              "cornerRadius": [
+                8,
+                8,
+                0,
+                0
+              ],
+              "padding": [
+                0,
+                16
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "TdKpf",
+                  "name": "plMiniTxt",
+                  "fill": "#F0F2F5",
+                  "content": "1교시 · 수학 개념 50분",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "dmA62",
+                  "name": "plMiniPlay",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "play",
+                  "iconFontFamily": "lucide",
+                  "fill": "#F0F2F5"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "UHtKU",
+              "name": "Bottom Nav",
+              "width": "fill_container",
+              "height": 56,
+              "fill": "#1A1A1A",
+              "padding": [
+                8,
+                0
+              ],
+              "justifyContent": "space_around",
+              "alignItems": "center"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "reOJ7",
+      "x": 830,
+      "y": 0,
+      "name": "Playlist Detail — 세션 수정 모드",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#121212",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "vTvEx",
+          "name": "Top Bar",
+          "width": "fill_container",
+          "height": 44,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "0WDRh",
+              "name": "plEditCancel",
+              "fill": "#8B90A0",
+              "content": "취소",
+              "fontFamily": "DM Sans",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "UrCGt",
+              "name": "plEditTitleTxt",
+              "fill": "#F0F2F5",
+              "content": "세션 편집",
+              "fontFamily": "DM Sans",
+              "fontSize": 16,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "5ZcVO",
+              "name": "plEditDone",
+              "fill": "#4A90D9",
+              "content": "완료",
+              "fontFamily": "DM Sans",
+              "fontSize": 15,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Q1JDU",
+          "name": "Edit Hint",
+          "width": "fill_container",
+          "padding": [
+            12,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "d2tFG",
+              "name": "plEditHintTxt",
+              "fill": "#8B90A0",
+              "content": "순서를 변경하거나 세션을 삭제할 수 있어요.",
+              "fontFamily": "DM Sans",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "sLs8x",
+          "name": "Track Edit List",
+          "width": "fill_container",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "gFjbB",
+              "name": "Edit Row 1",
+              "width": "fill_container",
+              "height": 64,
+              "gap": 12,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "cAihW",
+                  "name": "Delete Btn",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "#EF6461",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "swWjN",
+                      "name": "plEditRow1DelIcon",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "minus",
+                      "iconFontFamily": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Rw6oS",
+                  "name": "trackText",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "0doOd",
+                      "name": "plEditRow1Title",
+                      "fill": "#F0F2F5",
+                      "content": "1교시 · 수학 개념",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "SMDk9",
+                      "name": "plEditRow1Sub",
+                      "fill": "#8B90A0",
+                      "content": "50분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "L1dB2",
+                  "name": "plEditRow1Drag",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "grip-vertical",
+                  "iconFontFamily": "lucide",
+                  "fill": "#6A6A6A"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yqvX2",
+              "name": "Edit Row 2 — 선택됨 (삭제 확인)",
+              "width": "fill_container",
+              "height": 64,
+              "fill": "#2A1515",
+              "gap": 12,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ScYdp",
+                  "name": "Delete Btn",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "#EF6461",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "PRjWa",
+                      "name": "plEditRow2DelIcon",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "minus",
+                      "iconFontFamily": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "9OqGL",
+                  "name": "trackText",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "uzT1s",
+                      "name": "plEditRow2Title",
+                      "fill": "#EF6461",
+                      "content": "휴식",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "WlJPV",
+                      "name": "plEditRow2Sub",
+                      "fill": "#EF6461",
+                      "content": "10분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "r53Jd",
+                  "name": "plEditRow2Drag",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "grip-vertical",
+                  "iconFontFamily": "lucide",
+                  "fill": "#6A6A6A"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "PJpu5",
+              "name": "Edit Row 3",
+              "width": "fill_container",
+              "height": 64,
+              "gap": 12,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "TsjgR",
+                  "name": "Delete Btn",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "#EF6461",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "dJZZd",
+                      "name": "plEditRow3DelIcon",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "minus",
+                      "iconFontFamily": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "O9pXs",
+                  "name": "trackText",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MoUD5",
+                      "name": "plEditRow3Title",
+                      "fill": "#F0F2F5",
+                      "content": "2교시 · 영어 독해",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "991Po",
+                      "name": "plEditRow3Sub",
+                      "fill": "#8B90A0",
+                      "content": "50분",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "Dc52j",
+                  "name": "plEditRow3Drag",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "grip-vertical",
+                  "iconFontFamily": "lucide",
+                  "fill": "#6A6A6A"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "accent-green": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#2DD4BF"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        }
+      ]
+    },
+    "bg-elevated": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#161B22"
+        },
+        {
+          "value": "#141829"
+        },
+        {
+          "value": "#141414"
+        },
+        {
+          "value": "#141414"
+        },
+        {
+          "value": "#161B22"
+        },
+        {
+          "value": "#141829"
+        },
+        {
+          "value": "#1A1A1A"
+        },
+        {
+          "value": "#1A1A1A"
+        }
+      ]
+    },
+    "bg-primary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#0D1117"
+        },
+        {
+          "value": "#0C1021"
+        },
+        {
+          "value": "#0A0A0A"
+        },
+        {
+          "value": "#0A0A0A"
+        },
+        {
+          "value": "#0D1117"
+        },
+        {
+          "value": "#0C1021"
+        },
+        {
+          "value": "#121212"
+        },
+        {
+          "value": "#121212"
+        }
+      ]
+    },
+    "bg-surface": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#21262D"
+        },
+        {
+          "value": "#1C2035"
+        },
+        {
+          "value": "#1E1E1E"
+        },
+        {
+          "value": "#1E1E1E"
+        },
+        {
+          "value": "#21262D"
+        },
+        {
+          "value": "#1C2035"
+        },
+        {
+          "value": "#242424"
+        },
+        {
+          "value": "#242424"
+        }
+      ]
+    },
+    "font-family": {
+      "type": "string",
+      "value": [
+        {
+          "value": "Inter"
+        },
+        {
+          "value": "DM Sans"
+        }
+      ]
+    },
+    "radius-default": {
+      "type": "number",
+      "value": 8
+    },
+    "text-muted": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#484F58"
+        },
+        {
+          "value": "#565B6E"
+        },
+        {
+          "value": "#484F58"
+        },
+        {
+          "value": "#5A5A5A"
+        },
+        {
+          "value": "#484F58"
+        },
+        {
+          "value": "#565B6E"
+        },
+        {
+          "value": "#484F58"
+        },
+        {
+          "value": "#6A6A6A"
+        }
+      ]
+    },
+    "text-primary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#FFFFFF"
+        },
+        {
+          "value": "#F0F2F5"
+        }
+      ]
+    },
+    "text-secondary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#8B949E"
+        },
+        {
+          "value": "#8B90A0"
+        }
+      ]
+    }
+  }
+}

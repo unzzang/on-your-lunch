@@ -1,0 +1,169 @@
+erDiagram
+    users {
+        BIGINT id PK
+        VARCHAR_254 email UK "NOT NULL"
+        VARCHAR_50 name "NOT NULL"
+        VARCHAR_255 password_hash "nullable"
+        VARCHAR_255 apple_sub_id "nullable, unique"
+        ENUM exam_type "suneung|civil_service|certification|language|transfer|other, nullable"
+        DATE d_day "nullable, KST"
+        ENUM daily_hours "1-2h|3-4h|5-6h|7h+, nullable"
+        BOOLEAN onboarding_completed "DEFAULT false"
+        BOOLEAN marketing_agreed "DEFAULT false"
+        BOOLEAN is_deleted "DEFAULT false"
+        DATETIME deleted_at "nullable, KST"
+        DATETIME created_at "KST"
+        DATETIME updated_at "KST"
+    }
+
+    social_accounts {
+        BIGINT id PK
+        BIGINT user_id FK
+        ENUM provider "google|apple|kakao, NOT NULL"
+        VARCHAR_255 provider_user_id "NOT NULL"
+        VARCHAR_254 email "nullable"
+        DATETIME connected_at "KST"
+    }
+
+    playlists {
+        BIGINT id PK
+        VARCHAR_100 title "NOT NULL"
+        TEXT description "nullable"
+        VARCHAR_500 cover_image_url "nullable"
+        INT total_duration "분, NOT NULL"
+        ENUM creator_type "official|user, NOT NULL"
+        BIGINT created_by_user_id FK "nullable"
+        BOOLEAN is_modified_copy "DEFAULT false"
+        BIGINT original_playlist_id FK "nullable"
+        INT play_count "DEFAULT 0"
+        DATETIME created_at "KST"
+        DATETIME updated_at "KST"
+    }
+
+    playlist_exam_types {
+        BIGINT id PK
+        BIGINT playlist_id FK
+        ENUM exam_type "suneung|civil_service|certification|language|transfer|other"
+    }
+
+    sessions {
+        BIGINT id PK
+        BIGINT playlist_id FK
+        INT order_index "NOT NULL"
+        VARCHAR_100 name "NOT NULL"
+        ENUM session_type "study|rest, NOT NULL"
+        INT duration "분, NOT NULL"
+    }
+
+    user_playlists {
+        BIGINT id PK
+        BIGINT user_id FK
+        BIGINT playlist_id FK
+        ENUM type "liked|modified|recent, NOT NULL"
+        DATETIME saved_at "KST"
+        DATETIME last_played_at "nullable, KST"
+    }
+
+    play_logs {
+        BIGINT id PK
+        BIGINT user_id FK
+        BIGINT playlist_id FK
+        BIGINT session_id FK
+        DATETIME started_at "KST, NOT NULL"
+        DATETIME ended_at "nullable, KST"
+        INT actual_study_time "초, DEFAULT 0"
+        INT assigned_time "초, NOT NULL"
+        ENUM status "completed|incomplete|skipped, NOT NULL"
+        DATETIME created_at "KST"
+    }
+
+    distraction_logs {
+        BIGINT id PK
+        BIGINT user_id FK
+        BIGINT play_log_id FK
+        DATETIME left_at "KST, NOT NULL"
+        DATETIME returned_at "nullable, KST"
+        INT raw_duration "초, 버퍼 차감 전 실제 이탈 시간"
+    }
+
+    daily_stats {
+        BIGINT id PK
+        BIGINT user_id FK
+        DATE date "KST, NOT NULL"
+        INT total_study_time "초, DEFAULT 0"
+        INT total_distraction_time "초, 버퍼 차감 후 합산, DEFAULT 0"
+        DECIMAL_5_2 focus_rate "일간 집중률, nullable"
+        INT study_sessions_count "DEFAULT 0"
+        INT time_slot_morning "초, 05-12시, DEFAULT 0"
+        INT time_slot_afternoon "초, 12-18시, DEFAULT 0"
+        INT time_slot_evening "초, 18-22시, DEFAULT 0"
+        INT time_slot_late_night "초, 22-05시, DEFAULT 0"
+        DATETIME updated_at "KST"
+    }
+
+    review_schedules {
+        BIGINT id PK
+        BIGINT user_id FK
+        BIGINT playlist_id FK
+        BIGINT play_log_id FK "완료 기준 세션의 마지막 play_log"
+        DATE scheduled_date "KST, NOT NULL"
+        ENUM review_type "1d|3d|7d, NOT NULL"
+        DATETIME notified_at "nullable, KST"
+        ENUM status "pending|notified|completed|skipped, NOT NULL, DEFAULT pending"
+        DATETIME created_at "KST"
+    }
+
+    notifications {
+        BIGINT id PK
+        BIGINT user_id FK
+        ENUM type "session_start|session_end|review|retention_morning|retention_inactive|weekly_report, NOT NULL"
+        VARCHAR_100 title "NOT NULL"
+        VARCHAR_500 body "NOT NULL"
+        DATETIME sent_at "KST, NOT NULL"
+        BOOLEAN is_read "DEFAULT false"
+        DATETIME created_at "KST"
+    }
+
+    notification_settings {
+        BIGINT id PK
+        BIGINT user_id FK "UNIQUE"
+        BOOLEAN master_enabled "DEFAULT true"
+        BOOLEAN session_start_enabled "DEFAULT true"
+        BOOLEAN session_end_enabled "DEFAULT true"
+        BOOLEAN review_enabled "DEFAULT true"
+        BOOLEAN morning_call_enabled "DEFAULT true"
+        TIME morning_call_time "DEFAULT 08:00"
+        BOOLEAN inactive_reminder_enabled "DEFAULT true"
+        BOOLEAN weekly_report_enabled "DEFAULT true"
+        DATETIME updated_at "KST"
+    }
+
+    search_history {
+        BIGINT id PK
+        BIGINT user_id FK
+        VARCHAR_100 keyword "NOT NULL"
+        DATETIME searched_at "KST"
+    }
+
+    users ||--o{ social_accounts : "has"
+    users ||--o{ user_playlists : "saves"
+    users ||--o{ play_logs : "generates"
+    users ||--o{ distraction_logs : "generates"
+    users ||--o{ daily_stats : "has"
+    users ||--o{ review_schedules : "has"
+    users ||--o{ notifications : "receives"
+    users ||--|| notification_settings : "has"
+    users ||--o{ search_history : "has"
+    users ||--o{ playlists : "creates"
+
+    playlists ||--o{ playlist_exam_types : "tagged_with"
+    playlists ||--o{ sessions : "contains"
+    playlists ||--o{ user_playlists : "saved_by"
+    playlists ||--o{ play_logs : "played_in"
+    playlists ||--o{ review_schedules : "scheduled_for"
+    playlists ||--o| playlists : "copied_from"
+
+    sessions ||--o{ play_logs : "recorded_in"
+
+    play_logs ||--o{ distraction_logs : "has"
+    play_logs ||--o{ review_schedules : "triggers"

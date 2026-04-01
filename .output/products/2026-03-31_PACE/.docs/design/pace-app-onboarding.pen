@@ -1,0 +1,2114 @@
+{
+  "version": "2.9",
+  "children": [
+    {
+      "type": "frame",
+      "id": "JcKIr",
+      "x": 860,
+      "y": 0,
+      "name": "Step 1 - 목표 선택",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#121212",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": [
+        60,
+        24,
+        24,
+        24
+      ],
+      "children": [
+        {
+          "type": "frame",
+          "id": "TBaMV",
+          "name": "Top Bar",
+          "width": "fill_container",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "7z2pT",
+              "name": "Progress Bar",
+              "width": "fill_container",
+              "height": 4,
+              "gap": 4,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "XbvGd",
+                  "name": "prog1",
+                  "fill": "$accent",
+                  "width": "fill_container",
+                  "height": 4
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "LGa2n",
+                  "name": "prog2",
+                  "fill": "#242424",
+                  "width": "fill_container",
+                  "height": 4
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "CN9NI",
+                  "name": "prog3",
+                  "fill": "#242424",
+                  "width": "fill_container",
+                  "height": 4
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "z3vpk",
+              "name": "skipText",
+              "fill": "$text-secondary",
+              "content": "건너뛰기",
+              "fontFamily": "DM Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "9yEI8",
+          "name": "Text Area",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "vxzyi",
+              "name": "question",
+              "fill": "$text-primary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "어떤 시험을 준비하고 있나요?",
+              "fontFamily": "DM Sans",
+              "fontSize": 24,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "text",
+              "id": "0aDJB",
+              "name": "desc",
+              "fill": "$text-secondary",
+              "content": "맞춤 플레이리스트를 추천해드릴게요",
+              "fontFamily": "DM Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hcvui",
+          "name": "Card List",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "0E53o",
+              "name": "Card - 수능",
+              "width": "fill_container",
+              "fill": "#242424",
+              "cornerRadius": 8,
+              "stroke": {
+                "align": "inside",
+                "thickness": 2,
+                "fill": "#4A90D9"
+              },
+              "gap": 12,
+              "padding": [
+                16,
+                20
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "eo6wo",
+                  "name": "icon1",
+                  "fill": "$text-primary",
+                  "content": "📚",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "zJAhK",
+                  "name": "label1",
+                  "fill": "$text-primary",
+                  "content": "수능",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "wVsLv",
+              "name": "Card - 공무원",
+              "width": "fill_container",
+              "fill": "#242424",
+              "cornerRadius": 8,
+              "gap": 12,
+              "padding": [
+                16,
+                20
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "5wstI",
+                  "name": "icon2",
+                  "fill": "$text-primary",
+                  "content": "📝",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "COd3J",
+                  "name": "label2",
+                  "fill": "$text-primary",
+                  "content": "공무원",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZH9yz",
+              "name": "Card - 자격증",
+              "width": "fill_container",
+              "fill": "#242424",
+              "cornerRadius": 8,
+              "gap": 12,
+              "padding": [
+                16,
+                20
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "jYnsC",
+                  "name": "icon3",
+                  "fill": "$text-primary",
+                  "content": "📖",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "b8EWg",
+                  "name": "label3",
+                  "fill": "$text-primary",
+                  "content": "자격증",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "1Ia7Q",
+              "name": "Card - 어학",
+              "width": "fill_container",
+              "fill": "#242424",
+              "cornerRadius": 8,
+              "gap": 12,
+              "padding": [
+                16,
+                20
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "JrXmN",
+                  "name": "icon4",
+                  "fill": "$text-primary",
+                  "content": "🔤",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "3taJ9",
+                  "name": "label4",
+                  "fill": "$text-primary",
+                  "content": "어학",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "d7mB7",
+              "name": "Card - 편입",
+              "width": "fill_container",
+              "fill": "#242424",
+              "cornerRadius": 8,
+              "gap": 12,
+              "padding": [
+                16,
+                20
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qpA8K",
+                  "name": "icon5",
+                  "fill": "$text-primary",
+                  "content": "🎓",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "sQYTP",
+                  "name": "label5",
+                  "fill": "$text-primary",
+                  "content": "편입",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "gomLT",
+              "name": "Card - 기타",
+              "width": "fill_container",
+              "fill": "#242424",
+              "cornerRadius": 8,
+              "gap": 12,
+              "padding": [
+                16,
+                20
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "CzAGe",
+                  "name": "icon6",
+                  "fill": "$text-primary",
+                  "content": "✏️",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "NlMFL",
+                  "name": "label6",
+                  "fill": "$text-primary",
+                  "content": "기타",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "s8Jbv",
+          "name": "Spacer",
+          "width": "fill_container",
+          "height": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "SAmX5",
+          "name": "Next Button",
+          "width": "fill_container",
+          "height": 52,
+          "fill": "$accent",
+          "cornerRadius": 26,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "biMk6",
+              "name": "btnLabel",
+              "fill": "$text-primary",
+              "content": "다음",
+              "fontFamily": "DM Sans",
+              "fontSize": 16,
+              "fontWeight": "bold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "xbWqg",
+      "x": 1275,
+      "y": 0,
+      "name": "Step 2 - D-Day",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#121212",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": [
+        60,
+        24,
+        24,
+        24
+      ],
+      "children": [
+        {
+          "type": "frame",
+          "id": "PYwB0",
+          "name": "Top Bar",
+          "width": "fill_container",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "9KqeR",
+              "name": "Progress Bar",
+              "width": "fill_container",
+              "height": 4,
+              "gap": 4,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "ZxtLa",
+                  "name": "p2prog1",
+                  "fill": "$accent",
+                  "width": "fill_container",
+                  "height": 4
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "rBrVS",
+                  "name": "p2prog2",
+                  "fill": "$accent",
+                  "width": "fill_container",
+                  "height": 4
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "zWTqa",
+                  "name": "p2prog3",
+                  "fill": "#242424",
+                  "width": "fill_container",
+                  "height": 4
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "XjTG8",
+              "name": "skipText2",
+              "fill": "$text-secondary",
+              "content": "건너뛰기",
+              "fontFamily": "DM Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "V9rUD",
+          "name": "Text Area",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "xzxc1",
+              "name": "question2",
+              "fill": "$text-primary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "시험일이 언제인가요?",
+              "fontFamily": "DM Sans",
+              "fontSize": 24,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "text",
+              "id": "jqEmn",
+              "name": "desc2",
+              "fill": "$text-secondary",
+              "content": "학습 강도를 조절해드릴게요",
+              "fontFamily": "DM Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "p169M",
+          "name": "Date Area",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "fieWg",
+              "name": "dateText",
+              "fill": "$accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "2026년 11월 19일 (목)",
+              "textAlign": "center",
+              "fontFamily": "DM Sans",
+              "fontSize": 32,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "frame",
+              "id": "hlCfs",
+              "name": "D-Day Badge",
+              "fill": "#242424",
+              "cornerRadius": 100,
+              "padding": [
+                8,
+                16
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Q7K9Y",
+                  "name": "ddayText",
+                  "fill": "$text-primary",
+                  "content": "D-247",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "U8LIa",
+              "name": "undecided",
+              "fill": "$text-secondary",
+              "content": "아직 정하지 않았어요",
+              "fontFamily": "DM Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "P4tbH",
+          "name": "Spacer",
+          "width": "fill_container",
+          "height": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "8KdDl",
+          "name": "Next Button",
+          "width": "fill_container",
+          "height": 52,
+          "fill": "$accent",
+          "cornerRadius": 26,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "UiQKE",
+              "name": "btnLabel2",
+              "fill": "$text-primary",
+              "content": "다음",
+              "fontFamily": "DM Sans",
+              "fontSize": 16,
+              "fontWeight": "bold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "B63cD",
+      "x": 1690,
+      "y": 0,
+      "name": "Step 3 - 가용 시간",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#121212",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": [
+        60,
+        24,
+        24,
+        24
+      ],
+      "children": [
+        {
+          "type": "frame",
+          "id": "ToPUL",
+          "name": "Top Bar",
+          "width": "fill_container",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "UE2S0",
+              "name": "Progress Bar",
+              "width": "fill_container",
+              "height": 4,
+              "gap": 4,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "TS0YO",
+                  "name": "p3prog1",
+                  "fill": "$accent",
+                  "width": "fill_container",
+                  "height": 4
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "d2iMt",
+                  "name": "p3prog2",
+                  "fill": "$accent",
+                  "width": "fill_container",
+                  "height": 4
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "O2Ytf",
+                  "name": "p3prog3",
+                  "fill": "$accent",
+                  "width": "fill_container",
+                  "height": 4
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "PnEmb",
+              "name": "skipText3",
+              "fill": "$text-secondary",
+              "content": "건너뛰기",
+              "fontFamily": "DM Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "w6uNt",
+          "name": "Text Area",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "8AEVw",
+              "name": "question3",
+              "fill": "$text-primary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "하루에 몇 시간 공부할 수 있나요?",
+              "fontFamily": "DM Sans",
+              "fontSize": 24,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "text",
+              "id": "6gX6i",
+              "name": "desc3",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "딱 맞는 길이의 플레이리스트를 추천해드릴게요",
+              "fontFamily": "DM Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "61Rbt",
+          "name": "Grid",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "1YyaQ",
+              "name": "Row 1",
+              "width": "fill_container",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "GV7ZB",
+                  "name": "Card - 1~2시간",
+                  "width": "fill_container",
+                  "height": 80,
+                  "fill": "#242424",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "pHYTP",
+                      "name": "gc1text",
+                      "fill": "$text-primary",
+                      "content": "1~2시간",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZrqCd",
+                  "name": "Card - 3~4시간",
+                  "width": "fill_container",
+                  "height": 80,
+                  "fill": "#242424",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#4A90D9"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qcqSE",
+                      "name": "gc2text",
+                      "fill": "$text-primary",
+                      "content": "3~4시간",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "1iccG",
+              "name": "Row 2",
+              "width": "fill_container",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "vLJJL",
+                  "name": "Card - 5~6시간",
+                  "width": "fill_container",
+                  "height": 80,
+                  "fill": "#242424",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QOSvj",
+                      "name": "gc3text",
+                      "fill": "$text-primary",
+                      "content": "5~6시간",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "4makc",
+                  "name": "Card - 7시간 이상",
+                  "width": "fill_container",
+                  "height": 80,
+                  "fill": "#242424",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "bTs2h",
+                      "name": "gc4text",
+                      "fill": "$text-primary",
+                      "content": "7시간 이상",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qu8P6",
+          "name": "Spacer",
+          "width": "fill_container",
+          "height": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "7bEHw",
+          "name": "Next Button",
+          "width": "fill_container",
+          "height": 52,
+          "fill": "$accent",
+          "cornerRadius": 26,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "3fQxf",
+              "name": "btnLabel3",
+              "fill": "$text-primary",
+              "content": "다음",
+              "fontFamily": "DM Sans",
+              "fontSize": 16,
+              "fontWeight": "bold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ez095",
+      "x": 2105,
+      "y": 0,
+      "name": "Onboarding Step 1 — 목표 선택 전 (버튼 비활성)",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#121212",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Ze2GR",
+          "name": "Progress Bar",
+          "width": "fill_container",
+          "height": 4,
+          "fill": "#242424",
+          "children": [
+            {
+              "type": "frame",
+              "id": "zg4Z7",
+              "name": "progress",
+              "width": 125,
+              "height": 4,
+              "fill": "#4A90D9"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "AOrLv",
+          "name": "Body",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            48,
+            24,
+            0,
+            24
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "R0vTp",
+              "name": "ob1Step",
+              "fill": "#8B90A0",
+              "content": "1 / 3",
+              "fontFamily": "DM Sans",
+              "fontSize": 13,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "ehQh1",
+              "name": "ob1Q",
+              "fill": "#F0F2F5",
+              "textGrowth": "fixed-width",
+              "width": 327,
+              "content": "어떤 시험을 준비하고 있나요?",
+              "fontFamily": "DM Sans",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "pRg0z",
+              "name": "Goal Grid",
+              "width": "fill_container",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "PzSMw",
+                  "name": "Goal Chip — 수능",
+                  "height": 48,
+                  "fill": "#242424",
+                  "cornerRadius": 24,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "2D48A",
+                      "name": "ob1c1t",
+                      "fill": "#F0F2F5",
+                      "content": "수능",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "z8VPT",
+                  "name": "Goal Chip — 공무원",
+                  "height": 48,
+                  "fill": "#242424",
+                  "cornerRadius": 24,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "U8oDM",
+                      "name": "ob1c2t",
+                      "fill": "#F0F2F5",
+                      "content": "공무원",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "6Dpx6",
+                  "name": "Goal Chip — 자격증",
+                  "height": 48,
+                  "fill": "#242424",
+                  "cornerRadius": 24,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mPAN0",
+                      "name": "ob1c3t",
+                      "fill": "#F0F2F5",
+                      "content": "자격증",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "TIWFC",
+          "name": "Bottom CTA",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            0,
+            24,
+            40,
+            24
+          ],
+          "justifyContent": "end",
+          "children": [
+            {
+              "type": "frame",
+              "id": "e75do",
+              "name": "Next Button — Disabled",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "#2A2A2A",
+              "cornerRadius": 999,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "o8CzF",
+                  "name": "ob1BtnTxt",
+                  "fill": "#5A5A5A",
+                  "content": "다음",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "y4BqV",
+      "x": 2520,
+      "y": 0,
+      "name": "Onboarding Step 1 — 목표 선택 후 (버튼 활성)",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#121212",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "UI5J9",
+          "name": "Progress Bar",
+          "width": "fill_container",
+          "height": 4,
+          "fill": "#242424",
+          "children": [
+            {
+              "type": "frame",
+              "id": "SV1OS",
+              "name": "progress",
+              "width": 125,
+              "height": 4,
+              "fill": "#4A90D9"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "yftJr",
+          "name": "Body",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            48,
+            24,
+            0,
+            24
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "ZoSHm",
+              "name": "ob1sStep",
+              "fill": "#8B90A0",
+              "content": "1 / 3",
+              "fontFamily": "DM Sans",
+              "fontSize": 13,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "VNg1L",
+              "name": "ob1sQ",
+              "fill": "#F0F2F5",
+              "textGrowth": "fixed-width",
+              "width": 327,
+              "content": "어떤 시험을 준비하고 있나요?",
+              "fontFamily": "DM Sans",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "wWWzx",
+              "name": "Goal Grid",
+              "width": "fill_container",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "gFyY3",
+                  "name": "Goal Chip — 수능 (Selected)",
+                  "height": 48,
+                  "fill": "#4A90D9",
+                  "cornerRadius": 24,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "6MdyU",
+                      "name": "ob1sChipSelT",
+                      "fill": "#FFFFFF",
+                      "content": "수능",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "49JJq",
+                  "name": "Goal Chip — 공무원",
+                  "height": 48,
+                  "fill": "#242424",
+                  "cornerRadius": 24,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "z1U2r",
+                      "name": "ob1sChip2T",
+                      "fill": "#8B90A0",
+                      "content": "공무원",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ubETc",
+                  "name": "Goal Chip — 자격증",
+                  "height": 48,
+                  "fill": "#242424",
+                  "cornerRadius": 24,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "0GPsf",
+                      "name": "ob1sChip3T",
+                      "fill": "#8B90A0",
+                      "content": "자격증",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hNSrN",
+          "name": "Bottom CTA",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            0,
+            24,
+            40,
+            24
+          ],
+          "justifyContent": "end",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Vss2H",
+              "name": "Next Button — Active",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "#4A90D9",
+              "cornerRadius": 999,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "EtMcY",
+                  "name": "ob1sBtnTxt",
+                  "fill": "#FFFFFF",
+                  "content": "다음",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "o1V3k",
+      "x": 2935,
+      "y": 0,
+      "name": "Onboarding Step 2 — D-Day 입력",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#121212",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "l1cQu",
+          "name": "Progress Bar",
+          "width": "fill_container",
+          "height": 4,
+          "fill": "#242424",
+          "children": [
+            {
+              "type": "frame",
+              "id": "7hSIB",
+              "name": "progress",
+              "width": 250,
+              "height": 4,
+              "fill": "#4A90D9"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "FkPGn",
+          "name": "Body",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            48,
+            24,
+            0,
+            24
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "IouXX",
+              "name": "ob2Step",
+              "fill": "#8B90A0",
+              "content": "2 / 3",
+              "fontFamily": "DM Sans",
+              "fontSize": 13,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "z8j3o",
+              "name": "ob2Q",
+              "fill": "#F0F2F5",
+              "content": "시험일이 언제인가요?",
+              "fontFamily": "DM Sans",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "0KV2I",
+              "name": "Date Input Wrap",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "31bmG",
+                  "name": "Date Input",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#242424",
+                  "cornerRadius": 12,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "UB6ze",
+                      "name": "ob2InputTxt",
+                      "fill": "#F0F2F5",
+                      "content": "2025년 11월 13일",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 17,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "N080m",
+                      "name": "ob2CalIcon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "calendar",
+                      "iconFontFamily": "lucide",
+                      "fill": "#8B90A0"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Fx839",
+                  "name": "D-Day Badge",
+                  "gap": 6,
+                  "padding": [
+                    8,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "6veYd",
+                      "name": "ob2DdayIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "timer",
+                      "iconFontFamily": "lucide",
+                      "fill": "#4A90D9"
+                    },
+                    {
+                      "type": "text",
+                      "id": "8bFxn",
+                      "name": "ob2DdayTxt",
+                      "fill": "#4A90D9",
+                      "content": "D-240 — 2025년 11월 13일까지",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NOShX",
+          "name": "Bottom CTA",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            0,
+            24,
+            40,
+            24
+          ],
+          "justifyContent": "end",
+          "children": [
+            {
+              "type": "frame",
+              "id": "sti40",
+              "name": "Next Button — Active",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "#4A90D9",
+              "cornerRadius": 999,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Ybv8K",
+                  "name": "ob2BtnTxt",
+                  "fill": "#FFFFFF",
+                  "content": "다음",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "FhkbN",
+      "x": 3350,
+      "y": 0,
+      "name": "Onboarding Step 3 — 가용시간 선택",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#121212",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "zq1SZ",
+          "name": "Progress Bar",
+          "width": "fill_container",
+          "height": 4,
+          "fill": "#242424",
+          "children": [
+            {
+              "type": "frame",
+              "id": "4hiaS",
+              "name": "progress",
+              "width": 375,
+              "height": 4,
+              "fill": "#4A90D9"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NJVTM",
+          "name": "Body",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            48,
+            24,
+            0,
+            24
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "qJlQV",
+              "name": "ob3Step",
+              "fill": "#8B90A0",
+              "content": "3 / 3",
+              "fontFamily": "DM Sans",
+              "fontSize": 13,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "J6nRD",
+              "name": "ob3Q",
+              "fill": "#F0F2F5",
+              "textGrowth": "fixed-width",
+              "width": 327,
+              "content": "하루에 얼마나 공부할 수 있나요?",
+              "fontFamily": "DM Sans",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "VsboF",
+              "name": "ob3Sub",
+              "fill": "#8B90A0",
+              "textGrowth": "fixed-width",
+              "width": 327,
+              "content": "AI가 이 시간에 맞춰 플레이리스트를 만들어드려요.",
+              "fontFamily": "DM Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "nyPlJ",
+              "name": "Time Slider Wrap",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pdEFC",
+                  "name": "Slider Label Row",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "CdnjI",
+                      "name": "ob3SliderMin",
+                      "fill": "#8B90A0",
+                      "content": "1시간",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "UkQyB",
+                      "name": "ob3SliderVal",
+                      "fill": "#4A90D9",
+                      "content": "6시간",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 20,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "1GhxY",
+                      "name": "ob3SliderMax",
+                      "fill": "#8B90A0",
+                      "content": "12시간",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "iO2Lf",
+                  "name": "Slider Track",
+                  "width": "fill_container",
+                  "height": 4,
+                  "fill": "#242424",
+                  "cornerRadius": 2,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "snozi",
+                      "name": "Slider Fill",
+                      "width": 165,
+                      "height": 4,
+                      "fill": "#4A90D9",
+                      "cornerRadius": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "3moU2",
+          "name": "Bottom CTA",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            0,
+            24,
+            40,
+            24
+          ],
+          "justifyContent": "end",
+          "children": [
+            {
+              "type": "frame",
+              "id": "zkPbi",
+              "name": "Next Button — Active",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "#4A90D9",
+              "cornerRadius": 999,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "xpgIg",
+                  "name": "ob3BtnTxt",
+                  "fill": "#FFFFFF",
+                  "content": "AI 플레이리스트 생성하기",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "n8siZ",
+      "x": 3765,
+      "y": 0,
+      "name": "Onboarding 완료 — 추천 플레이리스트 미리보기",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#121212",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "j71Mh",
+          "name": "Top Section",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            60,
+            24,
+            32,
+            24
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "fGGj4",
+              "name": "obDoneIcon",
+              "width": 48,
+              "height": 48,
+              "iconFontName": "sparkles",
+              "iconFontFamily": "lucide",
+              "fill": "#4A90D9"
+            },
+            {
+              "type": "text",
+              "id": "GTPXb",
+              "name": "obDoneTitle",
+              "fill": "#F0F2F5",
+              "textGrowth": "fixed-width",
+              "width": 300,
+              "content": "AI가 첫 주 플레이리스트를\n만들었어요!",
+              "textAlign": "center",
+              "fontFamily": "DM Sans",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "XiQgS",
+              "name": "obDoneSub",
+              "fill": "#8B90A0",
+              "content": "지금 바로 학습을 시작해보세요.",
+              "textAlign": "center",
+              "fontFamily": "DM Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "nxbdO",
+          "name": "Playlist Preview Cards",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            0,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "VFG3E",
+              "name": "Preview Card 1",
+              "width": "fill_container",
+              "height": 72,
+              "fill": "#1E2A3A",
+              "cornerRadius": 12,
+              "gap": 12,
+              "padding": [
+                12,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "95jhL",
+                  "name": "cover",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#2A4A6A",
+                  "cornerRadius": 6
+                },
+                {
+                  "type": "frame",
+                  "id": "2IFvO",
+                  "name": "textGroup",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "6OZt4",
+                      "name": "obCard1Title",
+                      "fill": "#F0F2F5",
+                      "content": "수능 국영수 7시간 루틴",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "r7mot",
+                      "name": "obCard1Sub",
+                      "fill": "#8B90A0",
+                      "content": "오늘 · 7시간",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "RBHbY",
+              "name": "Preview Card 2",
+              "width": "fill_container",
+              "height": 72,
+              "fill": "#242424",
+              "cornerRadius": 12,
+              "gap": 12,
+              "padding": [
+                12,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ReQBU",
+                  "name": "cover",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#3A3A3A",
+                  "cornerRadius": 6
+                },
+                {
+                  "type": "frame",
+                  "id": "Zud6G",
+                  "name": "textGroup",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vJVTf",
+                      "name": "obCard2Title",
+                      "fill": "#F0F2F5",
+                      "content": "수학 집중 세션",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "LnzBX",
+                      "name": "obCard2Sub",
+                      "fill": "#8B90A0",
+                      "content": "내일 · 3시간",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mdKDU",
+              "name": "Preview Card 3",
+              "width": "fill_container",
+              "height": 72,
+              "fill": "#242424",
+              "cornerRadius": 12,
+              "gap": 12,
+              "padding": [
+                12,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "OHL4J",
+                  "name": "cover",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#3A3A3A",
+                  "cornerRadius": 6
+                },
+                {
+                  "type": "frame",
+                  "id": "7t0nU",
+                  "name": "textGroup",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "g1ElS",
+                      "name": "obCard3Title",
+                      "fill": "#F0F2F5",
+                      "content": "영어 집중 세션",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "aWefg",
+                      "name": "obCard3Sub",
+                      "fill": "#8B90A0",
+                      "content": "모레 · 2시간",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "L6VIG",
+          "name": "Bottom CTA",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            0,
+            24,
+            40,
+            24
+          ],
+          "justifyContent": "end",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Dw9ql",
+              "name": "Start Button",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "#4A90D9",
+              "cornerRadius": 999,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Gv1CX",
+                  "name": "obDoneBtnTxt",
+                  "fill": "#FFFFFF",
+                  "content": "학습 시작하기",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "accent": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#1DB954"
+        },
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#1DB954"
+        },
+        {
+          "value": "#4A90D9"
+        }
+      ]
+    },
+    "bg": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#121212"
+        },
+        {
+          "value": "#0D1117"
+        },
+        {
+          "value": "#121212"
+        },
+        {
+          "value": "#0C1021"
+        },
+        {
+          "value": "#0A0A0A"
+        },
+        {
+          "value": "#0A0A0A"
+        },
+        {
+          "value": "#0A0A0A"
+        },
+        {
+          "value": "#0A0A0A"
+        },
+        {
+          "value": "#121212"
+        },
+        {
+          "value": "#0D1117"
+        },
+        {
+          "value": "#121212"
+        },
+        {
+          "value": "#0C1021"
+        },
+        {
+          "value": "#121212"
+        },
+        {
+          "value": "#121212"
+        },
+        {
+          "value": "#121212"
+        },
+        {
+          "value": "#121212"
+        }
+      ]
+    },
+    "surface": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#282828"
+        },
+        {
+          "value": "#21262D"
+        },
+        {
+          "value": "#282828"
+        },
+        {
+          "value": "#1C2035"
+        },
+        {
+          "value": "#1E1E1E"
+        },
+        {
+          "value": "#1E1E1E"
+        },
+        {
+          "value": "#1E1E1E"
+        },
+        {
+          "value": "#1E1E1E"
+        },
+        {
+          "value": "#282828"
+        },
+        {
+          "value": "#21262D"
+        },
+        {
+          "value": "#282828"
+        },
+        {
+          "value": "#1C2035"
+        },
+        {
+          "value": "#242424"
+        },
+        {
+          "value": "#242424"
+        },
+        {
+          "value": "#242424"
+        },
+        {
+          "value": "#242424"
+        }
+      ]
+    },
+    "text-primary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#FFFFFF"
+        },
+        {
+          "value": "#FFFFFF"
+        },
+        {
+          "value": "#FFFFFF"
+        },
+        {
+          "value": "#F0F2F5"
+        }
+      ]
+    },
+    "text-secondary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#B3B3B3"
+        },
+        {
+          "value": "#8B949E"
+        },
+        {
+          "value": "#B3B3B3"
+        },
+        {
+          "value": "#8B90A0"
+        }
+      ]
+    },
+    "text-tertiary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#6A6A6A"
+        },
+        {
+          "value": "#484F58"
+        },
+        {
+          "value": "#6A6A6A"
+        },
+        {
+          "value": "#565B6E"
+        },
+        {
+          "value": "#5A5A5A"
+        },
+        {
+          "value": "#5A5A5A"
+        },
+        {
+          "value": "#5A5A5A"
+        },
+        {
+          "value": "#5A5A5A"
+        },
+        {
+          "value": "#6A6A6A"
+        },
+        {
+          "value": "#484F58"
+        },
+        {
+          "value": "#6A6A6A"
+        },
+        {
+          "value": "#565B6E"
+        },
+        {
+          "value": "#6A6A6A"
+        },
+        {
+          "value": "#6A6A6A"
+        },
+        {
+          "value": "#6A6A6A"
+        },
+        {
+          "value": "#6A6A6A"
+        }
+      ]
+    }
+  }
+}

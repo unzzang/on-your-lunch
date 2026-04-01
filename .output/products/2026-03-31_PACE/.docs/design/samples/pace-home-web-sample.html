@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PACE - Home (PC Web)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: '#242424',
+            'surface-light': '#2a2a2a',
+            'surface-elevated': '#333333',
+            accent: '#4A90D9',
+            'accent-hover': '#5BA0E9',
+            'text-primary': '#FFFFFF',
+            'text-secondary': '#B3B3B3',
+            'text-tertiary': '#727272',
+            sidebar: '#0a0a0a',
+          },
+          fontFamily: {
+            pretendard: ['Pretendard', 'sans-serif'],
+            dm: ['"DM Sans"', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background: #121212;
+      color: #FFFFFF;
+      word-break: keep-all;
+      overflow: hidden;
+      min-width: 1280px;
+    }
+
+    /* ── 커스텀 스크롤바 (Spotify 스타일) ── */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .sidebar-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    /* ── 카드 hover 트랜지션 ── */
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card-hover:hover {
+      transform: scale(1.03);
+    }
+
+    /* ── 루틴 카드 재생 버튼 (Spotify 스타일) ── */
+    .routine-card .play-btn {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .routine-card:hover .play-btn {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .routine-card .card-bg {
+      transition: background-color 0.3s ease;
+    }
+    .routine-card:hover .card-bg {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* ── 빠른 선택 카드 ── */
+    .quick-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: background-color 0.2s ease;
+    }
+    .quick-card:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* ── 학습 요약 카드 ── */
+    .stat-card {
+      background: linear-gradient(145deg, rgba(74, 144, 217, 0.12) 0%, rgba(74, 144, 217, 0.04) 100%);
+      border: 1px solid rgba(74, 144, 217, 0.15);
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+      border-color: rgba(74, 144, 217, 0.3);
+      background: linear-gradient(145deg, rgba(74, 144, 217, 0.16) 0%, rgba(74, 144, 217, 0.06) 100%);
+    }
+
+    /* ── 프로그레스 바 hover 효과 (Spotify 스타일) ── */
+    .progress-track {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+    .progress-track:hover {
+      height: 6px;
+    }
+    .progress-track:hover .progress-fill {
+      background: #4A90D9;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #FFFFFF;
+      border-radius: 2px;
+      position: relative;
+      transition: background-color 0.2s ease;
+    }
+    .progress-track:hover .progress-knob {
+      opacity: 1;
+    }
+    .progress-knob {
+      position: absolute;
+      right: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 10px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    /* ── 사이드바 네비게이션 ── */
+    .nav-item {
+      transition: all 0.15s ease;
+    }
+    .nav-item:hover {
+      color: #FFFFFF;
+    }
+    .nav-item.active {
+      color: #FFFFFF;
+    }
+
+    /* ── 사이드바 플레이리스트 아이템 ── */
+    .playlist-item {
+      transition: background-color 0.15s ease;
+      border-radius: 6px;
+    }
+    .playlist-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* ── 플레이어 바 컨트롤 버튼 ── */
+    .player-btn {
+      color: #B3B3B3;
+      transition: all 0.15s ease;
+    }
+    .player-btn:hover {
+      color: #FFFFFF;
+      transform: scale(1.06);
+    }
+    .player-btn.active {
+      color: #4A90D9;
+    }
+
+    /* ── 섹션 애니메이션 ── */
+    .section-fade-in {
+      animation: fadeUp 0.5s ease-out both;
+    }
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── 히어로 그라데이션 ── */
+    .hero-gradient {
+      background: linear-gradient(180deg, #1a3a5c 0%, #121212 100%);
+    }
+
+    /* ── 프로필 드롭다운 ── */
+    .profile-btn {
+      transition: all 0.15s ease;
+    }
+    .profile-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ── 상단 바 화살표 ── */
+    .nav-arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .nav-arrow:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .nav-arrow.disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    /* ── 집중 모드 토글 ── */
+    .focus-toggle {
+      width: 40px;
+      height: 22px;
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.15);
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .focus-toggle.active {
+      background: #4A90D9;
+    }
+    .focus-toggle .knob {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s ease;
+    }
+    .focus-toggle.active .knob {
+      transform: translateX(18px);
+    }
+
+    /* ── "모두 보기" 링크 ── */
+    .show-all {
+      color: #727272;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.15s ease;
+    }
+    .show-all:hover {
+      color: #FFFFFF;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="flex flex-col h-screen">
+
+    <!-- ================================================================ -->
+    <!-- 상단 영역: 사이드바 + 메인 콘텐츠 -->
+    <!-- ================================================================ -->
+    <div class="flex flex-1 overflow-hidden">
+
+      <!-- ============================================================ -->
+      <!-- 좌측 사이드바 (240px 고정) -->
+      <!-- Spotify Desktop 참조: 좌측 고정 사이드바 — 로고, 네비게이션, 라이브러리 리스트 -->
+      <!-- ============================================================ -->
+      <aside class="w-[240px] flex-shrink-0 bg-sidebar flex flex-col h-full">
+
+        <!-- 로고 -->
+        <div class="px-6 pt-6 pb-5">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+              <iconify-icon icon="solar:play-bold" width="16" style="color: white;"></iconify-icon>
+            </div>
+            <span class="text-[20px] font-bold font-dm text-text-primary tracking-tight">PACE</span>
+          </div>
+        </div>
+
+        <!-- 메인 네비게이션 -->
+        <nav class="px-3 space-y-0.5">
+          <a href="#" class="nav-item active flex items-center gap-4 px-3 py-2.5 text-[15px] font-semibold text-white">
+            <iconify-icon icon="solar:home-smile-bold" width="24" style="color: #FFFFFF;"></iconify-icon>
+            Home
+          </a>
+          <a href="#" class="nav-item flex items-center gap-4 px-3 py-2.5 text-[15px] font-medium text-text-secondary">
+            <iconify-icon icon="solar:magnifer-linear" width="24" style="color: #B3B3B3;"></iconify-icon>
+            Search
+          </a>
+          <a href="#" class="nav-item flex items-center gap-4 px-3 py-2.5 text-[15px] font-medium text-text-secondary">
+            <iconify-icon icon="solar:library-linear" width="24" style="color: #B3B3B3;"></iconify-icon>
+            Library
+          </a>
+        </nav>
+
+        <!-- 구분선 -->
+        <div class="mx-6 my-4 border-t border-white/[0.08]"></div>
+
+        <!-- 내 루틴 카드 리스트 -->
+        <div class="px-3 mb-3">
+          <p class="px-3 text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">내 루틴 카드</p>
+        </div>
+        <div class="flex-1 overflow-y-auto sidebar-scrollbar px-2 space-y-0.5">
+          <!-- 루틴 아이템 1 -->
+          <a href="#" class="playlist-item flex items-center gap-3 px-2 py-2 cursor-pointer">
+            <img src="https://picsum.photos/seed/sidebar-math/40/40" alt="" class="w-10 h-10 rounded object-cover flex-shrink-0" />
+            <div class="min-w-0">
+              <p class="text-[13px] font-medium text-text-primary truncate">수학 3시간 집중</p>
+              <p class="text-[11px] text-text-tertiary truncate">루틴 카드 &middot; 8개 세션</p>
+            </div>
+          </a>
+          <!-- 루틴 아이템 2 -->
+          <a href="#" class="playlist-item flex items-center gap-3 px-2 py-2 cursor-pointer">
+            <img src="https://picsum.photos/seed/sidebar-korean/40/40" alt="" class="w-10 h-10 rounded object-cover flex-shrink-0" />
+            <div class="min-w-0">
+              <p class="text-[13px] font-medium text-text-primary truncate">국어 비문학 루틴</p>
+              <p class="text-[11px] text-text-tertiary truncate">루틴 카드 &middot; 6개 세션</p>
+            </div>
+          </a>
+          <!-- 루틴 아이템 3 -->
+          <a href="#" class="playlist-item flex items-center gap-3 px-2 py-2 cursor-pointer">
+            <img src="https://picsum.photos/seed/sidebar-eng/40/40" alt="" class="w-10 h-10 rounded object-cover flex-shrink-0" />
+            <div class="min-w-0">
+              <p class="text-[13px] font-medium text-text-primary truncate">영단어 속성 암기</p>
+              <p class="text-[11px] text-text-tertiary truncate">루틴 카드 &middot; 4개 세션</p>
+            </div>
+          </a>
+          <!-- 루틴 아이템 4 -->
+          <a href="#" class="playlist-item flex items-center gap-3 px-2 py-2 cursor-pointer">
+            <img src="https://picsum.photos/seed/sidebar-sci/40/40" alt="" class="w-10 h-10 rounded object-cover flex-shrink-0" />
+            <div class="min-w-0">
+              <p class="text-[13px] font-medium text-text-primary truncate">과탐 기출 회독</p>
+              <p class="text-[11px] text-text-tertiary truncate">루틴 카드 &middot; 5개 세션</p>
+            </div>
+          </a>
+          <!-- 루틴 아이템 5 -->
+          <a href="#" class="playlist-item flex items-center gap-3 px-2 py-2 cursor-pointer">
+            <img src="https://picsum.photos/seed/sidebar-morning/40/40" alt="" class="w-10 h-10 rounded object-cover flex-shrink-0" />
+            <div class="min-w-0">
+              <p class="text-[13px] font-medium text-text-primary truncate">모닝 루틴 2시간</p>
+              <p class="text-[11px] text-text-tertiary truncate">루틴 카드 &middot; 3개 세션</p>
+            </div>
+          </a>
+          <!-- 루틴 아이템 6 -->
+          <a href="#" class="playlist-item flex items-center gap-3 px-2 py-2 cursor-pointer">
+            <img src="https://picsum.photos/seed/sidebar-toeic/40/40" alt="" class="w-10 h-10 rounded object-cover flex-shrink-0" />
+            <div class="min-w-0">
+              <p class="text-[13px] font-medium text-text-primary truncate">토익 RC 파트7 훈련</p>
+              <p class="text-[11px] text-text-tertiary truncate">루틴 카드 &middot; 6개 세션</p>
+            </div>
+          </a>
+          <!-- 루틴 아이템 7 -->
+          <a href="#" class="playlist-item flex items-center gap-3 px-2 py-2 cursor-pointer">
+            <img src="https://picsum.photos/seed/sidebar-review/40/40" alt="" class="w-10 h-10 rounded object-cover flex-shrink-0" />
+            <div class="min-w-0">
+              <p class="text-[13px] font-medium text-text-primary truncate">복습 사이클 45분</p>
+              <p class="text-[11px] text-text-tertiary truncate">루틴 카드 &middot; 3개 세션</p>
+            </div>
+          </a>
+          <!-- 루틴 아이템 8 -->
+          <a href="#" class="playlist-item flex items-center gap-3 px-2 py-2 cursor-pointer">
+            <img src="https://picsum.photos/seed/sidebar-admin/40/40" alt="" class="w-10 h-10 rounded object-cover flex-shrink-0" />
+            <div class="min-w-0">
+              <p class="text-[13px] font-medium text-text-primary truncate">공무원 행정법 집중</p>
+              <p class="text-[11px] text-text-tertiary truncate">루틴 카드 &middot; 7개 세션</p>
+            </div>
+          </a>
+        </div>
+
+        <!-- 루틴 카드 만들기 버튼 -->
+        <div class="px-3 py-4">
+          <button class="w-full flex items-center justify-center gap-2 py-2.5 rounded-full border border-white/[0.15] text-[13px] font-semibold text-text-secondary hover:text-white hover:border-white/[0.3] transition-all">
+            <iconify-icon icon="solar:add-circle-linear" width="18"></iconify-icon>
+            루틴 카드 만들기
+          </button>
+        </div>
+      </aside>
+
+      <!-- ============================================================ -->
+      <!-- 메인 콘텐츠 영역 -->
+      <!-- Spotify Desktop 참조: 중앙 메인 콘텐츠 — 상단 바 + 스크롤 콘텐츠 -->
+      <!-- ============================================================ -->
+      <main class="flex-1 overflow-hidden flex flex-col bg-[#121212] rounded-tl-lg">
+
+        <!-- ── 상단 네비게이션 바 ── -->
+        <!-- Spotify Desktop 참조: 좌측 뒤로/앞으로, 우측 프로필 드롭다운 -->
+        <header class="sticky top-0 z-30 flex items-center justify-between px-8 py-4 bg-[#121212]/80 backdrop-blur-xl" id="topBar">
+          <div class="flex items-center gap-2">
+            <button class="nav-arrow disabled">
+              <iconify-icon icon="solar:alt-arrow-left-line-duotone" width="18" style="color: #FFFFFF;"></iconify-icon>
+            </button>
+            <button class="nav-arrow disabled">
+              <iconify-icon icon="solar:alt-arrow-right-line-duotone" width="18" style="color: #FFFFFF;"></iconify-icon>
+            </button>
+          </div>
+          <div class="flex items-center gap-3">
+            <button class="profile-btn flex items-center gap-2 px-1 pr-3 py-1 rounded-full bg-surface/60 hover:bg-surface">
+              <div class="w-7 h-7 rounded-full bg-accent flex items-center justify-center">
+                <span class="text-white text-[12px] font-bold font-dm">MJ</span>
+              </div>
+              <span class="text-[13px] font-semibold text-text-primary">민준</span>
+              <iconify-icon icon="solar:alt-arrow-down-line-duotone" width="14" style="color: #B3B3B3;"></iconify-icon>
+            </button>
+          </div>
+        </header>
+
+        <!-- ── 스크롤 가능한 메인 콘텐츠 ── -->
+        <div class="flex-1 overflow-y-auto" id="mainScroll">
+          <div class="max-w-[1400px] mx-auto px-8 pb-8">
+
+            <!-- ================================================ -->
+            <!-- 1. 히어로 인사 영역 -->
+            <!-- Spotify Desktop 참조: "Good afternoon" 인사 + 배경 그라데이션 -->
+            <!-- ================================================ -->
+            <section class="section-fade-in -mx-8 px-8 pt-4 pb-8 hero-gradient -mt-4 rounded-t-lg" style="animation-delay: 0s;">
+              <h1 class="text-[32px] font-bold text-text-primary leading-tight mb-6">좋은 오후예요, 민준님</h1>
+
+              <!-- 빠른 선택 그리드 (3열 x 2행) -->
+              <!-- Spotify Desktop 참조: "Good afternoon" 아래 6개 가로 직사각형 카드 그리드 -->
+              <div class="grid grid-cols-3 gap-3">
+                <!-- Quick Card 1 -->
+                <a href="#" class="quick-card rounded-md flex items-center overflow-hidden group cursor-pointer">
+                  <img src="https://picsum.photos/seed/math-routine/80/80" alt="" class="w-[80px] h-[80px] object-cover flex-shrink-0" />
+                  <div class="flex items-center justify-between flex-1 px-4 py-3">
+                    <p class="text-[14px] font-semibold text-text-primary leading-snug">수학 3시간 집중</p>
+                    <button class="play-btn w-10 h-10 bg-accent rounded-full flex items-center justify-center shadow-lg shadow-accent/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <iconify-icon icon="solar:play-bold" width="18" style="color: white;"></iconify-icon>
+                    </button>
+                  </div>
+                </a>
+                <!-- Quick Card 2 -->
+                <a href="#" class="quick-card rounded-md flex items-center overflow-hidden group cursor-pointer">
+                  <img src="https://picsum.photos/seed/korean-lang/80/80" alt="" class="w-[80px] h-[80px] object-cover flex-shrink-0" />
+                  <div class="flex items-center justify-between flex-1 px-4 py-3">
+                    <p class="text-[14px] font-semibold text-text-primary leading-snug">국어 비문학 루틴</p>
+                    <button class="play-btn w-10 h-10 bg-accent rounded-full flex items-center justify-center shadow-lg shadow-accent/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <iconify-icon icon="solar:play-bold" width="18" style="color: white;"></iconify-icon>
+                    </button>
+                  </div>
+                </a>
+                <!-- Quick Card 3 -->
+                <a href="#" class="quick-card rounded-md flex items-center overflow-hidden group cursor-pointer">
+                  <img src="https://picsum.photos/seed/eng-vocab/80/80" alt="" class="w-[80px] h-[80px] object-cover flex-shrink-0" />
+                  <div class="flex items-center justify-between flex-1 px-4 py-3">
+                    <p class="text-[14px] font-semibold text-text-primary leading-snug">영단어 속성 암기</p>
+                    <button class="play-btn w-10 h-10 bg-accent rounded-full flex items-center justify-center shadow-lg shadow-accent/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <iconify-icon icon="solar:play-bold" width="18" style="color: white;"></iconify-icon>
+                    </button>
+                  </div>
+                </a>
+                <!-- Quick Card 4 -->
+                <a href="#" class="quick-card rounded-md flex items-center overflow-hidden group cursor-pointer">
+                  <img src="https://picsum.photos/seed/science-pack/80/80" alt="" class="w-[80px] h-[80px] object-cover flex-shrink-0" />
+                  <div class="flex items-center justify-between flex-1 px-4 py-3">
+                    <p class="text-[14px] font-semibold text-text-primary leading-snug">과탐 기출 회독</p>
+                    <button class="play-btn w-10 h-10 bg-accent rounded-full flex items-center justify-center shadow-lg shadow-accent/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <iconify-icon icon="solar:play-bold" width="18" style="color: white;"></iconify-icon>
+                    </button>
+                  </div>
+                </a>
+                <!-- Quick Card 5 -->
+                <a href="#" class="quick-card rounded-md flex items-center overflow-hidden group cursor-pointer">
+                  <img src="https://picsum.photos/seed/morning-rout/80/80" alt="" class="w-[80px] h-[80px] object-cover flex-shrink-0" />
+                  <div class="flex items-center justify-between flex-1 px-4 py-3">
+                    <p class="text-[14px] font-semibold text-text-primary leading-snug">모닝 루틴 2시간</p>
+                    <button class="play-btn w-10 h-10 bg-accent rounded-full flex items-center justify-center shadow-lg shadow-accent/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <iconify-icon icon="solar:play-bold" width="18" style="color: white;"></iconify-icon>
+                    </button>
+                  </div>
+                </a>
+                <!-- Quick Card 6 -->
+                <a href="#" class="quick-card rounded-md flex items-center overflow-hidden group cursor-pointer">
+                  <img src="https://picsum.photos/seed/review-cycle/80/80" alt="" class="w-[80px] h-[80px] object-cover flex-shrink-0" />
+                  <div class="flex items-center justify-between flex-1 px-4 py-3">
+                    <p class="text-[14px] font-semibold text-text-primary leading-snug">복습 사이클 45분</p>
+                    <button class="play-btn w-10 h-10 bg-accent rounded-full flex items-center justify-center shadow-lg shadow-accent/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <iconify-icon icon="solar:play-bold" width="18" style="color: white;"></iconify-icon>
+                    </button>
+                  </div>
+                </a>
+              </div>
+            </section>
+
+            <!-- ================================================ -->
+            <!-- 2. 오늘의 학습 요약 -->
+            <!-- 순공 시간, 완료 세션, 집중률 — 가로 3열 카드 -->
+            <!-- ================================================ -->
+            <section class="section-fade-in mt-8" style="animation-delay: 0.1s;">
+              <div class="grid grid-cols-3 gap-4">
+                <div class="stat-card rounded-xl p-5 cursor-pointer">
+                  <div class="flex items-center gap-2 mb-3">
+                    <iconify-icon icon="solar:clock-circle-bold-duotone" width="20" style="color: #4A90D9;"></iconify-icon>
+                    <span class="text-[13px] text-text-tertiary font-medium">순공 시간</span>
+                  </div>
+                  <p class="text-[36px] font-bold font-dm text-text-primary leading-none">3<span class="text-[20px] text-text-secondary font-medium">h</span> 42<span class="text-[20px] text-text-secondary font-medium">m</span></p>
+                  <p class="text-[13px] text-text-tertiary mt-2">목표 8시간 중</p>
+                  <div class="mt-3 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                    <div class="h-full bg-accent rounded-full" style="width: 46%;"></div>
+                  </div>
+                </div>
+                <div class="stat-card rounded-xl p-5 cursor-pointer">
+                  <div class="flex items-center gap-2 mb-3">
+                    <iconify-icon icon="solar:checklist-minimalistic-bold-duotone" width="20" style="color: #4A90D9;"></iconify-icon>
+                    <span class="text-[13px] text-text-tertiary font-medium">완료 세션</span>
+                  </div>
+                  <p class="text-[36px] font-bold font-dm text-text-primary leading-none">5<span class="text-[20px] text-text-secondary font-medium">/8</span></p>
+                  <p class="text-[13px] text-text-tertiary mt-2">3개 세션 남음</p>
+                  <div class="mt-3 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                    <div class="h-full bg-accent rounded-full" style="width: 62.5%;"></div>
+                  </div>
+                </div>
+                <div class="stat-card rounded-xl p-5 cursor-pointer">
+                  <div class="flex items-center gap-2 mb-3">
+                    <iconify-icon icon="solar:target-bold-duotone" width="20" style="color: #4A90D9;"></iconify-icon>
+                    <span class="text-[13px] text-text-tertiary font-medium">집중률</span>
+                  </div>
+                  <p class="text-[36px] font-bold font-dm text-accent leading-none">87<span class="text-[20px] text-accent/70 font-medium">%</span></p>
+                  <p class="text-[13px] text-text-tertiary mt-2">어제 대비 +5%</p>
+                  <div class="mt-3 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                    <div class="h-full bg-accent rounded-full" style="width: 87%;"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ================================================ -->
+            <!-- 3. 지금 시작하면 딱 좋은 (시간 기반 추천) -->
+            <!-- Spotify Desktop 참조: 가로 카드 캐러셀 + "모두 보기" 링크 -->
+            <!-- ================================================ -->
+            <section class="section-fade-in mt-10" style="animation-delay: 0.15s;">
+              <div class="flex items-baseline justify-between mb-5">
+                <h2 class="text-[24px] font-bold text-text-primary">지금 시작하면 딱 좋은</h2>
+                <a href="#" class="show-all">모두 보기</a>
+              </div>
+              <div class="grid grid-cols-5 gap-5">
+                <!-- Card 1 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/focus-am/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">오전 집중 루틴</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">국어 독서 + 수학 미적분 3시간 구성</p>
+                  </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/half-mock/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">하프 모의고사</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">실전 감각 유지를 위한 90분 연습</p>
+                  </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/light-review/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">가볍게 복습 30분</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">어제 학습한 핵심 내용 빠르게 정리</p>
+                  </div>
+                </div>
+                <!-- Card 4 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/pomodoro-x/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">뽀모도로 4세트</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">25분 집중 + 5분 휴식 반복 구성</p>
+                  </div>
+                </div>
+                <!-- Card 5 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/night-deep/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">야간 심화 학습</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">고난도 문제 풀이 집중 2시간</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ================================================ -->
+            <!-- 4. 민준님을 위한 추천 (AI 맞춤 추천) -->
+            <!-- Spotify Desktop 참조: "Made for You" 섹션 — 개인화 캐러셀 -->
+            <!-- ================================================ -->
+            <section class="section-fade-in mt-10" style="animation-delay: 0.2s;">
+              <div class="flex items-baseline justify-between mb-5">
+                <div>
+                  <h2 class="text-[24px] font-bold text-text-primary">민준님을 위한 추천</h2>
+                  <p class="text-[14px] text-text-tertiary mt-1">최근 학습 패턴 기반 AI 분석</p>
+                </div>
+                <a href="#" class="show-all">모두 보기</a>
+              </div>
+              <div class="grid grid-cols-5 gap-5">
+                <!-- AI Card 1 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/ai-math-deep/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <div class="absolute top-2 left-2 px-2.5 py-1 bg-accent/90 rounded text-[11px] font-semibold text-white flex items-center gap-1 backdrop-blur-sm">
+                        <iconify-icon icon="solar:magic-stick-3-bold" width="12"></iconify-icon>
+                        AI 추천
+                      </div>
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">수학 취약 단원 보강</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">미적분 정적분 집중 2시간 코스</p>
+                  </div>
+                </div>
+                <!-- AI Card 2 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/ai-eng-listen/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <div class="absolute top-2 left-2 px-2.5 py-1 bg-accent/90 rounded text-[11px] font-semibold text-white flex items-center gap-1 backdrop-blur-sm">
+                        <iconify-icon icon="solar:magic-stick-3-bold" width="12"></iconify-icon>
+                        AI 추천
+                      </div>
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">영어 듣기 실전 훈련</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">기출 듣기 40분 속성 코스</p>
+                  </div>
+                </div>
+                <!-- AI Card 3 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/ai-night-rev/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <div class="absolute top-2 left-2 px-2.5 py-1 bg-accent/90 rounded text-[11px] font-semibold text-white flex items-center gap-1 backdrop-blur-sm">
+                        <iconify-icon icon="solar:magic-stick-3-bold" width="12"></iconify-icon>
+                        AI 추천
+                      </div>
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">야간 마무리 복습</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">오늘 틀린 문제 중심 오답 정리</p>
+                  </div>
+                </div>
+                <!-- AI Card 4 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/ai-weekend/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <div class="absolute top-2 left-2 px-2.5 py-1 bg-accent/90 rounded text-[11px] font-semibold text-white flex items-center gap-1 backdrop-blur-sm">
+                        <iconify-icon icon="solar:magic-stick-3-bold" width="12"></iconify-icon>
+                        AI 추천
+                      </div>
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">주말 몰입 플랜</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">국영수 통합 6시간 풀 세트</p>
+                  </div>
+                </div>
+                <!-- AI Card 5 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/ai-ebbinghaus/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <div class="absolute top-2 left-2 px-2.5 py-1 bg-accent/90 rounded text-[11px] font-semibold text-white flex items-center gap-1 backdrop-blur-sm">
+                        <iconify-icon icon="solar:magic-stick-3-bold" width="12"></iconify-icon>
+                        AI 추천
+                      </div>
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">망각 곡선 복습</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">3일 전 학습 내용 자동 리마인드</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ================================================ -->
+            <!-- 5. 수험생들이 많이 쓰는 (인기 루틴) -->
+            <!-- Spotify Desktop 참조: 인기 플레이리스트 섹션 -->
+            <!-- ================================================ -->
+            <section class="section-fade-in mt-10 pb-4" style="animation-delay: 0.25s;">
+              <div class="flex items-baseline justify-between mb-5">
+                <h2 class="text-[24px] font-bold text-text-primary">수험생들이 많이 쓰는</h2>
+                <a href="#" class="show-all">모두 보기</a>
+              </div>
+              <div class="grid grid-cols-5 gap-5">
+                <!-- Popular 1 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/pop-csat-full/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <div class="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 bg-surface/80 rounded text-[11px] text-text-secondary font-medium backdrop-blur-sm">
+                        <iconify-icon icon="solar:users-group-rounded-bold" width="13"></iconify-icon>
+                        47,200+
+                      </div>
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">수능 실전 풀세트</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">국영수탐 전과목 8시간 시뮬레이션</p>
+                  </div>
+                </div>
+                <!-- Popular 2 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/pop-gong-admin/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <div class="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 bg-surface/80 rounded text-[11px] text-text-secondary font-medium backdrop-blur-sm">
+                        <iconify-icon icon="solar:users-group-rounded-bold" width="13"></iconify-icon>
+                        31,800+
+                      </div>
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">공무원 행정법 집중</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">기출 회독 중심 3시간 루틴</p>
+                  </div>
+                </div>
+                <!-- Popular 3 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/pop-toeic-900/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <div class="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 bg-surface/80 rounded text-[11px] text-text-secondary font-medium backdrop-blur-sm">
+                        <iconify-icon icon="solar:users-group-rounded-bold" width="13"></iconify-icon>
+                        28,500+
+                      </div>
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">토익 900+ 달성 코스</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">LC + RC 파트별 2시간 루틴</p>
+                  </div>
+                </div>
+                <!-- Popular 4 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/pop-cpa-acc/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <div class="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 bg-surface/80 rounded text-[11px] text-text-secondary font-medium backdrop-blur-sm">
+                        <iconify-icon icon="solar:users-group-rounded-bold" width="13"></iconify-icon>
+                        19,400+
+                      </div>
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">회계사 회계학 몰입</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">재무회계 기초부터 심화까지 4시간</p>
+                  </div>
+                </div>
+                <!-- Popular 5 -->
+                <div class="routine-card cursor-pointer">
+                  <div class="card-bg rounded-lg p-4 pb-5">
+                    <div class="relative mb-4">
+                      <img src="https://picsum.photos/seed/pop-medical/300/300" alt="" class="w-full aspect-square rounded-md object-cover shadow-lg shadow-black/40" />
+                      <div class="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 bg-surface/80 rounded text-[11px] text-text-secondary font-medium backdrop-blur-sm">
+                        <iconify-icon icon="solar:users-group-rounded-bold" width="13"></iconify-icon>
+                        15,700+
+                      </div>
+                      <button class="play-btn absolute bottom-2 right-2 w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-xl shadow-accent/40">
+                        <iconify-icon icon="solar:play-bold" width="20" style="color: white;"></iconify-icon>
+                      </button>
+                    </div>
+                    <p class="text-[15px] font-semibold text-text-primary leading-snug line-clamp-1">의대 생물 마스터</p>
+                    <p class="text-[13px] text-text-tertiary mt-1 line-clamp-2 leading-relaxed">생명과학 II 전범위 5시간 코스</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- 하단 플레이어 바 (90px 고정) -->
+    <!-- Spotify Desktop 참조: 하단 고정 플레이어 — 좌(곡 정보) / 중(컨트롤) / 우(볼륨 등) -->
+    <!-- PACE 변형: 우측에 볼륨 대신 "집중 모드" 토글 + 타이머 표시 -->
+    <!-- ================================================================ -->
+    <footer class="h-[90px] flex-shrink-0 bg-surface border-t border-white/[0.06] flex items-center px-4 z-50">
+
+      <!-- 좌측: 현재 세션 정보 -->
+      <div class="flex items-center gap-3 w-[30%] min-w-[200px]">
+        <img src="https://picsum.photos/seed/now-playing-thumb/112/112" alt="" class="w-14 h-14 rounded object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity" />
+        <div class="min-w-0">
+          <p class="text-[14px] font-semibold text-text-primary truncate cursor-pointer hover:underline">2교시 확률과 통계</p>
+          <p class="text-[12px] text-text-secondary truncate cursor-pointer hover:underline">수학 3시간 집중</p>
+        </div>
+        <button class="player-btn flex-shrink-0 ml-2">
+          <iconify-icon icon="solar:heart-linear" width="18"></iconify-icon>
+        </button>
+      </div>
+
+      <!-- 중앙: 재생 컨트롤 + 프로그레스 바 -->
+      <div class="flex-1 max-w-[722px] mx-auto flex flex-col items-center gap-2">
+        <!-- 컨트롤 버튼 -->
+        <div class="flex items-center gap-5">
+          <button class="player-btn" title="셔플">
+            <iconify-icon icon="solar:shuffle-linear" width="18"></iconify-icon>
+          </button>
+          <button class="player-btn" title="이전 세션">
+            <iconify-icon icon="solar:skip-previous-bold" width="22"></iconify-icon>
+          </button>
+          <button class="w-9 h-9 bg-white rounded-full flex items-center justify-center hover:scale-105 transition-transform" id="mainPlayBtn" title="재생/일시정지">
+            <iconify-icon icon="solar:pause-bold" width="18" style="color: #121212;" id="mainPlayIcon"></iconify-icon>
+          </button>
+          <button class="player-btn" title="다음 세션">
+            <iconify-icon icon="solar:skip-next-bold" width="22"></iconify-icon>
+          </button>
+          <button class="player-btn" title="반복">
+            <iconify-icon icon="solar:repeat-linear" width="18"></iconify-icon>
+          </button>
+        </div>
+        <!-- 프로그레스 바 -->
+        <div class="w-full flex items-center gap-2">
+          <span class="text-[11px] text-text-tertiary font-dm tabular-nums w-10 text-right">18:36</span>
+          <div class="progress-track flex-1" id="progressBar">
+            <div class="progress-fill" style="width: 62%;">
+              <div class="progress-knob"></div>
+            </div>
+          </div>
+          <span class="text-[11px] text-text-tertiary font-dm tabular-nums w-10">50:00</span>
+        </div>
+      </div>
+
+      <!-- 우측: 집중 모드 토글 + 타이머 -->
+      <div class="flex items-center gap-4 w-[30%] min-w-[200px] justify-end">
+        <div class="flex items-center gap-2">
+          <iconify-icon icon="solar:target-bold-duotone" width="18" style="color: #4A90D9;"></iconify-icon>
+          <span class="text-[12px] text-text-secondary font-medium">집중 모드</span>
+          <div class="focus-toggle active" id="focusToggle">
+            <div class="knob"></div>
+          </div>
+        </div>
+        <div class="h-5 border-l border-white/[0.08]"></div>
+        <div class="flex items-center gap-2">
+          <iconify-icon icon="solar:clock-circle-linear" width="16" style="color: #B3B3B3;"></iconify-icon>
+          <span class="text-[16px] font-dm font-semibold text-text-primary tabular-nums" id="timerDisplay">31:24</span>
+        </div>
+        <button class="player-btn" title="전체 화면">
+          <iconify-icon icon="solar:maximize-linear" width="18"></iconify-icon>
+        </button>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // ── 재생/일시정지 토글 ──
+    const mainPlayBtn = document.getElementById('mainPlayBtn');
+    const mainPlayIcon = document.getElementById('mainPlayIcon');
+    let isPlaying = true;
+
+    mainPlayBtn.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      mainPlayIcon.setAttribute('icon', isPlaying ? 'solar:pause-bold' : 'solar:play-bold');
+    });
+
+    // ── 집중 모드 토글 ──
+    const focusToggle = document.getElementById('focusToggle');
+    focusToggle.addEventListener('click', () => {
+      focusToggle.classList.toggle('active');
+    });
+
+    // ── 프로그레스 바 클릭 ──
+    const progressBar = document.getElementById('progressBar');
+    progressBar.addEventListener('click', (e) => {
+      const rect = progressBar.getBoundingClientRect();
+      const pct = ((e.clientX - rect.left) / rect.width) * 100;
+      progressBar.querySelector('.progress-fill').style.width = pct + '%';
+    });
+
+    // ── 상단 바 배경 스크롤 연동 ──
+    const mainScroll = document.getElementById('mainScroll');
+    const topBar = document.getElementById('topBar');
+    mainScroll.addEventListener('scroll', () => {
+      if (mainScroll.scrollTop > 80) {
+        topBar.style.backgroundColor = 'rgba(18, 18, 18, 0.95)';
+      } else {
+        topBar.style.backgroundColor = 'rgba(18, 18, 18, 0.8)';
+      }
+    });
+
+    // ── 섹션 페이드인 옵저버 ──
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.section-fade-in').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>

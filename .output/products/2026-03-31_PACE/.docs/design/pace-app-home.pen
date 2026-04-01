@@ -1,0 +1,3089 @@
+{
+  "version": "2.8",
+  "children": [
+    {
+      "type": "frame",
+      "id": "yIuEZ",
+      "x": 262,
+      "y": 586,
+      "name": "Home Screen",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#121212",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "zzbVI",
+          "x": 0,
+          "y": 0,
+          "name": "Scroll Content",
+          "width": 375,
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            0,
+            16,
+            130,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "fSzIC",
+              "name": "Status Bar",
+              "width": "fill_container",
+              "height": 62,
+              "padding": [
+                0,
+                24
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "mApc6",
+                  "name": "timeLabel",
+                  "fill": "#F0F2F5",
+                  "content": "9:41",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "vP1R5",
+                  "name": "Status Icons",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "oT02w",
+                      "name": "signalIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "signal",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "7yGJI",
+                      "name": "wifiIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "wifi",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "iibK3",
+                      "name": "batteryIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "battery-full",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "H4Nbj",
+              "name": "Top Bar",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "0TfH5",
+                  "name": "greeting",
+                  "fill": "#F0F2F5",
+                  "content": "좋은 아침이에요, OO님",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "azgmF",
+                  "name": "Profile Icon",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "#242424",
+                  "cornerRadius": 16,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "jn0Yx",
+                      "x": 7,
+                      "y": 7,
+                      "name": "profileIcon",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "user",
+                      "iconFontFamily": "lucide",
+                      "fill": "#8B90A0"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "2FIEP",
+              "name": "Today Summary Card",
+              "width": "fill_container",
+              "fill": "#242424",
+              "cornerRadius": 8,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "TelP9",
+                  "name": "summaryTitle",
+                  "fill": "#F0F2F5",
+                  "content": "오늘 3시간 24분 집중했어요",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "Ufyto",
+                  "name": "Summary Stats Row",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "6wNNH",
+                      "name": "stat1frame",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "YHV9t",
+                          "name": "stat1icon",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "target",
+                          "iconFontFamily": "lucide",
+                          "fill": "#4a90d9"
+                        },
+                        {
+                          "type": "text",
+                          "id": "74IaV",
+                          "name": "stat1text",
+                          "fill": "#8B90A0",
+                          "content": "집중률 65%",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BimZ9",
+                      "name": "stat2frame",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "5Ze30",
+                          "name": "stat2icon",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "circle-check",
+                          "iconFontFamily": "lucide",
+                          "fill": "#4a90d9"
+                        },
+                        {
+                          "type": "text",
+                          "id": "1Tej3",
+                          "name": "stat2text",
+                          "fill": "#8B90A0",
+                          "content": "완료 4/8 세션",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "8hQLm",
+              "name": "Quick Pick Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "xNMdv",
+                  "name": "quickTitle",
+                  "fill": "#F0F2F5",
+                  "content": "빠른 선택",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "4MQAs",
+                  "name": "Quick Grid",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "s1BIS",
+                      "name": "Row 1",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ImFia",
+                          "name": "Quick Card 1",
+                          "width": "fill_container",
+                          "height": 56,
+                          "fill": "#1A1A1A",
+                          "cornerRadius": 8,
+                          "gap": 12,
+                          "padding": [
+                            0,
+                            12,
+                            0,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "UBPoA",
+                              "name": "Card1 Cover",
+                              "metadata": {
+                                "type": "unsplash",
+                                "username": "violatakesphotos",
+                                "link": "https://unsplash.com/@violatakesphotos",
+                                "author": "Viola Kovács"
+                              },
+                              "width": 48,
+                              "height": 56,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "https://images.unsplash.com/photo-1629034673453-9853ab14c833?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzMTZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                                "mode": "fill"
+                              },
+                              "cornerRadius": [
+                                8,
+                                0,
+                                0,
+                                8
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "C2UcP",
+                              "name": "card1info",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "GthSt",
+                                  "name": "card1title",
+                                  "fill": "#F0F2F5",
+                                  "content": "수능 국어 루틴",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "NjVb6",
+                                  "name": "card1time",
+                                  "fill": "#8B90A0",
+                                  "content": "2시간 30분",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "zPmV3",
+                          "name": "Quick Card 2",
+                          "width": "fill_container",
+                          "height": 56,
+                          "fill": "#1A1A1A",
+                          "cornerRadius": 8,
+                          "gap": 12,
+                          "padding": [
+                            0,
+                            12,
+                            0,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "PRj6v",
+                              "name": "Card2 Cover",
+                              "metadata": {
+                                "type": "unsplash",
+                                "username": "antoine1003",
+                                "link": "https://unsplash.com/@antoine1003",
+                                "author": "Antoine Dautry"
+                              },
+                              "width": 48,
+                              "height": 56,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzMjJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                                "mode": "fill"
+                              },
+                              "cornerRadius": [
+                                8,
+                                0,
+                                0,
+                                8
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "jMUHW",
+                              "name": "card2info",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "nDMIQ",
+                                  "name": "card2title",
+                                  "fill": "#F0F2F5",
+                                  "content": "수학 집중 플랜",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "N5Sc0",
+                                  "name": "card2time",
+                                  "fill": "#8B90A0",
+                                  "content": "1시간 50분",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yGtM9",
+                      "name": "Row 2",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "u7atg",
+                          "name": "Quick Card 3",
+                          "width": "fill_container",
+                          "height": 56,
+                          "fill": "#1A1A1A",
+                          "cornerRadius": 8,
+                          "gap": 12,
+                          "padding": [
+                            0,
+                            12,
+                            0,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "k8A6l",
+                              "name": "Card3 Cover",
+                              "metadata": {
+                                "type": "unsplash",
+                                "username": "mycreate",
+                                "link": "https://unsplash.com/@mycreate",
+                                "author": "Ivan Shilov"
+                              },
+                              "width": 48,
+                              "height": 56,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1773725328738.png",
+                                "mode": "fill"
+                              },
+                              "cornerRadius": [
+                                8,
+                                0,
+                                0,
+                                8
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "gpR6n",
+                              "name": "card3info",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "29gN0",
+                                  "name": "card3title",
+                                  "fill": "#F0F2F5",
+                                  "content": "영어 독해 루틴",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "PVK1z",
+                                  "name": "card3time",
+                                  "fill": "#8B90A0",
+                                  "content": "1시간 20분",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "XA8MM",
+                          "name": "Quick Card 4",
+                          "width": "fill_container",
+                          "height": 56,
+                          "fill": "#1A1A1A",
+                          "cornerRadius": 8,
+                          "gap": 12,
+                          "padding": [
+                            0,
+                            12,
+                            0,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "ZdgJO",
+                              "name": "Card4 Cover",
+                              "metadata": {
+                                "type": "unsplash",
+                                "username": "takeshi2",
+                                "link": "https://unsplash.com/@takeshi2",
+                                "author": "wu yi"
+                              },
+                              "width": 48,
+                              "height": 56,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "https://images.unsplash.com/photo-1732023995290-7348c74f547b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzMjN8&ixlib=rb-4.1.0&q=80&w=1080",
+                                "mode": "fill"
+                              },
+                              "cornerRadius": [
+                                8,
+                                0,
+                                0,
+                                8
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Aumej",
+                              "name": "card4info",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "K3Rsn",
+                                  "name": "card4title",
+                                  "fill": "#F0F2F5",
+                                  "content": "과학탐구 복습",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "0ms2q",
+                                  "name": "card4time",
+                                  "fill": "#8B90A0",
+                                  "content": "45분",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Ou5UF",
+              "name": "Recommended Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "M4dBS",
+                  "name": "recTitle",
+                  "fill": "#F0F2F5",
+                  "content": "지금 시작하면 딱 좋은",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "Qs4p3",
+                  "name": "Rec Scroll",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "BcMuD",
+                      "name": "Rec Card 1",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ZXJRA",
+                          "name": "Rec Card1 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "kawerodriguess",
+                            "link": "https://unsplash.com/@kawerodriguess",
+                            "author": "Kawê Rodrigues"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1675453987062-ba156180d5a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzMzJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "peeb3",
+                          "name": "recCard1title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "수능 D-100 루틴",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "U7Wnt",
+                          "name": "recCard1time",
+                          "fill": "#8B90A0",
+                          "content": "3시간 30분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "XIns3",
+                      "name": "Rec Card 2",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "xVqZD",
+                          "name": "Rec Card2 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "theyard_india",
+                            "link": "https://unsplash.com/@theyard_india",
+                            "author": "The Yardcoworking"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1761818645907-8bed418b415b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzMzN8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "o5swQ",
+                          "name": "recCard2title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "공무원 행정법 집중",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ulkHg",
+                          "name": "recCard2time",
+                          "fill": "#8B90A0",
+                          "content": "2시간 00분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nPOu0",
+                      "name": "Rec Card 3",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "o7gsK",
+                          "name": "Rec Card3 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "silverkblack",
+                            "link": "https://unsplash.com/@silverkblack",
+                            "author": "Vitaly Gariev"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "./images/generated-1773725345617.png",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "59E2F",
+                          "name": "recCard3title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "TOEIC 리스닝 루틴",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "WUzlZ",
+                          "name": "recCard3time",
+                          "fill": "#8B90A0",
+                          "content": "1시간 40분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "g6cjZ",
+              "name": "Popular Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "xrntd",
+                  "name": "popTitle",
+                  "fill": "#F0F2F5",
+                  "content": "수험생들이 많이 쓰는",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "yKT3u",
+                  "name": "Pop Scroll",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "rX0oH",
+                      "name": "Pop Card 1",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "WN9ic",
+                          "name": "Pop Card1 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "josefhu15",
+                            "link": "https://unsplash.com/@josefhu15",
+                            "author": "Jose Hernandez-Uribe"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1628149588806-04e41a81a945?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzNDV8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "cEorf",
+                          "name": "popCard1title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "새벽 기상 루틴",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bj9Jk",
+                          "name": "popCard1time",
+                          "fill": "#8B90A0",
+                          "content": "4시간 00분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vV2zJ",
+                      "name": "Pop Card 2",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "EQMqW",
+                          "name": "Pop Card2 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "introspectivedsgn",
+                            "link": "https://unsplash.com/@introspectivedsgn",
+                            "author": "Erik Mclean"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1681250530858-14d1762464e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzNDZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "LFreL",
+                          "name": "popCard2title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "포모도로 25/5 세트",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "HMVDa",
+                          "name": "popCard2time",
+                          "fill": "#8B90A0",
+                          "content": "2시간 30분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "iucg2",
+                      "name": "Pop Card 3",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "zjooP",
+                          "name": "Pop Card3 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "lifeinkorea",
+                            "link": "https://unsplash.com/@lifeinkorea",
+                            "author": "IRa Kang"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1758620369571-cdde95e47302?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzNDZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "NHt2I",
+                          "name": "popCard3title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "한국사 암기 루틴",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "i4V6m",
+                          "name": "popCard3time",
+                          "fill": "#8B90A0",
+                          "content": "1시간 30분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "k10TD",
+          "x": 0,
+          "y": 700,
+          "name": "Bottom Fixed Area",
+          "width": 375,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "AQbN6",
+              "name": "Mini Player",
+              "enabled": false,
+              "width": 375,
+              "height": 56,
+              "fill": "#242424",
+              "padding": [
+                0,
+                16
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "oaztB",
+                  "name": "mpLeft",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "W5fIJ",
+                      "name": "mpDot",
+                      "width": 8,
+                      "height": 8,
+                      "fill": "#2DD4BF",
+                      "cornerRadius": 4
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qpqat",
+                      "name": "mpInfo",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "CfPQk",
+                          "name": "mpSubject",
+                          "fill": "#F0F2F5",
+                          "content": "수학 - 미적분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "8AY49",
+                          "name": "mpTime",
+                          "fill": "#8B90A0",
+                          "content": "남은 시간 32:15",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "HwliX",
+                  "name": "mpPlayBtn",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "#F0F2F5",
+                  "cornerRadius": 16,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "79fNy",
+                      "x": 8,
+                      "y": 8,
+                      "name": "mpPlayIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "pause",
+                      "iconFontFamily": "lucide",
+                      "fill": "#121212"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "pRc16",
+              "name": "Mini Player",
+              "width": "fill_container",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 0,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#3571b5",
+                    "position": 0
+                  },
+                  {
+                    "color": "#4a90d9",
+                    "position": 1
+                  }
+                ]
+              },
+              "cornerRadius": [
+                8,
+                8,
+                0,
+                0
+              ],
+              "gap": 12,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "S1PuF",
+                  "name": "MP Info",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "NwFMy",
+                      "name": "mpSubject",
+                      "fill": "#F0F2F5",
+                      "content": "수학 - 미적분 집중",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "zB4eH",
+                      "name": "mpTime",
+                      "fill": "#F0F2F5CC",
+                      "content": "23:45 남음",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 11,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "YHDyO",
+                  "name": "MP Controls",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "lhejV",
+                      "name": "mpPause",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "pause",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "Y162P",
+                      "name": "mpSkip",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "skip-forward",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5CC"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "fiUJC",
+              "name": "Mini Player Progress",
+              "width": 375,
+              "height": 2,
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 90,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#4a90d9",
+                    "position": 0
+                  },
+                  {
+                    "color": "#4a90d9",
+                    "position": 0.6
+                  },
+                  {
+                    "color": "#404040",
+                    "position": 0.6
+                  },
+                  {
+                    "color": "#404040",
+                    "position": 1
+                  }
+                ]
+              }
+            },
+            {
+              "type": "frame",
+              "id": "wolFl",
+              "name": "Bottom Nav",
+              "width": 375,
+              "height": 56,
+              "fill": "#1A1A1A",
+              "padding": [
+                8,
+                0
+              ],
+              "justifyContent": "space_around",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ee2BZ",
+                  "name": "navHome",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "rO87b",
+                      "name": "navHomeIcon",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "house",
+                      "iconFontFamily": "lucide",
+                      "fill": "#4A90D9"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hQtC8",
+                      "name": "navHomeLabel",
+                      "fill": "#4A90D9",
+                      "content": "Home",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "aGlnw",
+                  "name": "navSearch",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "9vb3O",
+                      "name": "navSearchIcon",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "search",
+                      "iconFontFamily": "lucide",
+                      "fill": "#565B6E"
+                    },
+                    {
+                      "type": "text",
+                      "id": "9eo50",
+                      "name": "navSearchLabel",
+                      "fill": "#6A6A6A",
+                      "content": "Search",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NRrVj",
+                  "name": "navLib",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "8dnxN",
+                      "name": "navLibIcon",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "library",
+                      "iconFontFamily": "lucide",
+                      "fill": "#565B6E"
+                    },
+                    {
+                      "type": "text",
+                      "id": "iLOF6",
+                      "name": "navLibLabel",
+                      "fill": "#6A6A6A",
+                      "content": "Library",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "WfW3f",
+      "x": 677,
+      "y": 586,
+      "name": "Home Screen - Full Scroll",
+      "width": 375,
+      "fill": "#121212",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "ldyF5",
+          "name": "Scroll Content",
+          "width": 375,
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            0,
+            16,
+            24,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "CrO0L",
+              "name": "Status Bar",
+              "width": "fill_container",
+              "height": 62,
+              "padding": [
+                0,
+                24
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "v631d",
+                  "name": "timeLabel",
+                  "fill": "#F0F2F5",
+                  "content": "9:41",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "i33AY",
+                  "name": "Status Icons",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "hSlkA",
+                      "name": "signalIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "signal",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "2IAVg",
+                      "name": "wifiIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "wifi",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "mGgPa",
+                      "name": "batteryIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "battery-full",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Qgp11",
+              "name": "Top Bar",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "URuWt",
+                  "name": "greeting",
+                  "fill": "#F0F2F5",
+                  "content": "좋은 아침이에요, OO님",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "LwDc8",
+                  "name": "Profile Icon",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "#242424",
+                  "cornerRadius": 16,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "DNU9u",
+                      "x": 7,
+                      "y": 7,
+                      "name": "profileIcon",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "user",
+                      "iconFontFamily": "lucide",
+                      "fill": "#8B90A0"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "7ojoM",
+              "name": "Today Summary Card",
+              "width": "fill_container",
+              "fill": "#242424",
+              "cornerRadius": 8,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "HerT7",
+                  "name": "summaryTitle",
+                  "fill": "#F0F2F5",
+                  "content": "오늘 3시간 24분 집중했어요",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "AJU7T",
+                  "name": "Summary Stats Row",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "icjde",
+                      "name": "stat1frame",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "bNiYL",
+                          "name": "stat1icon",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "target",
+                          "iconFontFamily": "lucide",
+                          "fill": "#4a90d9"
+                        },
+                        {
+                          "type": "text",
+                          "id": "nZ1cz",
+                          "name": "stat1text",
+                          "fill": "#8B90A0",
+                          "content": "집중률 65%",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "f4ou8",
+                      "name": "stat2frame",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "cHVgi",
+                          "name": "stat2icon",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "circle-check",
+                          "iconFontFamily": "lucide",
+                          "fill": "#4a90d9"
+                        },
+                        {
+                          "type": "text",
+                          "id": "4M2UN",
+                          "name": "stat2text",
+                          "fill": "#8B90A0",
+                          "content": "완료 4/8 세션",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "jRgVI",
+              "name": "Quick Pick Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "2G0sO",
+                  "name": "quickTitle",
+                  "fill": "#F0F2F5",
+                  "content": "빠른 선택",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "j041Q",
+                  "name": "Quick Grid",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "W7uJx",
+                      "name": "Row 1",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "LyYkc",
+                          "name": "Quick Card 1",
+                          "width": "fill_container",
+                          "height": 56,
+                          "fill": "#1A1A1A",
+                          "cornerRadius": 8,
+                          "gap": 12,
+                          "padding": [
+                            0,
+                            12,
+                            0,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "YawZr",
+                              "name": "Card1 Cover",
+                              "metadata": {
+                                "type": "unsplash",
+                                "username": "violatakesphotos",
+                                "link": "https://unsplash.com/@violatakesphotos",
+                                "author": "Viola Kovács"
+                              },
+                              "width": 48,
+                              "height": 56,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "https://images.unsplash.com/photo-1629034673453-9853ab14c833?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzMTZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                                "mode": "fill"
+                              },
+                              "cornerRadius": [
+                                8,
+                                0,
+                                0,
+                                8
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "ABpaX",
+                              "name": "card1info",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "eOMbY",
+                                  "name": "card1title",
+                                  "fill": "#F0F2F5",
+                                  "content": "수능 국어 루틴",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "X4WHA",
+                                  "name": "card1time",
+                                  "fill": "#8B90A0",
+                                  "content": "2시간 30분",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "a0yio",
+                          "name": "Quick Card 2",
+                          "width": "fill_container",
+                          "height": 56,
+                          "fill": "#1A1A1A",
+                          "cornerRadius": 8,
+                          "gap": 12,
+                          "padding": [
+                            0,
+                            12,
+                            0,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "6NMYw",
+                              "name": "Card2 Cover",
+                              "metadata": {
+                                "type": "unsplash",
+                                "username": "antoine1003",
+                                "link": "https://unsplash.com/@antoine1003",
+                                "author": "Antoine Dautry"
+                              },
+                              "width": 48,
+                              "height": 56,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzMjJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                                "mode": "fill"
+                              },
+                              "cornerRadius": [
+                                8,
+                                0,
+                                0,
+                                8
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "zjKaU",
+                              "name": "card2info",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "sPBt5",
+                                  "name": "card2title",
+                                  "fill": "#F0F2F5",
+                                  "content": "수학 집중 플랜",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "ASay3",
+                                  "name": "card2time",
+                                  "fill": "#8B90A0",
+                                  "content": "1시간 50분",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "UozDF",
+                      "name": "Row 2",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "R0tz3",
+                          "name": "Quick Card 3",
+                          "width": "fill_container",
+                          "height": 56,
+                          "fill": "#1A1A1A",
+                          "cornerRadius": 8,
+                          "gap": 12,
+                          "padding": [
+                            0,
+                            12,
+                            0,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "aezdI",
+                              "name": "Card3 Cover",
+                              "metadata": {
+                                "type": "unsplash",
+                                "username": "mycreate",
+                                "link": "https://unsplash.com/@mycreate",
+                                "author": "Ivan Shilov"
+                              },
+                              "width": 48,
+                              "height": 56,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1773725328738.png",
+                                "mode": "fill"
+                              },
+                              "cornerRadius": [
+                                8,
+                                0,
+                                0,
+                                8
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "S7YRK",
+                              "name": "card3info",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "41ex1",
+                                  "name": "card3title",
+                                  "fill": "#F0F2F5",
+                                  "content": "영어 독해 루틴",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "vth1y",
+                                  "name": "card3time",
+                                  "fill": "#8B90A0",
+                                  "content": "1시간 20분",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "TaDrl",
+                          "name": "Quick Card 4",
+                          "width": "fill_container",
+                          "height": 56,
+                          "fill": "#1A1A1A",
+                          "cornerRadius": 8,
+                          "gap": 12,
+                          "padding": [
+                            0,
+                            12,
+                            0,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "S2Jp9",
+                              "name": "Card4 Cover",
+                              "metadata": {
+                                "type": "unsplash",
+                                "username": "takeshi2",
+                                "link": "https://unsplash.com/@takeshi2",
+                                "author": "wu yi"
+                              },
+                              "width": 48,
+                              "height": 56,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "https://images.unsplash.com/photo-1732023995290-7348c74f547b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzMjN8&ixlib=rb-4.1.0&q=80&w=1080",
+                                "mode": "fill"
+                              },
+                              "cornerRadius": [
+                                8,
+                                0,
+                                0,
+                                8
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Ymups",
+                              "name": "card4info",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Hq75N",
+                                  "name": "card4title",
+                                  "fill": "#F0F2F5",
+                                  "content": "과학탐구 복습",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "7RB6e",
+                                  "name": "card4time",
+                                  "fill": "#8B90A0",
+                                  "content": "45분",
+                                  "fontFamily": "DM Sans",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "B1ge2",
+              "name": "Recommended Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "OBTGi",
+                  "name": "recTitle",
+                  "fill": "#F0F2F5",
+                  "content": "지금 시작하면 딱 좋은",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "hImcL",
+                  "name": "Rec Scroll",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "fGI6D",
+                      "name": "Rec Card 1",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "AAsmI",
+                          "name": "Rec Card1 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "kawerodriguess",
+                            "link": "https://unsplash.com/@kawerodriguess",
+                            "author": "Kawê Rodrigues"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1675453987062-ba156180d5a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzMzJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "IO0eu",
+                          "name": "recCard1title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "수능 D-100 루틴",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Pm9Bv",
+                          "name": "recCard1time",
+                          "fill": "#8B90A0",
+                          "content": "3시간 30분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "AH9vf",
+                      "name": "Rec Card 2",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "XGhZ0",
+                          "name": "Rec Card2 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "theyard_india",
+                            "link": "https://unsplash.com/@theyard_india",
+                            "author": "The Yardcoworking"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1761818645907-8bed418b415b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzMzN8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "ZBU6B",
+                          "name": "recCard2title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "공무원 행정법 집중",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "dIrGI",
+                          "name": "recCard2time",
+                          "fill": "#8B90A0",
+                          "content": "2시간 00분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "agCD2",
+                      "name": "Rec Card 3",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "j6Q9x",
+                          "name": "Rec Card3 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "silverkblack",
+                            "link": "https://unsplash.com/@silverkblack",
+                            "author": "Vitaly Gariev"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "./images/generated-1773725345617.png",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "iumUg",
+                          "name": "recCard3title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "TOEIC 리스닝 루틴",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wPyhA",
+                          "name": "recCard3time",
+                          "fill": "#8B90A0",
+                          "content": "1시간 40분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ArmJX",
+              "name": "Popular Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "kzgsS",
+                  "name": "popTitle",
+                  "fill": "#F0F2F5",
+                  "content": "수험생들이 많이 쓰는",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "pVe2B",
+                  "name": "Pop Scroll",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "uJyg1",
+                      "name": "Pop Card 1",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "JnQiF",
+                          "name": "Pop Card1 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "josefhu15",
+                            "link": "https://unsplash.com/@josefhu15",
+                            "author": "Jose Hernandez-Uribe"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1628149588806-04e41a81a945?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzNDV8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "cuoKW",
+                          "name": "popCard1title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "새벽 기상 루틴",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Qb3hz",
+                          "name": "popCard1time",
+                          "fill": "#8B90A0",
+                          "content": "4시간 00분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "8oKxH",
+                      "name": "Pop Card 2",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "TvSmn",
+                          "name": "Pop Card2 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "introspectivedsgn",
+                            "link": "https://unsplash.com/@introspectivedsgn",
+                            "author": "Erik Mclean"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1681250530858-14d1762464e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzNDZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "aNaqT",
+                          "name": "popCard2title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "포모도로 25/5 세트",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "xCENd",
+                          "name": "popCard2time",
+                          "fill": "#8B90A0",
+                          "content": "2시간 30분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "AOxdv",
+                      "name": "Pop Card 3",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "m54de",
+                          "name": "Pop Card3 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "lifeinkorea",
+                            "link": "https://unsplash.com/@lifeinkorea",
+                            "author": "IRa Kang"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1758620369571-cdde95e47302?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3MjUzNDZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "0Yu4E",
+                          "name": "popCard3title",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "한국사 암기 루틴",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "dddMm",
+                          "name": "popCard3time",
+                          "fill": "#8B90A0",
+                          "content": "1시간 30분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Tmqnc",
+              "name": "New Playlist Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Ju0l0",
+                  "name": "newTitle",
+                  "fill": "#F0F2F5",
+                  "content": "새로 올라온 플레이리스트",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "9uXSA",
+                  "name": "New Scroll",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "jnXot",
+                      "name": "New Card 1",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "1TtPE",
+                          "name": "New Card1 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "keishakim",
+                            "link": "https://unsplash.com/@keishakim",
+                            "author": "Keisha Kim"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1660128353955-8f731b53e5d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3Mzc0Nzd8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "vIu8w",
+                          "name": "title1",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "EBS 수능특강 루틴",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "F3oh6",
+                          "name": "time1",
+                          "fill": "#8B90A0",
+                          "content": "3시간 00분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "T7Apj",
+                      "name": "New Card 2",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "wmmnr",
+                          "name": "New Card2 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "brett_jordan",
+                            "link": "https://unsplash.com/@brett_jordan",
+                            "author": "Brett Jordan"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1706512855327-155ce327bb42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3Mzc0Nzh8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "8K9TH",
+                          "name": "title2",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "TOEIC 집중 4주 플랜",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "esUlA",
+                          "name": "time2",
+                          "fill": "#8B90A0",
+                          "content": "2시간 00분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "WiDxh",
+                      "name": "New Card 3",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "wL8pJ",
+                          "name": "New Card3 Cover",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "yunwuwanzi",
+                            "link": "https://unsplash.com/@yunwuwanzi",
+                            "author": "Yaqing Wei"
+                          },
+                          "width": 140,
+                          "height": 140,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1761058493606-1fad88f8f18e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM3Mzc0Nzl8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "6uuXI",
+                          "name": "title3",
+                          "fill": "#F0F2F5",
+                          "textGrowth": "fixed-width",
+                          "width": 140,
+                          "content": "공무원 행정법 기초",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "JINdr",
+                          "name": "time3",
+                          "fill": "#8B90A0",
+                          "content": "1시간 45분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "eHnQx",
+          "name": "Bottom Fixed Area",
+          "width": "fill_container",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Ww3Eh",
+              "name": "Mini Player",
+              "enabled": false,
+              "width": 375,
+              "height": 56,
+              "fill": "#242424",
+              "padding": [
+                0,
+                16
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "KO9FQ",
+                  "name": "mpLeft",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "IEj58",
+                      "name": "mpDot",
+                      "width": 8,
+                      "height": 8,
+                      "fill": "#2DD4BF",
+                      "cornerRadius": 4
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ZTsf2",
+                      "name": "mpInfo",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "tVDJq",
+                          "name": "mpSubject",
+                          "fill": "#F0F2F5",
+                          "content": "수학 - 미적분",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "0dmHu",
+                          "name": "mpTime",
+                          "fill": "#8B90A0",
+                          "content": "남은 시간 32:15",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "2ORFu",
+                  "name": "mpPlayBtn",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "#F0F2F5",
+                  "cornerRadius": 16,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "kNPZU",
+                      "x": 8,
+                      "y": 8,
+                      "name": "mpPlayIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "pause",
+                      "iconFontFamily": "lucide",
+                      "fill": "#121212"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "8b5TK",
+              "name": "Mini Player",
+              "width": "fill_container",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 0,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#3571b5",
+                    "position": 0
+                  },
+                  {
+                    "color": "#4a90d9",
+                    "position": 1
+                  }
+                ]
+              },
+              "cornerRadius": [
+                8,
+                8,
+                0,
+                0
+              ],
+              "gap": 12,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "1QmBE",
+                  "name": "MP Info",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "5qehZ",
+                      "name": "mpSubject",
+                      "fill": "#F0F2F5",
+                      "content": "수학 - 미적분 집중",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "4FMow",
+                      "name": "mpTime",
+                      "fill": "#F0F2F5CC",
+                      "content": "23:45 남음",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 11,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "udbi3",
+                  "name": "MP Controls",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "b68Lq",
+                      "name": "mpPause",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "pause",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "7gSPO",
+                      "name": "mpSkip",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "skip-forward",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0F2F5CC"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "uEdAk",
+              "name": "Mini Player Progress",
+              "width": 375,
+              "height": 2,
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 90,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#4a90d9",
+                    "position": 0
+                  },
+                  {
+                    "color": "#4a90d9",
+                    "position": 0.6
+                  },
+                  {
+                    "color": "#404040",
+                    "position": 0.6
+                  },
+                  {
+                    "color": "#404040",
+                    "position": 1
+                  }
+                ]
+              }
+            },
+            {
+              "type": "frame",
+              "id": "6guar",
+              "name": "Bottom Nav",
+              "width": 375,
+              "height": 56,
+              "fill": "#1A1A1A",
+              "padding": [
+                8,
+                0
+              ],
+              "justifyContent": "space_around",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "zBxgU",
+                  "name": "navHome",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "WAxSe",
+                      "name": "navHomeIcon",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "house",
+                      "iconFontFamily": "lucide",
+                      "fill": "#4A90D9"
+                    },
+                    {
+                      "type": "text",
+                      "id": "t28M1",
+                      "name": "navHomeLabel",
+                      "fill": "#4A90D9",
+                      "content": "Home",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zgmU3",
+                  "name": "navSearch",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "NbCVo",
+                      "name": "navSearchIcon",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "search",
+                      "iconFontFamily": "lucide",
+                      "fill": "#565B6E"
+                    },
+                    {
+                      "type": "text",
+                      "id": "SFKvk",
+                      "name": "navSearchLabel",
+                      "fill": "#6A6A6A",
+                      "content": "Search",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NBwM5",
+                  "name": "navLib",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "JeHYv",
+                      "name": "navLibIcon",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "library",
+                      "iconFontFamily": "lucide",
+                      "fill": "#565B6E"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ukpN7",
+                      "name": "navLibLabel",
+                      "fill": "#6A6A6A",
+                      "content": "Library",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "--background": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#0D1117"
+        },
+        {
+          "value": "#0C1021"
+        },
+        {
+          "value": "#0A0A0A"
+        },
+        {
+          "value": "#0A0A0A"
+        },
+        {
+          "value": "#0D1117"
+        },
+        {
+          "value": "#0C1021"
+        },
+        {
+          "value": "#121212"
+        },
+        {
+          "value": "#121212"
+        }
+      ]
+    },
+    "--bg-elevated": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#161B22"
+        },
+        {
+          "value": "#141829"
+        },
+        {
+          "value": "#141414"
+        },
+        {
+          "value": "#141414"
+        },
+        {
+          "value": "#161B22"
+        },
+        {
+          "value": "#141829"
+        },
+        {
+          "value": "#1A1A1A"
+        },
+        {
+          "value": "#1A1A1A"
+        }
+      ]
+    },
+    "--foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#FFFFFF"
+        },
+        {
+          "value": "#F0F2F5"
+        }
+      ]
+    },
+    "--muted-foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#8B949E"
+        },
+        {
+          "value": "#8B90A0"
+        }
+      ]
+    },
+    "--primary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#4A90D9"
+        },
+        {
+          "value": "#4A90D9"
+        }
+      ]
+    },
+    "--radius-l": {
+      "type": "number",
+      "value": 12
+    },
+    "--radius-m": {
+      "type": "number",
+      "value": 8
+    },
+    "--radius-pill": {
+      "type": "number",
+      "value": 999
+    },
+    "--radius-s": {
+      "type": "number",
+      "value": 4
+    },
+    "--surface": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#21262D"
+        },
+        {
+          "value": "#1C2035"
+        },
+        {
+          "value": "#1E1E1E"
+        },
+        {
+          "value": "#1E1E1E"
+        },
+        {
+          "value": "#21262D"
+        },
+        {
+          "value": "#1C2035"
+        },
+        {
+          "value": "#242424"
+        },
+        {
+          "value": "#242424"
+        }
+      ]
+    },
+    "--surface-border": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#404040"
+        },
+        {
+          "value": "#1E2338"
+        },
+        {
+          "value": "#2A2A2A"
+        },
+        {
+          "value": "#1A1A1A"
+        },
+        {
+          "value": "#404040"
+        },
+        {
+          "value": "#1E2338"
+        },
+        {
+          "value": "#333333"
+        },
+        {
+          "value": "#202020"
+        }
+      ]
+    },
+    "accent-green": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#3FB950"
+        },
+        {
+          "value": "#2DD4BF"
+        }
+      ]
+    },
+    "bg-elevated": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#161B22"
+        },
+        {
+          "value": "#141829"
+        },
+        {
+          "value": "#141414"
+        },
+        {
+          "value": "#141414"
+        },
+        {
+          "value": "#161B22"
+        },
+        {
+          "value": "#141829"
+        },
+        {
+          "value": "#1A1A1A"
+        },
+        {
+          "value": "#1A1A1A"
+        }
+      ]
+    },
+    "bg-primary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#0D1117"
+        },
+        {
+          "value": "#0C1021"
+        },
+        {
+          "value": "#0A0A0A"
+        },
+        {
+          "value": "#0A0A0A"
+        },
+        {
+          "value": "#0D1117"
+        },
+        {
+          "value": "#0C1021"
+        },
+        {
+          "value": "#121212"
+        },
+        {
+          "value": "#121212"
+        }
+      ]
+    },
+    "bg-surface": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#21262D"
+        },
+        {
+          "value": "#1C2035"
+        },
+        {
+          "value": "#1E1E1E"
+        },
+        {
+          "value": "#1E1E1E"
+        },
+        {
+          "value": "#21262D"
+        },
+        {
+          "value": "#1C2035"
+        },
+        {
+          "value": "#242424"
+        },
+        {
+          "value": "#242424"
+        }
+      ]
+    },
+    "card-radius": {
+      "type": "number",
+      "value": 8
+    },
+    "font-family": {
+      "type": "string",
+      "value": [
+        {
+          "value": "Inter"
+        },
+        {
+          "value": "DM Sans"
+        }
+      ]
+    },
+    "section-gap": {
+      "type": "number",
+      "value": 24
+    },
+    "side-padding": {
+      "type": "number",
+      "value": 16
+    },
+    "text-primary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#FFFFFF"
+        },
+        {
+          "value": "#F0F2F5"
+        }
+      ]
+    },
+    "text-secondary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#8B949E"
+        },
+        {
+          "value": "#8B90A0"
+        }
+      ]
+    },
+    "text-subdued": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#484F58"
+        },
+        {
+          "value": "#565B6E"
+        },
+        {
+          "value": "#484F58"
+        },
+        {
+          "value": "#5A5A5A"
+        },
+        {
+          "value": "#484F58"
+        },
+        {
+          "value": "#565B6E"
+        },
+        {
+          "value": "#484F58"
+        },
+        {
+          "value": "#6A6A6A"
+        }
+      ]
+    }
+  }
+}

@@ -7,78 +7,80 @@ import {
   Body,
   Param,
   Query,
-  UseGuards,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
-import { CurrentUser } from '@/common';
 import { EatingHistoryService } from './eating-history.service';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { CreateEatingHistoryDto } from './dto/create-eating-history.dto';
+import { CreateCustomEatingHistoryDto } from './dto/create-custom-eating-history.dto';
+import { UpdateEatingHistoryDto } from './dto/update-eating-history.dto';
+import { CalendarQueryDto } from './dto/calendar-query.dto';
 
-@ApiTags('먹은 이력')
 @Controller('eating-histories')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class EatingHistoryController {
-  constructor(private readonly eatingHistoryService: EatingHistoryService) {}
+  constructor(private eatingHistoryService: EatingHistoryService) {}
 
-  @Post()
-  @ApiOperation({ summary: '먹었어요 기록' })
-  async create(
-    @CurrentUser() user: { userId: string },
-    @Body()
-    body: {
-      restaurantId: string;
-      eatenDate: string;
-      rating: number;
-      memo?: string;
-      isFromRecommendation: boolean;
-    },
-  ) {
-    return this.eatingHistoryService.create(user.userId, body);
-  }
-
-  @Post('custom')
-  @ApiOperation({ summary: 'DB에 없는 식당 직접 기록' })
-  async createCustom(
-    @CurrentUser() user: { userId: string },
-    @Body()
-    body: {
-      restaurantName: string;
-      categoryId: string;
-      eatenDate: string;
-      rating: number;
-      memo?: string;
-    },
-  ) {
-    return this.eatingHistoryService.createCustom(user.userId, body);
-  }
-
+  /** GET /eating-histories/calendar — 캘린더 조회 (calendar가 :id보다 먼저 매칭) */
   @Get('calendar')
-  @ApiOperation({ summary: '먹은 이력 캘린더 조회 (월별)' })
-  async getCalendar(
-    @CurrentUser() user: { userId: string },
-    @Query('year') year: number,
-    @Query('month') month: number,
+  getCalendar(
+    @Query() dto: CalendarQueryDto,
+    @CurrentUser() user: { id: string },
   ) {
-    return this.eatingHistoryService.getCalendar(user.userId, year, month);
+    return this.eatingHistoryService.getCalendar(user.id, dto.year, dto.month);
   }
 
+  /** POST /eating-histories — 먹었어요 기록 */
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  create(
+    @Body() dto: CreateEatingHistoryDto,
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.eatingHistoryService.create(
+      user.id,
+      dto.restaurantId,
+      dto.eatenDate,
+      dto.rating,
+      dto.memo,
+      dto.isFromRecommendation,
+    );
+  }
+
+  /** POST /eating-histories/custom — 직접 입력 식당 기록 */
+  @Post('custom')
+  @HttpCode(HttpStatus.CREATED)
+  createCustom(
+    @Body() dto: CreateCustomEatingHistoryDto,
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.eatingHistoryService.createCustom(
+      user.id,
+      dto.restaurantName,
+      dto.categoryId,
+      dto.eatenDate,
+      dto.rating,
+      dto.memo,
+    );
+  }
+
+  /** PATCH /eating-histories/:id — 수정 */
   @Patch(':id')
-  @ApiOperation({ summary: '먹은 이력 수정' })
-  async update(
-    @CurrentUser() user: { userId: string },
+  update(
     @Param('id') id: string,
-    @Body() body: { rating?: number; memo?: string },
+    @Body() dto: UpdateEatingHistoryDto,
+    @CurrentUser() user: { id: string },
   ) {
-    return this.eatingHistoryService.update(user.userId, id, body);
+    return this.eatingHistoryService.update(id, user.id, dto.rating, dto.memo);
   }
 
+  /** DELETE /eating-histories/:id — 삭제 */
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '먹은 이력 삭제' })
-  async delete(@CurrentUser() user: { userId: string }, @Param('id') id: string) {
-    return this.eatingHistoryService.delete(user.userId, id);
+  delete(
+    @Param('id') id: string,
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.eatingHistoryService.delete(id, user.id);
   }
 }

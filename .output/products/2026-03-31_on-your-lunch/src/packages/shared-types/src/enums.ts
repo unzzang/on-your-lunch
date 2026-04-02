@@ -1,50 +1,42 @@
-// 가격대
+// ─────────────────────────────────────────
+// Prisma schema의 enum과 동일한 값.
+// Prisma가 DB의 source of truth이고,
+// 이 파일은 프론트↔백엔드 API 계약의 source of truth.
+// 값을 바꿀 때는 Prisma schema → 여기 → 양쪽 동시에.
+// ─────────────────────────────────────────
+
+// 가격대 — Prisma enum PriceRange와 동일
 export enum PriceRange {
   UNDER_10K = 'UNDER_10K',
   BETWEEN_10K_20K = 'BETWEEN_10K_20K',
   OVER_20K = 'OVER_20K',
 }
 
-// 식당 데이터 출처
+// 식당 데이터 출처 — Prisma enum DataSource와 동일
 export enum DataSource {
   KAKAO = 'KAKAO',
   MANUAL = 'MANUAL',
   USER = 'USER',
 }
 
-// 알림 허용 시간 (30분 단위)
-export const NOTIFICATION_TIMES = [
-  '10:00',
-  '10:30',
-  '11:00',
-  '11:30',
-  '12:00',
-  '12:30',
-  '13:00',
-] as const;
+// ─────────────────────────────────────────
+// API에서만 쓰는 enum (DB 컬럼이 아님)
+// ─────────────────────────────────────────
 
-export type NotificationTime = (typeof NOTIFICATION_TIMES)[number];
+// 에러 코드 — API 스펙 1.5절
+export enum ErrorCode {
+  VALIDATION_ERROR = 'VALIDATION_ERROR',
+  UNAUTHORIZED = 'UNAUTHORIZED',
+  TOKEN_EXPIRED = 'TOKEN_EXPIRED',
+  FORBIDDEN = 'FORBIDDEN',
+  NOT_FOUND = 'NOT_FOUND',
+  DUPLICATE = 'DUPLICATE',
+  REFRESH_LIMIT_EXCEEDED = 'REFRESH_LIMIT_EXCEEDED',
+  INTERNAL_ERROR = 'INTERNAL_ERROR',
+}
 
-// 식당 탐색 정렬 기준
+// 식당 리스트 정렬 — API 스펙 5.3절
 export enum RestaurantSort {
   DISTANCE = 'distance',
   RATING = 'rating',
 }
-
-// 도보 거리 필터 허용값 (분)
-export const WALK_MINUTES_OPTIONS = [5, 10, 15] as const;
-export type WalkMinutes = (typeof WALK_MINUTES_OPTIONS)[number];
-
-// 추천 새로고침 최대 횟수
-export const MAX_REFRESH_COUNT = 5;
-
-// 별점 범위
-export const RATING_MIN = 1;
-export const RATING_MAX = 5;
-
-// 메모 최대 길이
-export const MEMO_MAX_LENGTH = 300;
-
-// 닉네임 길이 범위
-export const NICKNAME_MIN_LENGTH = 2;
-export const NICKNAME_MAX_LENGTH = 10;

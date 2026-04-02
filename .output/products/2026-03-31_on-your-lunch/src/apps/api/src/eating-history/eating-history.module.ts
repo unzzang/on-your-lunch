@@ -5,6 +5,5 @@ import { EatingHistoryService } from './eating-history.service';
 @Module({
   controllers: [EatingHistoryController],
   providers: [EatingHistoryService],
-  exports: [EatingHistoryService],
 })
 export class EatingHistoryModule {}

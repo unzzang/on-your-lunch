@@ -1,61 +1,52 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
-import { CurrentUser } from '@/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { SearchRestaurantDto } from './dto/search-restaurant.dto';
+import { ListRestaurantDto } from './dto/list-restaurant.dto';
+import { MapRestaurantDto } from './dto/map-restaurant.dto';
 
-@ApiTags('식당')
 @Controller('restaurants')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class RestaurantController {
-  constructor(private readonly restaurantService: RestaurantService) {}
+  constructor(private restaurantService: RestaurantService) {}
 
+  /** GET /restaurants/search — 식당 검색 (search가 :id보다 먼저 매칭되도록 위에 배치) */
   @Get('search')
-  @ApiOperation({ summary: '식당 검색' })
-  async search(
-    @CurrentUser() user: { userId: string },
-    @Query('q') q: string,
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
+  search(
+    @Query() dto: SearchRestaurantDto,
+    @CurrentUser() user: { id: string },
   ) {
-    return this.restaurantService.search(user.userId, q, page, limit);
+    return this.restaurantService.search(dto.q, dto.page!, dto.limit!, user.id);
   }
 
+  /** GET /restaurants/map — 지도 핀 */
   @Get('map')
-  @ApiOperation({ summary: '식당 지도 핀 조회' })
-  async getMapPins(
-    @CurrentUser() user: { userId: string },
-    @Query('swLat') swLat: number,
-    @Query('swLng') swLng: number,
-    @Query('neLat') neLat: number,
-    @Query('neLng') neLng: number,
-    @Query('categoryIds') categoryIds?: string,
+  mapPins(
+    @Query() dto: MapRestaurantDto,
+    @CurrentUser() user: { id: string },
   ) {
-    return this.restaurantService.getMapPins(user.userId, { swLat, swLng, neLat, neLng, categoryIds });
+    return this.restaurantService.findMapPins(
+      dto.swLat, dto.swLng, dto.neLat, dto.neLng,
+      dto.categoryIds, user.id,
+    );
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: '식당 상세 조회' })
-  async getDetail(
-    @CurrentUser() user: { userId: string },
-    @Param('id') id: string,
-  ) {
-    return this.restaurantService.getDetail(user.userId, id);
-  }
-
+  /** GET /restaurants — 식당 탐색 리스트 */
   @Get()
-  @ApiOperation({ summary: '식당 탐색 (리스트)' })
-  async list(
-    @CurrentUser() user: { userId: string },
-    @Query('categoryIds') categoryIds?: string,
-    @Query('priceRange') priceRange?: string,
-    @Query('walkMinutes') walkMinutes?: number,
-    @Query('sort') sort?: string,
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
-    @Query('favoritesOnly') favoritesOnly?: boolean,
+  findAll(
+    @Query() dto: ListRestaurantDto,
+    @CurrentUser() user: { id: string },
   ) {
-    return this.restaurantService.list(user.userId, { categoryIds, priceRange, walkMinutes: walkMinutes ? Number(walkMinutes) : undefined, sort, page, limit, favoritesOnly });
+    return this.restaurantService.findAll(
+      dto.categoryIds, dto.sort!, dto.page!, dto.limit!, dto.favoritesOnly!, user.id,
+    );
+  }
+
+  /** GET /restaurants/:id — 식당 상세 조회 */
+  @Get(':id')
+  findById(
+    @Param('id') id: string,
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.restaurantService.findById(id, user.id);
   }
 }

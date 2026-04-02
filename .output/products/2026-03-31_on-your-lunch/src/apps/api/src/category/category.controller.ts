@@ -1,21 +1,22 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CategoryService } from './category.service';
+import { Public } from '../auth/decorators/public.decorator';
 
-@ApiTags('마스터 데이터')
 @Controller()
 export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
+  constructor(private categoryService: CategoryService) {}
 
+  /** GET /categories — 카테고리 목록 [Public] */
+  @Public()
   @Get('categories')
-  @ApiOperation({ summary: '카테고리 목록 조회 (인증 불필요)' })
-  async getCategories() {
-    return this.categoryService.getCategories();
+  getCategories() {
+    return this.categoryService.findAll();
   }
 
+  /** GET /allergy-types — 알레르기 목록 [Public] */
+  @Public()
   @Get('allergy-types')
-  @ApiOperation({ summary: '알레르기 목록 조회 (인증 불필요)' })
-  async getAllergyTypes() {
-    return this.categoryService.getAllergyTypes();
+  getAllergyTypes() {
+    return this.categoryService.findAllAllergyTypes();
   }
 }

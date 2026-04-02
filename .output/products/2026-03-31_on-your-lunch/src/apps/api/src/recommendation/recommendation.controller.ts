@@ -1,38 +1,39 @@
-import { Controller, Get, Post, Body, Query, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
-import { CurrentUser } from '@/common';
+import { Controller, Get, Post, Body, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { RecommendationService } from './recommendation.service';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { TodayRecommendationDto } from './dto/today-recommendation.dto';
+import { RefreshRecommendationDto } from './dto/refresh-recommendation.dto';
 
-@ApiTags('추천')
 @Controller('recommendations')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class RecommendationController {
-  constructor(private readonly recommendationService: RecommendationService) {}
+  constructor(private recommendationService: RecommendationService) {}
 
+  /** GET /recommendations/today — 오늘의 추천 조회 */
   @Get('today')
-  @ApiOperation({ summary: '오늘의 추천 조회' })
-  async getToday(
-    @CurrentUser() user: { userId: string },
-    @Query('categoryIds') categoryIds?: string,
-    @Query('priceRange') priceRange?: string,
-    @Query('walkMinutes') walkMinutes?: number,
+  getToday(
+    @Query() dto: TodayRecommendationDto,
+    @CurrentUser() user: { id: string },
   ) {
-    return this.recommendationService.getToday(user.userId, {
-      categoryIds,
-      priceRange,
-      walkMinutes,
-    });
+    return this.recommendationService.getToday(
+      user.id,
+      dto.categoryIds,
+      dto.priceRange,
+      dto.walkMinutes,
+    );
   }
 
+  /** POST /recommendations/today/refresh — 추천 새로고침 */
   @Post('today/refresh')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '추천 새로고침' })
-  async refresh(
-    @CurrentUser() user: { userId: string },
-    @Body() body: { categoryIds?: string[]; priceRange?: string; walkMinutes?: number },
+  refresh(
+    @Body() dto: RefreshRecommendationDto,
+    @CurrentUser() user: { id: string },
   ) {
-    return this.recommendationService.refresh(user.userId, body);
+    return this.recommendationService.refresh(
+      user.id,
+      dto.categoryIds,
+      dto.priceRange,
+      dto.walkMinutes,
+    );
   }
 }

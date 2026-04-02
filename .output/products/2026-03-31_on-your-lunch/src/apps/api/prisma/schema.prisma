@@ -1,5 +1,7 @@
-// 온유어런치 — Prisma Schema (ERD 14개 테이블 기반)
-// PostGIS geom 컬럼은 Prisma에서 직접 지원하지 않으므로 수동 마이그레이션으로 추가
+// ─────────────────────────────────────────
+// 온유어런치 Prisma Schema
+// ERD 문서: docs/004_planning/erd/2026-03-30(일)_ERD.md
+// ─────────────────────────────────────────
 
 generator client {
   provider = "prisma-client-js"
@@ -7,104 +9,152 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ─────────────────────────────────────────
-// 2.1. USER (사용자)
+// Enum 정의
+// DB 레벨에서 잘못된 값이 들어가는 것을 막아준다.
+// Prisma가 TypeScript 타입도 자동 생성한다.
 // ─────────────────────────────────────────
+
+// 가격대 — 추천 필터, 식당 정보, 사용자 취향에서 사용
+enum PriceRange {
+  UNDER_10K       // 1만원 이하
+  BETWEEN_10K_20K // 1~2만원
+  OVER_20K        // 2만원 이상
+}
+
+// 식당 데이터 출처 — 어디서 가져온 식당인지 구분
+enum DataSource {
+  KAKAO   // 카카오 로컬 API에서 수집
+  MANUAL  // 관리자가 수동 입력
+  USER    // 사용자가 직접 입력 (먹은 이력에서)
+}
+
+// ─────────────────────────────────────────
+// 마스터 테이블
+// 앱에서 선택지로 보여주는 고정 데이터.
+// 시드(seed)로 초기 데이터를 넣는다.
+// ─────────────────────────────────────────
+
+// 카테고리 — 한식, 중식, 일식 등 7개
+model Category {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String   @unique @db.VarChar(30)   // "한식", "중식" 등
+  colorCode String   @map("color_code") @db.VarChar(7) // "#FF8C00" — 캘린더 dot, 지도 핀 색상
+  sortOrder Int      @map("sort_order")        // 표시 순서
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // 관계: 이 카테고리에 속한 식당들, 선호/제외한 사용자들
+  restaurants        Restaurant[]
+  preferredByUsers   UserPreferredCategory[]
+  excludedByUsers    UserExcludedCategory[]
+
+  @@map("category")
+}
+
+// 알레르기 종류 — 갑각류, 견과류 등 6개
+model AllergyType {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String   @unique @db.VarChar(20)   // "갑각류", "견과류" 등
+  sortOrder Int      @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // 관계: 이 알레르기를 가진 사용자들
+  users UserAllergy[]
+
+  @@map("allergy_type")
+}
+
+// ─────────────────────────────────────────
+// 사용자 테이블
+// ─────────────────────────────────────────
+
+// 사용자 — 앱의 모든 기능이 이 테이블을 중심으로 돌아간다
 model User {
-  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                  String    @unique @db.VarChar(255)
-  nickname               String    @db.VarChar(10)
-  profileImageUrl        String?   @map("profile_image_url") @db.Text
-  googleId               String    @unique @map("google_id") @db.VarChar(255)
-  refreshToken           String?   @map("refresh_token") @db.Text
-  notificationEnabled    Boolean   @default(true) @map("notification_enabled")
-  notificationTime       String    @default("11:30") @map("notification_time") @db.VarChar(5)
-  marketingAgreed        Boolean   @default(false) @map("marketing_agreed")
-  termsAgreedAt          DateTime  @map("terms_agreed_at") @db.Timestamptz()
-  expoPushToken          String?   @map("expo_push_token") @db.Text
-  preferredPriceRange    String    @default("BETWEEN_10K_20K") @map("preferred_price_range") @db.VarChar(20)
-  isOnboardingCompleted  Boolean   @default(false) @map("is_onboarding_completed")
-  deletedAt              DateTime? @map("deleted_at") @db.Timestamptz()
-  createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt              DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+  id                    String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                 String     @unique @db.VarChar(255)        // Google OAuth 이메일
+  nickname              String     @db.VarChar(10)                 // 2~10자
+  profileImageUrl       String?    @map("profile_image_url")       // 프로필 사진 URL (없으면 기본 아바타)
+  googleId              String     @unique @map("google_id") @db.VarChar(255) // Google OAuth 고유 ID
+  refreshToken          String?    @map("refresh_token")           // JWT Refresh Token (로그아웃 시 null)
+  notificationEnabled   Boolean    @default(true) @map("notification_enabled")  // 푸시 알림 ON/OFF
+  notificationTime      String     @default("11:30") @map("notification_time") @db.VarChar(5) // "11:30" 형식
+  marketingAgreed       Boolean    @default(false) @map("marketing_agreed")
+  termsAgreedAt         DateTime   @map("terms_agreed_at") @db.Timestamptz
+  expoPushToken         String?    @map("expo_push_token")         // 모바일 푸시 토큰
+  preferredPriceRange   PriceRange @map("preferred_price_range")   // ← Prisma enum 사용!
+  isOnboardingCompleted Boolean    @default(false) @map("is_onboarding_completed")
+  deletedAt             DateTime?  @map("deleted_at") @db.Timestamptz // 소프트 삭제 (null이면 활성)
+  createdAt             DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
-  // 관계
-  location              UserLocation?
-  preferredCategories   UserPreferredCategory[]
-  excludedCategories    UserExcludedCategory[]
-  allergies             UserAllergy[]
-  eatingHistories       EatingHistory[]
-  favorites             Favorite[]
-  recommendationLogs    RecommendationLog[]
-  eventLogs             EventLog[]
+  // 관계: 사용자가 가진 것들
+  location           UserLocation?
+  preferredCategories UserPreferredCategory[]
+  excludedCategories  UserExcludedCategory[]
+  allergies           UserAllergy[]
+  eatingHistories     EatingHistory[]
+  favorites           Favorite[]
+  recommendationLogs  RecommendationLog[]
+  eventLogs           EventLog[]
 
-  @@index([deletedAt], map: "idx_user_deleted_at")
   @@map("user")
 }
 
-// ─────────────────────────────────────────
-// 2.2. USER_LOCATION (사용자 회사 위치)
-// ─────────────────────────────────────────
+// 사용자 회사 위치 — User와 1:1 관계
+// 왜 분리? 추천할 때마다 위도/경도를 쓰는데, User 전체를 읽을 필요가 없으므로
 model UserLocation {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId       String   @unique @map("user_id") @db.Uuid
-  latitude     Decimal  @db.Decimal(9, 6)
-  longitude    Decimal  @db.Decimal(9, 6)
-  address      String   @db.VarChar(255)
-  buildingName String?  @map("building_name") @db.VarChar(100)
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+  latitude     Decimal  @db.Decimal(9, 6)    // 위도 (예: 37.497942)
+  longitude    Decimal  @db.Decimal(9, 6)    // 경도 (예: 127.027621)
+  address      String   @db.VarChar(255)     // 도로명 주소
+  buildingName String?  @map("building_name") @db.VarChar(100) // 건물명
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
 
   @@map("user_location")
 }
 
-// ─────────────────────────────────────────
-// 2.3. USER_PREFERRED_CATEGORY (선호 카테고리 N:M)
-// ─────────────────────────────────────────
+// 사용자 선호 카테고리 — User와 Category의 N:M 관계
 model UserPreferredCategory {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId     String   @map("user_id") @db.Uuid
   categoryId String   @map("category_id") @db.Uuid
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
 
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
   category Category @relation(fields: [categoryId], references: [id])
 
   @@unique([userId, categoryId], map: "idx_upc_user_category")
   @@map("user_preferred_category")
 }
 
-// ─────────────────────────────────────────
-// 2.3. USER_EXCLUDED_CATEGORY (제외 카테고리 N:M)
-// ─────────────────────────────────────────
+// 사용자 제외 카테고리
 model UserExcludedCategory {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId     String   @map("user_id") @db.Uuid
   categoryId String   @map("category_id") @db.Uuid
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
 
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
   category Category @relation(fields: [categoryId], references: [id])
 
   @@unique([userId, categoryId], map: "idx_uec_user_category")
   @@map("user_excluded_category")
 }
 
-// ─────────────────────────────────────────
-// 2.3. USER_ALLERGY (알레르기 N:M)
-// ─────────────────────────────────────────
+// 사용자 알레르기
 model UserAllergy {
   id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId        String   @map("user_id") @db.Uuid
   allergyTypeId String   @map("allergy_type_id") @db.Uuid
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
 
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id])
   allergyType AllergyType @relation(fields: [allergyTypeId], references: [id])
 
   @@unique([userId, allergyTypeId], map: "idx_ua_user_allergy")
@@ -112,141 +162,106 @@ model UserAllergy {
 }
 
 // ─────────────────────────────────────────
-// 2.4. CATEGORY (카테고리 마스터)
+// 식당 테이블
 // ─────────────────────────────────────────
-model Category {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name      String   @unique @db.VarChar(30)
-  colorCode String   @map("color_code") @db.VarChar(7)
-  sortOrder Int      @map("sort_order")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  restaurants          Restaurant[]
-  preferredByUsers     UserPreferredCategory[]
-  excludedByUsers      UserExcludedCategory[]
-  eatingHistories      EatingHistory[]         @relation("ManualCategory")
-  kakaoCategoryMappings KakaoCategoryMapping[]
-
-  @@map("category")
-}
-
-// ─────────────────────────────────────────
-// 2.5. ALLERGY_TYPE (알레르기 마스터)
-// ─────────────────────────────────────────
-model AllergyType {
-  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name      String @unique @db.VarChar(20)
-  sortOrder Int    @map("sort_order")
-
-  userAllergies UserAllergy[]
-
-  @@map("allergy_type")
-}
-
-// ─────────────────────────────────────────
-// 2.6. RESTAURANT (식당)
-// ─────────────────────────────────────────
+// 식당 — 추천, 탐색, 먹은 이력의 대상
 model Restaurant {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  kakaoPlaceId  String?  @unique @map("kakao_place_id") @db.VarChar(50)
-  name          String   @db.VarChar(100)
-  categoryId    String   @map("category_id") @db.Uuid
-  address       String   @db.VarChar(255)
-  latitude      Decimal  @db.Decimal(9, 6)
-  longitude     Decimal  @db.Decimal(9, 6)
-  phone         String?  @db.VarChar(20)
-  description   String?  @db.VarChar(200)
-  priceRange    String?  @map("price_range") @db.VarChar(20)
-  businessHours String?  @map("business_hours") @db.VarChar(200)
-  thumbnailUrl  String?  @map("thumbnail_url") @db.Text
-  isUserCreated Boolean  @default(false) @map("is_user_created")
-  isClosed      Boolean  @default(false) @map("is_closed")
-  dataSource    String   @default("KAKAO") @map("data_source") @db.VarChar(20)
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+  id              String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kakaoPlaceId    String?     @unique @map("kakao_place_id") @db.VarChar(50) // 카카오 API ID (직접 입력 식당은 null)
+  name            String      @db.VarChar(100)       // 식당명
+  categoryId      String      @map("category_id") @db.Uuid
+  address         String      @db.VarChar(255)        // 도로명 주소
+  latitude        Decimal     @db.Decimal(9, 6)       // 위도
+  longitude       Decimal     @db.Decimal(9, 6)       // 경도
+  phone           String?     @db.VarChar(20)         // 전화번호
+  description     String?     @db.VarChar(200)        // 한줄 설명
+  priceRange      PriceRange? @map("price_range")     // ← Prisma enum! null이면 가격 정보 없음
+  businessHours   String?     @map("business_hours") @db.VarChar(200) // 영업시간 텍스트
+  thumbnailUrl    String?     @map("thumbnail_url")   // 대표 사진 URL
+  isUserCreated   Boolean     @default(false) @map("is_user_created")  // 사용자가 직접 입력한 식당?
+  isClosed        Boolean     @default(false) @map("is_closed")        // 폐업 여부
+  dataSource      DataSource  @default(KAKAO) @map("data_source")      // ← Prisma enum!
+  createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
-  // geom 컬럼은 수동 마이그레이션으로 추가 (PostGIS GEOGRAPHY(POINT, 4326))
-
-  category                Category   @relation(fields: [categoryId], references: [id])
-  menus                   RestaurantMenu[]
-  photos                  RestaurantPhoto[]
-  eatingHistories         EatingHistory[]
-  favorites               Favorite[]
-  recommendationLogItems  RecommendationLogItem[]
+  // 관계
+  category               Category                @relation(fields: [categoryId], references: [id])
+  menus                  RestaurantMenu[]
+  photos                 RestaurantPhoto[]
+  eatingHistories        EatingHistory[]
+  favorites              Favorite[]
+  recommendationLogItems RecommendationLogItem[]
 
   @@index([categoryId], map: "idx_restaurant_category")
   @@map("restaurant")
 }
 
-// ─────────────────────────────────────────
-// 2.7. RESTAURANT_MENU (식당 메뉴)
-// ─────────────────────────────────────────
+// 식당 메뉴 — 식당 1개에 메뉴 여러 개
 model RestaurantMenu {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   restaurantId String   @map("restaurant_id") @db.Uuid
-  name         String   @db.VarChar(100)
-  price        Int?
+  name         String   @db.VarChar(100)    // 메뉴명 (예: "된장찌개 정식")
+  price        Int?                          // 가격 (원). null이면 미확인
   sortOrder    Int      @default(0) @map("sort_order")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
 
-  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
 
   @@index([restaurantId], map: "idx_restaurant_menu_restaurant")
   @@map("restaurant_menu")
 }
 
-// ─────────────────────────────────────────
-// 2.8. RESTAURANT_PHOTO (식당 사진)
-// ─────────────────────────────────────────
+// 식당 사진 — 식당 1개에 사진 여러 장
 model RestaurantPhoto {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   restaurantId String   @map("restaurant_id") @db.Uuid
-  imageUrl     String   @map("image_url") @db.Text
-  isThumbnail  Boolean  @default(false) @map("is_thumbnail")
+  imageUrl     String   @map("image_url")     // 사진 URL (Cloudflare R2)
+  isThumbnail  Boolean  @default(false) @map("is_thumbnail") // 대표 사진 여부
   sortOrder    Int      @default(0) @map("sort_order")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
 
-  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
 
   @@index([restaurantId], map: "idx_restaurant_photo_restaurant")
   @@map("restaurant_photo")
 }
 
 // ─────────────────────────────────────────
-// 2.9. EATING_HISTORY (먹은 이력)
+// 먹은 이력 + 즐겨찾기
 // ─────────────────────────────────────────
+
+// 먹은 이력 — 사용자가 "먹었어요"를 탭했을 때 저장
 model EatingHistory {
-  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId                 String    @map("user_id") @db.Uuid
-  restaurantId           String?   @map("restaurant_id") @db.Uuid
-  manualRestaurantName   String?   @map("manual_restaurant_name") @db.VarChar(100)
-  manualCategoryId       String?   @map("manual_category_id") @db.Uuid
-  eatenDate              DateTime  @map("eaten_date") @db.Date
-  rating                 Int       @db.SmallInt
-  memo                   String?   @db.VarChar(300)
-  isFromRecommendation   Boolean   @default(false) @map("is_from_recommendation")
-  createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt              DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+  id                    String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                String     @map("user_id") @db.Uuid
+  restaurantId          String?    @map("restaurant_id") @db.Uuid        // null이면 직접 입력 식당
+  manualRestaurantName  String?    @map("manual_restaurant_name") @db.VarChar(100) // 직접 입력 식당명
+  manualCategoryId      String?    @map("manual_category_id") @db.Uuid   // 직접 입력 카테고리
+  eatenDate             DateTime   @map("eaten_date") @db.Date           // 먹은 날짜
+  rating                Int        @db.SmallInt                           // 별점 1~5
+  memo                  String?    @db.VarChar(300)                       // 한줄 메모 (최대 300자)
+  isFromRecommendation  Boolean    @default(false) @map("is_from_recommendation") // 추천에서 기록했는지
+  createdAt             DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
-  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  restaurant     Restaurant? @relation(fields: [restaurantId], references: [id])
-  manualCategory Category?   @relation("ManualCategory", fields: [manualCategoryId], references: [id])
+  user       User        @relation(fields: [userId], references: [id])
+  restaurant Restaurant? @relation(fields: [restaurantId], references: [id])
 
+  // 같은 날 같은 식당 중복 방지 (직접 입력은 restaurantId가 null이라 이 제약에 안 걸림)
   @@unique([userId, restaurantId, eatenDate], map: "idx_eating_history_user_date")
   @@index([userId, eatenDate(sort: Desc)], map: "idx_eating_history_user_recent")
   @@map("eating_history")
 }
 
-// ─────────────────────────────────────────
-// 2.10. FAVORITE (즐겨찾기)
-// ─────────────────────────────────────────
+// 즐겨찾기 — 토글 방식 (추가/해제)
 model Favorite {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId       String   @map("user_id") @db.Uuid
   restaurantId String   @map("restaurant_id") @db.Uuid
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
 
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id])
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
 
   @@unique([userId, restaurantId], map: "idx_favorite_user_restaurant")
@@ -255,35 +270,35 @@ model Favorite {
 }
 
 // ─────────────────────────────────────────
-// 2.11. RECOMMENDATION_LOG (추천 기록)
+// 추천 기록
 // ─────────────────────────────────────────
-model RecommendationLog {
-  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId              String?  @map("user_id") @db.Uuid
-  recommendationDate  DateTime @map("recommendation_date") @db.Date
-  refreshCount        Int      @default(0) @map("refresh_count") @db.SmallInt
-  filterCategoryIds   String[] @map("filter_category_ids") @db.Uuid
-  filterPriceRange    String?  @map("filter_price_range") @db.VarChar(20)
-  filterWalkMinutes   Int?     @map("filter_walk_minutes") @db.SmallInt
-  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  user  User?                   @relation(fields: [userId], references: [id], onDelete: SetNull)
+// 추천 로그 — 날짜별 추천 기록 + 새로고침 횟수
+model RecommendationLog {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String?   @map("user_id") @db.Uuid  // nullable — 회원 탈퇴 시 null로 익명화
+  recommendationDate DateTime  @map("recommendation_date") @db.Date
+  refreshCount       Int       @default(0) @map("refresh_count") @db.SmallInt // 새로고침 횟수 (0~5)
+  filterCategoryIds  String[]  @map("filter_category_ids") @db.Uuid  // 적용된 카테고리 필터
+  filterPriceRange   String?   @map("filter_price_range") @db.VarChar(20) // 적용된 가격대 필터
+  filterWalkMinutes  Int?      @map("filter_walk_minutes") @db.SmallInt   // 적용된 도보 거리 (분)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  user  User? @relation(fields: [userId], references: [id])
   items RecommendationLogItem[]
 
   @@index([userId, recommendationDate(sort: Desc)], map: "idx_recommendation_log_user_date")
   @@map("recommendation_log")
 }
 
-// ─────────────────────────────────────────
-// 2.12. RECOMMENDATION_LOG_ITEM (추천 상세)
-// ─────────────────────────────────────────
+// 추천 상세 — 추천된 식당 3개 (추천 1회당 3건)
 model RecommendationLogItem {
   id                  String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   recommendationLogId String @map("recommendation_log_id") @db.Uuid
   restaurantId        String @map("restaurant_id") @db.Uuid
-  displayOrder        Int    @map("display_order") @db.SmallInt
+  displayOrder        Int    @map("display_order") @db.SmallInt // 카드 순서 (1, 2, 3)
 
-  recommendationLog RecommendationLog @relation(fields: [recommendationLogId], references: [id], onDelete: Cascade)
+  recommendationLog RecommendationLog @relation(fields: [recommendationLogId], references: [id])
   restaurant        Restaurant        @relation(fields: [restaurantId], references: [id])
 
   @@index([recommendationLogId], map: "idx_rli_log_id")
@@ -292,30 +307,28 @@ model RecommendationLogItem {
 }
 
 // ─────────────────────────────────────────
-// 2.13. KAKAO_CATEGORY_MAPPING (카카오 카테고리 매핑)
+// 기타 테이블
 // ─────────────────────────────────────────
+
+// 카카오 카테고리 매핑 — 카카오 API 카테고리를 자체 7개로 변환하는 룰
 model KakaoCategoryMapping {
   id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  kakaoCategory  String   @unique @map("kakao_category") @db.VarChar(100)
-  categoryId     String?  @map("category_id") @db.Uuid
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
-
-  category Category? @relation(fields: [categoryId], references: [id])
+  kakaoCategory  String   @unique @map("kakao_category") @db.VarChar(100) // "음식점 > 한식 > 백반"
+  categoryId     String?  @map("category_id") @db.Uuid  // 매핑된 자체 카테고리 (null이면 미매핑)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   @@map("kakao_category_mapping")
 }
 
-// ─────────────────────────────────────────
-// 2.14. EVENT_LOG (추적 이벤트)
-// ─────────────────────────────────────────
+// 이벤트 로그 — 데이터 분석용. 사용자 행동을 JSONB로 유연하게 저장
 model EventLog {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String?  @map("user_id") @db.Uuid
-  eventName String   @map("event_name") @db.VarChar(50)
-  eventData Json     @default("{}") @map("event_data") @db.JsonB
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  userId    String?  @map("user_id") @db.Uuid  // 비로그인 이벤트는 null
+  eventName String   @map("event_name") @db.VarChar(50) // "recommendation_viewed" 등
+  eventData Json     @default("{}") @map("event_data")   // 이벤트별 상세 데이터 (JSONB)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
 
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user User? @relation(fields: [userId], references: [id])
 
   @@index([userId, createdAt(sort: Desc)], map: "idx_event_log_user_created")
   @@index([eventName, createdAt(sort: Desc)], map: "idx_event_log_name_created")

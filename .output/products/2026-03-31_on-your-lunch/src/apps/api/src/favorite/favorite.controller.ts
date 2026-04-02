@@ -1,23 +1,19 @@
-import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
-import { CurrentUser } from '@/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { FavoriteService } from './favorite.service';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { ToggleFavoriteDto } from './dto/toggle-favorite.dto';
 
-@ApiTags('즐겨찾기')
 @Controller('favorites')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class FavoriteController {
-  constructor(private readonly favoriteService: FavoriteService) {}
+  constructor(private favoriteService: FavoriteService) {}
 
+  /** POST /favorites/toggle — 즐겨찾기 토글 */
   @Post('toggle')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '즐겨찾기 토글' })
-  async toggle(
-    @CurrentUser() user: { userId: string },
-    @Body() body: { restaurantId: string },
+  toggle(
+    @Body() dto: ToggleFavoriteDto,
+    @CurrentUser() user: { id: string },
   ) {
-    return this.favoriteService.toggle(user.userId, body.restaurantId);
+    return this.favoriteService.toggle(user.id, dto.restaurantId);
   }
 }

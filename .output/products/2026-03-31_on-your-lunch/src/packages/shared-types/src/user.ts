@@ -1,7 +1,14 @@
-import { PriceRange, NotificationTime } from './enums';
-import { CategorySummary, AllergyTypeSummary } from './restaurant';
+import { PriceRange } from './enums';
+import { CategorySummary } from './common';
+import { NotificationTime } from './constants';
 
-// PUT /users/me/location 요청
+// ─────────────────────────────────────────
+// 사용자 API 타입
+// 온보딩 (API 스펙 3절) + 사용자 정보 (API 스펙 8절)
+// ─────────────────────────────────────────
+
+// --- 회사 위치 ---
+
 export interface UpdateLocationRequest {
   latitude: number;
   longitude: number;
@@ -9,15 +16,15 @@ export interface UpdateLocationRequest {
   buildingName?: string;
 }
 
-// PUT /users/me/location 응답
-export interface UserLocationResponse {
+export interface LocationResponse {
   latitude: number;
   longitude: number;
   address: string;
   buildingName: string | null;
 }
 
-// PUT /users/me/preferences 요청
+// --- 취향 설정 ---
+
 export interface UpdatePreferencesRequest {
   preferredCategoryIds: string[];
   excludedCategoryIds: string[];
@@ -25,48 +32,64 @@ export interface UpdatePreferencesRequest {
   preferredPriceRange: PriceRange;
 }
 
-// PUT /users/me/preferences 응답
-export interface UserPreferencesResponse {
+export interface PreferencesResponse {
   preferredCategories: CategorySummary[];
   excludedCategories: CategorySummary[];
-  allergies: AllergyTypeSummary[];
+  allergies: { id: string; name: string }[];
   preferredPriceRange: PriceRange;
 }
 
-// POST /users/me/onboarding/complete 응답
+// --- 온보딩 완료 ---
+
 export interface OnboardingCompleteResponse {
   isOnboardingCompleted: boolean;
 }
 
-// GET /users/me 응답
+// --- 내 정보 조회 ---
+
 export interface UserMeResponse {
   id: string;
   email: string;
   nickname: string;
   profileImageUrl: string | null;
-  location: UserLocationResponse | null;
-  preferences: UserPreferencesResponse | null;
+  location: LocationResponse | null;
+  preferences: PreferencesResponse;
   notification: {
     enabled: boolean;
-    time: NotificationTime;
+    time: string;
   };
   marketingAgreed: boolean;
   isOnboardingCompleted: boolean;
   createdAt: string;
 }
 
-// PATCH /users/me/profile 요청
+// --- 프로필 수정 ---
+
 export interface UpdateProfileRequest {
   nickname?: string;
 }
 
-// PUT /users/me/notification 요청
+// --- 알림 설정 ---
+
 export interface UpdateNotificationRequest {
   enabled: boolean;
   time: NotificationTime;
 }
 
-// PUT /users/me/push-token 요청
-export interface UpdatePushTokenRequest {
+// --- 프로필 수정 응답 ---
+// multipart/form-data로 사진 업로드 시에는 FormData를 사용하므로
+// 요청 타입에 profileImage 필드는 포함하지 않음 (프론트에서 FormData로 처리)
+export type UpdateProfileResponse = UserMeResponse;
+
+// --- 알림 설정 응답 ---
+
+export interface UpdateNotificationResponse {
+  enabled: boolean;
+  time: string;
+}
+
+// --- 푸시 토큰 등록 ---
+
+export interface RegisterPushTokenRequest {
   expoPushToken: string;
 }

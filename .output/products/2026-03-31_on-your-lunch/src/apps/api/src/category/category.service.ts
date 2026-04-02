@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CategoryService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
-  async getCategories() {
+  /** 카테고리 7건 조회 (sortOrder 순) */
+  async findAll() {
     return this.prisma.category.findMany({
       orderBy: { sortOrder: 'asc' },
       select: {
@@ -17,7 +18,8 @@ export class CategoryService {
     });
   }
 
-  async getAllergyTypes() {
+  /** 알레르기 6건 조회 (sortOrder 순) */
+  async findAllAllergyTypes() {
     return this.prisma.allergyType.findMany({
       orderBy: { sortOrder: 'asc' },
       select: {

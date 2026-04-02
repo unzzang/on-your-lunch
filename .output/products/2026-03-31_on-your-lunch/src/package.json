@@ -2,45 +2,27 @@
   "name": "on-your-lunch",
   "version": "0.1.0",
   "private": true,
-  "description": "온유어런치 — 직장인 점심 메뉴 추천 앱",
+  "packageManager": "pnpm@10.32.1",
   "scripts": {
     "dev": "turbo run dev",
-    "build": "turbo run build",
-    "test": "turbo run test",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json}\"",
     "api:dev": "turbo run dev --filter=@on-your-lunch/api",
     "api:build": "turbo run build --filter=@on-your-lunch/api",
     "api:test": "turbo run test --filter=@on-your-lunch/api",
     "api:lint": "turbo run lint --filter=@on-your-lunch/api",
-    "mobile:start": "pnpm --filter @on-your-lunch/mobile start",
-    "mobile:ios": "pnpm --filter @on-your-lunch/mobile ios",
-    "mobile:android": "pnpm --filter @on-your-lunch/mobile android",
-    "mobile:build:dev": "pnpm --filter @on-your-lunch/mobile build:dev",
-    "mobile:build:preview": "pnpm --filter @on-your-lunch/mobile build:preview",
-    "mobile:build:prod": "pnpm --filter @on-your-lunch/mobile build:prod",
+    "mobile:start": "turbo run start --filter=@on-your-lunch/mobile",
+    "mobile:ios": "pnpm --filter @on-your-lunch/mobile exec expo start --ios",
+    "mobile:android": "pnpm --filter @on-your-lunch/mobile exec expo start --android",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "db:generate": "pnpm --filter @on-your-lunch/api exec prisma generate",
     "db:migrate": "pnpm --filter @on-your-lunch/api exec prisma migrate dev",
     "db:migrate:deploy": "pnpm --filter @on-your-lunch/api exec prisma migrate deploy",
-    "db:generate": "pnpm --filter @on-your-lunch/api exec prisma generate",
     "db:studio": "pnpm --filter @on-your-lunch/api exec prisma studio",
     "db:seed": "pnpm --filter @on-your-lunch/api exec prisma db seed"
   },
   "devDependencies": {
-    "turbo": "^2.5.0",
-    "prettier": "^3.5.0"
-  },
-  "packageManager": "pnpm@10.6.0",
-  "engines": {
-    "node": ">=22.0.0",
-    "pnpm": ">=10.0.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@nestjs/core",
-      "@prisma/client",
-      "@prisma/engines",
-      "prisma"
-    ]
+    "turbo": "^2.9.3"
   }
 }

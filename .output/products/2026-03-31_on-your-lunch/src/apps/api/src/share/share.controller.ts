@@ -1,21 +1,22 @@
 import { Controller, Get, Param, Req, Res } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import { Public } from '../auth/decorators/public.decorator';
 import { ShareService } from './share.service';
 
-@ApiTags('공유')
 @Controller('share')
 export class ShareController {
-  constructor(private readonly shareService: ShareService) {}
+  constructor(private shareService: ShareService) {}
 
+  /** GET /share/restaurant/:id — 딥링크 리다이렉트 [Public] */
+  @Public()
   @Get('restaurant/:id')
-  @ApiOperation({ summary: '딥링크 리다이렉트 (카카오톡 공유)' })
-  async redirectToRestaurant(
+  shareRestaurant(
     @Param('id') id: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const redirectUrl = await this.shareService.getRedirectUrl(id, req.headers['user-agent'] || '');
-    return res.redirect(redirectUrl);
+    const userAgent = req.headers['user-agent'] || '';
+    const redirectUrl = this.shareService.getRedirectUrl(id, userAgent);
+    res.redirect(redirectUrl);
   }
 }

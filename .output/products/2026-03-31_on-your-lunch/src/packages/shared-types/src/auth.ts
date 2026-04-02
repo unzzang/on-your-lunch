@@ -1,11 +1,16 @@
-// POST /auth/google 요청
+// ─────────────────────────────────────────
+// 인증 API 타입 (API 스펙 2절)
+// POST /auth/google, /auth/refresh, /auth/logout
+// ─────────────────────────────────────────
+
+// --- Google 로그인 ---
+
 export interface GoogleLoginRequest {
-  idToken: string;
-  termsAgreed: boolean;
-  marketingAgreed: boolean;
+  idToken: string;          // Google ID Token
+  termsAgreed: boolean;     // 필수 약관 동의
+  marketingAgreed: boolean; // 마케팅 수신 동의 (선택)
 }
 
-// POST /auth/google 응답 내 사용자 정보
 export interface AuthUser {
   id: string;
   email: string;
@@ -14,19 +19,18 @@ export interface AuthUser {
   isOnboardingCompleted: boolean;
 }
 
-// POST /auth/google 응답
 export interface GoogleLoginResponse {
   accessToken: string;
   refreshToken: string;
   user: AuthUser;
 }
 
-// POST /auth/refresh 요청
+// --- 토큰 갱신 ---
+
 export interface RefreshTokenRequest {
   refreshToken: string;
 }
 
-// POST /auth/refresh 응답
 export interface RefreshTokenResponse {
   accessToken: string;
   refreshToken: string;

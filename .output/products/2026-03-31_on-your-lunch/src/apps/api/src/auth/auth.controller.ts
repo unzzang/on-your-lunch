@@ -1,35 +1,44 @@
-import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Post, Body, HttpCode, HttpStatus, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { CurrentUser } from '@/common';
+import { GoogleLoginDto } from './dto/google-login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { Public } from './decorators/public.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
-@ApiTags('인증')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
+  /** POST /auth/google — Google 로그인 [Public] */
+  @Public()
   @Post('google')
-  @ApiOperation({ summary: 'Google 로그인' })
-  async googleLogin(
-    @Body() body: { idToken: string; termsAgreed: boolean; marketingAgreed: boolean },
-  ) {
-    return this.authService.googleLogin(body);
+  async googleLogin(@Body() dto: GoogleLoginDto, @Res({ passthrough: true }) res: Response) {
+    const result = await this.authService.googleLogin(
+      dto.idToken,
+      dto.termsAgreed,
+      dto.marketingAgreed,
+    );
+
+    // 신규 가입이면 201, 기존 사용자면 200
+    res.status(result.isNewUser ? HttpStatus.CREATED : HttpStatus.OK);
+
+    const { isNewUser, ...data } = result;
+    return data;
   }
 
+  /** POST /auth/refresh — 토큰 갱신 [Public] */
+  @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '토큰 갱신' })
-  async refresh(@Body() body: { refreshToken: string }) {
-    return this.authService.refreshToken(body.refreshToken);
+  refreshToken(@Body() dto: RefreshTokenDto) {
+    return this.authService.refreshTokens(dto.refreshToken);
   }
 
+  /** POST /auth/logout — 로그아웃 */
   @Post('logout')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '로그아웃' })
-  async logout(@CurrentUser() user: { userId: string }) {
-    return this.authService.logout(user.userId);
+  logout(@CurrentUser() user: { id: string }) {
+    return this.authService.logout(user.id);
   }
 }

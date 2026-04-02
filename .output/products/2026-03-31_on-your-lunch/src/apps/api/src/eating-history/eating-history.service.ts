@@ -1,68 +1,38 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
-import { RATING_MIN, RATING_MAX, MEMO_MAX_LENGTH } from '@shared-types';
+import { PrismaService } from '../prisma/prisma.service';
+import { DataSource } from '@prisma/client';
 
 @Injectable()
 export class EatingHistoryService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
-  /**
-   * 먹었어요 기록 — 식당 ID 기반
-   */
+  /** POST /eating-histories — 먹었어요 기록 */
   async create(
     userId: string,
-    data: {
-      restaurantId: string;
-      eatenDate: string;
-      rating: number;
-      memo?: string;
-      isFromRecommendation: boolean;
-    },
+    restaurantId: string,
+    eatenDate: string,
+    rating: number,
+    memo: string | undefined,
+    isFromRecommendation: boolean,
   ) {
-    // 별점 범위 검증
-    if (data.rating < RATING_MIN || data.rating > RATING_MAX) {
-      throw new HttpException(
-        { code: 'VALIDATION_ERROR', message: `별점은 ${RATING_MIN}~${RATING_MAX} 사이여야 합니다.` },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    const date = new Date(eatenDate);
 
-    // 메모 길이 검증
-    if (data.memo && data.memo.length > MEMO_MAX_LENGTH) {
-      throw new HttpException(
-        { code: 'VALIDATION_ERROR', message: `메모는 최대 ${MEMO_MAX_LENGTH}자입니다.` },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    // 날짜 검증: 당일 또는 최대 7일 전
-    const eatenDate = new Date(data.eatenDate);
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+    // 7일 이전 날짜 검증
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     sevenDaysAgo.setHours(0, 0, 0, 0);
-
-    if (eatenDate > today) {
+    if (date < sevenDaysAgo) {
       throw new HttpException(
-        { code: 'VALIDATION_ERROR', message: '미래 날짜는 기록할 수 없습니다.' },
+        { code: 'VALIDATION_ERROR', message: '7일 이전 날짜는 기록할 수 없습니다.' },
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    if (eatenDate < sevenDaysAgo) {
-      throw new HttpException(
-        { code: 'VALIDATION_ERROR', message: '7일 이전의 기록은 추가할 수 없습니다.' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    // 식당 존재 확인
+    // 식당 존재 여부
     const restaurant = await this.prisma.restaurant.findUnique({
-      where: { id: data.restaurantId },
-      include: { category: true },
+      where: { id: restaurantId },
+      include: { category: { select: { name: true } } },
     });
-
     if (!restaurant) {
       throw new HttpException(
         { code: 'NOT_FOUND', message: '식당을 찾을 수 없습니다.' },
@@ -72,29 +42,99 @@ export class EatingHistoryService {
 
     // 같은 날 같은 식당 중복 체크
     const existing = await this.prisma.eatingHistory.findFirst({
-      where: {
-        userId,
-        restaurantId: data.restaurantId,
-        eatenDate: eatenDate,
-      },
+      where: { userId, restaurantId, eatenDate: date },
     });
-
     if (existing) {
       throw new HttpException(
-        { code: 'DUPLICATE', message: '같은 날 같은 식당의 기록이 이미 있습니다.' },
+        { code: 'DUPLICATE', message: '같은 날 같은 식당은 이미 기록되어 있습니다.' },
         HttpStatus.CONFLICT,
       );
     }
+
+    const history = await this.prisma.eatingHistory.create({
+      data: {
+        userId,
+        restaurantId,
+        eatenDate: date,
+        rating,
+        memo,
+        isFromRecommendation,
+      },
+      include: {
+        restaurant: {
+          select: {
+            id: true,
+            name: true,
+            category: { select: { name: true } },
+          },
+        },
+      },
+    });
+
+    return {
+      id: history.id,
+      restaurant: {
+        id: history.restaurant!.id,
+        name: history.restaurant!.name,
+        category: { name: history.restaurant!.category.name },
+      },
+      eatenDate: history.eatenDate,
+      rating: history.rating,
+      memo: history.memo,
+      isFromRecommendation: history.isFromRecommendation,
+      createdAt: history.createdAt,
+    };
+  }
+
+  /** POST /eating-histories/custom — 직접 입력 식당 기록 */
+  async createCustom(
+    userId: string,
+    restaurantName: string,
+    categoryId: string,
+    eatenDate: string,
+    rating: number,
+    memo: string | undefined,
+  ) {
+    const date = new Date(eatenDate);
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+    if (date < sevenDaysAgo) {
+      throw new HttpException(
+        { code: 'VALIDATION_ERROR', message: '7일 이전 날짜는 기록할 수 없습니다.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // 사용자 위치 가져오기 (식당 생성에 필요)
+    const userLocation = await this.prisma.userLocation.findUnique({
+      where: { userId },
+    });
+
+    // 식당 생성 (is_user_created: true, data_source: USER)
+    const restaurant = await this.prisma.restaurant.create({
+      data: {
+        name: restaurantName,
+        categoryId,
+        address: '직접 입력',
+        latitude: userLocation ? userLocation.latitude : 0,
+        longitude: userLocation ? userLocation.longitude : 0,
+        isUserCreated: true,
+        dataSource: DataSource.USER,
+      },
+      include: { category: { select: { name: true } } },
+    });
 
     // 먹은 이력 생성
     const history = await this.prisma.eatingHistory.create({
       data: {
         userId,
-        restaurantId: data.restaurantId,
-        eatenDate: eatenDate,
-        rating: data.rating,
-        memo: data.memo || null,
-        isFromRecommendation: data.isFromRecommendation,
+        restaurantId: restaurant.id,
+        eatenDate: date,
+        rating,
+        memo,
+        isFromRecommendation: false,
       },
     });
 
@@ -105,243 +145,49 @@ export class EatingHistoryService {
         name: restaurant.name,
         category: { name: restaurant.category.name },
       },
-      eatenDate: data.eatenDate,
+      eatenDate: history.eatenDate,
       rating: history.rating,
       memo: history.memo,
-      isFromRecommendation: history.isFromRecommendation,
-      createdAt: history.createdAt.toISOString(),
-    };
-  }
-
-  /**
-   * DB에 없는 식당 직접 기록 — 식당 생성 후 이력 연결
-   */
-  async createCustom(
-    userId: string,
-    data: {
-      restaurantName: string;
-      categoryId: string;
-      eatenDate: string;
-      rating: number;
-      memo?: string;
-    },
-  ) {
-    // 별점 범위 검증
-    if (data.rating < RATING_MIN || data.rating > RATING_MAX) {
-      throw new HttpException(
-        { code: 'VALIDATION_ERROR', message: `별점은 ${RATING_MIN}~${RATING_MAX} 사이여야 합니다.` },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    // 날짜 검증
-    const eatenDate = new Date(data.eatenDate);
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    sevenDaysAgo.setHours(0, 0, 0, 0);
-
-    if (eatenDate > today || eatenDate < sevenDaysAgo) {
-      throw new HttpException(
-        { code: 'VALIDATION_ERROR', message: '당일~7일 전까지만 기록할 수 있습니다.' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    // 카테고리 존재 확인
-    const category = await this.prisma.category.findUnique({
-      where: { id: data.categoryId },
-    });
-
-    if (!category) {
-      throw new HttpException(
-        { code: 'NOT_FOUND', message: '카테고리를 찾을 수 없습니다.' },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    // 사용자 위치 조회 (직접 입력 식당의 좌표로 사용)
-    const userLocation = await this.prisma.userLocation.findUnique({
-      where: { userId },
-    });
-
-    // 트랜잭션: 식당 생성 + 이력 생성
-    const result = await this.prisma.$transaction(async (tx) => {
-      // 사용자 직접 입력 식당 생성
-      const restaurant = await tx.restaurant.create({
-        data: {
-          name: data.restaurantName,
-          categoryId: data.categoryId,
-          address: '사용자 직접 입력',
-          latitude: userLocation ? userLocation.latitude : 0,
-          longitude: userLocation ? userLocation.longitude : 0,
-          isUserCreated: true,
-          dataSource: 'USER',
-        },
-      });
-
-      // 먹은 이력 생성
-      const history = await tx.eatingHistory.create({
-        data: {
-          userId,
-          restaurantId: restaurant.id,
-          eatenDate: eatenDate,
-          rating: data.rating,
-          memo: data.memo || null,
-          isFromRecommendation: false,
-        },
-      });
-
-      return { restaurant, history };
-    });
-
-    return {
-      id: result.history.id,
-      restaurant: {
-        id: result.restaurant.id,
-        name: result.restaurant.name,
-        category: { name: category.name },
-      },
-      eatenDate: data.eatenDate,
-      rating: result.history.rating,
-      memo: result.history.memo,
       isFromRecommendation: false,
-      createdAt: result.history.createdAt.toISOString(),
+      createdAt: history.createdAt,
     };
   }
 
-  /**
-   * 먹은 이력 캘린더 조회 (월별) — 날짜별 그룹핑
-   */
-  async getCalendar(userId: string, year: number, month: number) {
-    // 해당 월의 시작/종료 날짜
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 0); // 해당 월 마지막 날
-
-    const histories = await this.prisma.eatingHistory.findMany({
-      where: {
-        userId,
-        eatenDate: {
-          gte: startDate,
-          lte: endDate,
-        },
-      },
-      include: {
-        restaurant: {
-          include: { category: true },
-        },
-        manualCategory: true,
-      },
-      orderBy: { eatenDate: 'asc' },
+  /** PATCH /eating-histories/:id — 수정 */
+  async update(
+    historyId: string,
+    userId: string,
+    rating: number | undefined,
+    memo: string | undefined,
+  ) {
+    const history = await this.prisma.eatingHistory.findUnique({
+      where: { id: historyId },
     });
 
-    // 날짜별 그룹핑
-    const dayMap = new Map<
-      string,
-      Array<{
-        id: string;
-        restaurant: { id: string; name: string };
-        category: { id: string; name: string; colorCode: string };
-        rating: number;
-        memo: string | null;
-      }>
-    >();
-
-    for (const h of histories) {
-      const dateStr =
-        h.eatenDate instanceof Date
-          ? h.eatenDate.toISOString().split('T')[0]
-          : String(h.eatenDate);
-
-      if (!dayMap.has(dateStr)) {
-        dayMap.set(dateStr, []);
-      }
-
-      const restaurantName = h.restaurant
-        ? h.restaurant.name
-        : h.manualRestaurantName || '알 수 없음';
-      const restaurantId = h.restaurant ? h.restaurant.id : h.id;
-      const category = h.restaurant
-        ? h.restaurant.category
-        : h.manualCategory;
-
-      dayMap.get(dateStr)!.push({
-        id: h.id,
-        restaurant: { id: restaurantId, name: restaurantName },
-        category: {
-          id: category?.id || '',
-          name: category?.name || '기타',
-          colorCode: category?.colorCode || '#999999',
-        },
-        rating: h.rating,
-        memo: h.memo,
-      });
-    }
-
-    // 배열로 변환 (기록 없는 날짜는 포함하지 않음)
-    const days = Array.from(dayMap.entries()).map(([date, records]) => ({
-      date,
-      records,
-    }));
-
-    return {
-      year,
-      month,
-      days,
-    };
-  }
-
-  /**
-   * 먹은 이력 수정 — 본인 이력만 수정 가능
-   */
-  async update(userId: string, id: string, data: { rating?: number; memo?: string }) {
-    // 본인 이력 확인
-    const history = await this.prisma.eatingHistory.findFirst({
-      where: { id, userId },
-      include: {
-        restaurant: { include: { category: true } },
-      },
-    });
-
-    if (!history) {
+    if (!history || history.userId !== userId) {
       throw new HttpException(
-        { code: 'NOT_FOUND', message: '먹은 이력을 찾을 수 없습니다.' },
+        { code: 'NOT_FOUND', message: '이력을 찾을 수 없습니다.' },
         HttpStatus.NOT_FOUND,
       );
     }
 
-    // 별점 범위 검증
-    if (data.rating !== undefined && (data.rating < RATING_MIN || data.rating > RATING_MAX)) {
-      throw new HttpException(
-        { code: 'VALIDATION_ERROR', message: `별점은 ${RATING_MIN}~${RATING_MAX} 사이여야 합니다.` },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    // 메모 길이 검증
-    if (data.memo !== undefined && data.memo.length > MEMO_MAX_LENGTH) {
-      throw new HttpException(
-        { code: 'VALIDATION_ERROR', message: `메모는 최대 ${MEMO_MAX_LENGTH}자입니다.` },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    const data: Record<string, any> = {};
+    if (rating !== undefined) data.rating = rating;
+    if (memo !== undefined) data.memo = memo;
 
     const updated = await this.prisma.eatingHistory.update({
-      where: { id },
-      data: {
-        ...(data.rating !== undefined && { rating: data.rating }),
-        ...(data.memo !== undefined && { memo: data.memo }),
-      },
+      where: { id: historyId },
+      data,
       include: {
-        restaurant: { include: { category: true } },
+        restaurant: {
+          select: {
+            id: true,
+            name: true,
+            category: { select: { name: true } },
+          },
+        },
       },
     });
-
-    const dateStr =
-      updated.eatenDate instanceof Date
-        ? updated.eatenDate.toISOString().split('T')[0]
-        : String(updated.eatenDate);
 
     return {
       id: updated.id,
@@ -351,39 +197,79 @@ export class EatingHistoryService {
             name: updated.restaurant.name,
             category: { name: updated.restaurant.category.name },
           }
-        : {
-            id: updated.id,
-            name: updated.manualRestaurantName || '알 수 없음',
-            category: { name: '기타' },
-          },
-      eatenDate: dateStr,
+        : null,
+      eatenDate: updated.eatenDate,
       rating: updated.rating,
       memo: updated.memo,
       isFromRecommendation: updated.isFromRecommendation,
-      createdAt: updated.createdAt.toISOString(),
+      createdAt: updated.createdAt,
     };
   }
 
-  /**
-   * 먹은 이력 삭제 — 본인 이력만, 즉시 삭제 (소프트 삭제 아님)
-   */
-  async delete(userId: string, id: string) {
-    // 본인 이력 확인
-    const history = await this.prisma.eatingHistory.findFirst({
-      where: { id, userId },
+  /** DELETE /eating-histories/:id — 삭제 */
+  async delete(historyId: string, userId: string) {
+    const history = await this.prisma.eatingHistory.findUnique({
+      where: { id: historyId },
     });
 
-    if (!history) {
+    if (!history || history.userId !== userId) {
       throw new HttpException(
-        { code: 'NOT_FOUND', message: '먹은 이력을 찾을 수 없습니다.' },
+        { code: 'NOT_FOUND', message: '이력을 찾을 수 없습니다.' },
         HttpStatus.NOT_FOUND,
       );
     }
 
-    await this.prisma.eatingHistory.delete({
-      where: { id },
+    await this.prisma.eatingHistory.delete({ where: { id: historyId } });
+    return null;
+  }
+
+  /** GET /eating-histories/calendar — 캘린더 조회 (월별) */
+  async getCalendar(userId: string, year: number, month: number) {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0); // 해당 월의 마지막 날
+
+    const histories = await this.prisma.eatingHistory.findMany({
+      where: {
+        userId,
+        eatenDate: { gte: startDate, lte: endDate },
+      },
+      include: {
+        restaurant: {
+          select: {
+            id: true,
+            name: true,
+            category: { select: { name: true, colorCode: true } },
+          },
+        },
+      },
+      orderBy: { eatenDate: 'asc' },
     });
 
-    return null;
+    // 날짜별 그룹핑
+    const dayMap = new Map<string, Array<any>>();
+    for (const h of histories) {
+      const dateStr = h.eatenDate.toISOString().split('T')[0];
+      if (!dayMap.has(dateStr)) {
+        dayMap.set(dateStr, []);
+      }
+      dayMap.get(dateStr)!.push({
+        id: h.id,
+        restaurant: h.restaurant
+          ? { id: h.restaurant.id, name: h.restaurant.name }
+          : { id: null, name: h.manualRestaurantName },
+        category: h.restaurant
+          ? { name: h.restaurant.category.name, colorCode: h.restaurant.category.colorCode }
+          : { name: '기타', colorCode: '#999999' },
+        rating: h.rating,
+        memo: h.memo,
+      });
+    }
+
+    const days = Array.from(dayMap.entries()).map(([date, records]) => ({
+      date,
+      records,
+    }));
+
+    return { year, month, days };
   }
 }

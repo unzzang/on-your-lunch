@@ -1,78 +1,65 @@
-import { Injectable, UnauthorizedException, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '@/prisma/prisma.service';
-import { GoogleStrategy } from './strategies/google.strategy';
+import { PrismaService } from '../prisma/prisma.service';
+import { PriceRange } from '@prisma/client';
+
+/** Google ID Token에서 추출한 사용자 정보 (개발용 모의 처리) */
+interface GoogleUserInfo {
+  googleId: string;
+  email: string;
+  nickname: string;
+  profileImageUrl: string | null;
+}
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
-    private readonly googleStrategy: GoogleStrategy,
+    private prisma: PrismaService,
+    private jwtService: JwtService,
   ) {}
 
   /**
-   * Google ID Token 검증 후 로그인/회원가입 처리.
+   * Google ID Token을 검증하고 JWT를 발급한다.
+   * 로컬 개발에서는 실제 Google API 대신 모의 처리한다.
    */
-  async googleLogin(body: {
-    idToken: string;
-    termsAgreed: boolean;
-    marketingAgreed: boolean;
-  }) {
-    // Google ID Token 검증
-    const googleUser = await this.googleStrategy.verifyIdToken(body.idToken);
+  async googleLogin(idToken: string, termsAgreed: boolean, marketingAgreed: boolean) {
+    // 개발용: ID Token에서 사용자 정보 모의 추출
+    const googleUser = this.verifyGoogleIdToken(idToken);
 
-    // 기존 사용자 조회 (소프트 삭제된 계정 제외)
-    let user = await this.prisma.user.findFirst({
-      where: { googleId: googleUser.googleId, deletedAt: null },
+    // 기존 사용자 조회
+    let user = await this.prisma.user.findUnique({
+      where: { googleId: googleUser.googleId },
     });
 
     let isNewUser = false;
 
-    if (user) {
-      // 기존 사용자 — 토큰 발급만
-      const tokens = await this.generateTokenPair(user.id);
-      return {
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        user: {
-          id: user.id,
-          email: user.email,
-          nickname: user.nickname,
-          profileImageUrl: user.profileImageUrl,
-          isOnboardingCompleted: user.isOnboardingCompleted,
+    if (!user) {
+      // 신규 가입
+      isNewUser = true;
+      user = await this.prisma.user.create({
+        data: {
+          email: googleUser.email,
+          nickname: googleUser.nickname,
+          profileImageUrl: googleUser.profileImageUrl,
+          googleId: googleUser.googleId,
+          marketingAgreed,
+          termsAgreedAt: new Date(),
+          preferredPriceRange: PriceRange.BETWEEN_10K_20K, // 기본값
         },
-      };
+      });
     }
 
-    // 신규 가입
-    if (!body.termsAgreed) {
-      throw new HttpException(
-        { code: 'VALIDATION_ERROR', message: '필수 약관에 동의해야 합니다.' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // JWT 발급
+    const tokens = await this.generateTokens(user.id, user.email);
 
-    user = await this.prisma.user.create({
-      data: {
-        email: googleUser.email,
-        nickname: googleUser.name.substring(0, 10), // 최대 10자
-        profileImageUrl: googleUser.picture,
-        googleId: googleUser.googleId,
-        marketingAgreed: body.marketingAgreed || false,
-        termsAgreedAt: new Date(),
-        preferredPriceRange: 'BETWEEN_10K_20K',
-      },
+    // Refresh Token 저장
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken: tokens.refreshToken },
     });
 
-    isNewUser = true;
-
-    const tokens = await this.generateTokenPair(user.id);
     return {
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
+      ...tokens,
       user: {
         id: user.id,
         email: user.email,
@@ -80,31 +67,38 @@ export class AuthService {
         profileImageUrl: user.profileImageUrl,
         isOnboardingCompleted: user.isOnboardingCompleted,
       },
+      isNewUser,
     };
   }
 
-  /**
-   * Refresh Token 검증 후 새 토큰 쌍을 발급한다.
-   */
-  async refreshToken(refreshToken: string) {
+  /** Refresh Token으로 새 토큰 발급 */
+  async refreshTokens(refreshToken: string) {
     try {
-      // Refresh Token 검증
-      const payload = this.jwtService.verify<{ sub: string }>(refreshToken, {
-        secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-key',
       });
 
-      // DB에 저장된 Refresh Token과 비교
-      const user = await this.prisma.user.findFirst({
-        where: { id: payload.sub, deletedAt: null },
+      const user = await this.prisma.user.findUnique({
+        where: { id: payload.sub },
       });
 
-      if (!user || user.refreshToken !== refreshToken) {
-        throw new UnauthorizedException();
+      if (!user || user.deletedAt || user.refreshToken !== refreshToken) {
+        throw new HttpException(
+          { code: 'TOKEN_EXPIRED', message: '토큰이 만료되었습니다.' },
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
-      // 새 토큰 쌍 발급
-      return this.generateTokenPair(user.id);
-    } catch {
+      const tokens = await this.generateTokens(user.id, user.email);
+
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { refreshToken: tokens.refreshToken },
+      });
+
+      return tokens;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
       throw new HttpException(
         { code: 'TOKEN_EXPIRED', message: '토큰이 만료되었습니다.' },
         HttpStatus.UNAUTHORIZED,
@@ -112,35 +106,45 @@ export class AuthService {
     }
   }
 
-  /**
-   * 로그아웃 — Refresh Token과 푸시 토큰을 삭제한다.
-   */
+  /** 로그아웃: Refresh Token 무효화 */
   async logout(userId: string) {
     await this.prisma.user.update({
       where: { id: userId },
-      data: { refreshToken: null, expoPushToken: null },
+      data: { refreshToken: null },
     });
     return null;
   }
 
-  /**
-   * Access Token + Refresh Token 쌍을 생성한다.
-   */
-  async generateTokenPair(userId: string) {
-    const payload = { sub: userId };
+  /** Access Token + Refresh Token 생성 */
+  private async generateTokens(userId: string, email: string) {
+    const payload = { sub: userId, email };
 
-    const accessToken = this.jwtService.sign(payload);
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
-      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ?? '30d',
-    });
-
-    // DB에 Refresh Token 저장
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { refreshToken },
-    });
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: process.env.JWT_SECRET || 'dev-secret-key',
+        expiresIn: '1h',
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-key',
+        expiresIn: '7d',
+      }),
+    ]);
 
     return { accessToken, refreshToken };
+  }
+
+  /**
+   * Google ID Token 모의 검증 (로컬 개발용).
+   * 프로덕션에서는 Google OAuth2Client.verifyIdToken()으로 교체해야 한다.
+   */
+  private verifyGoogleIdToken(idToken: string): GoogleUserInfo {
+    // 개발용: idToken 문자열을 그대로 googleId로 사용
+    // 실제 구현 시 google-auth-library의 OAuth2Client 사용
+    return {
+      googleId: `google_${idToken.slice(0, 20)}`,
+      email: `user_${idToken.slice(0, 8)}@gmail.com`,
+      nickname: '점심러',
+      profileImageUrl: null,
+    };
   }
 }

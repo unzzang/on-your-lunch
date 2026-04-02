@@ -1,24 +1,19 @@
-import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
-import { CurrentUser } from '@/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { EventService } from './event.service';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { CreateEventDto } from './dto/create-event.dto';
 
-@ApiTags('이벤트')
 @Controller('events')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class EventController {
-  constructor(private readonly eventService: EventService) {}
+  constructor(private eventService: EventService) {}
 
+  /** POST /events — 이벤트 로그 기록 */
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: '이벤트 로그 기록' })
-  async create(
-    @CurrentUser() user: { userId: string },
-    @Body() body: { eventName: string; eventData: Record<string, unknown> },
+  create(
+    @Body() dto: CreateEventDto,
+    @CurrentUser() user: { id: string },
   ) {
-    await this.eventService.create(user.userId, body);
-    return null;
+    return this.eventService.create(user.id, dto.eventName, dto.eventData ?? {});
   }
 }

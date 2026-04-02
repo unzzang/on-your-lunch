@@ -1,73 +1,47 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
-import { MAX_REFRESH_COUNT } from '@shared-types';
+import { PrismaService } from '../prisma/prisma.service';
+import { Prisma, PriceRange } from '@prisma/client';
 
-// 도보 거리 계산 상수
-const WALK_SPEED_M_PER_MIN = 80;
-const ROAD_CORRECTION = 1.3;
-const RECOMMENDATION_COUNT = 3;
+// Haversine 공식 (restaurant.service.ts와 동일)
+function haversineDistance(
+  lat1: number, lon1: number,
+  lat2: number, lon2: number,
+): number {
+  const R = 6371000;
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function distanceToWalkMinutes(distanceMeters: number): number {
+  return Math.round((distanceMeters * 1.3) / 80);
+}
+
+/** 도보 N분 → 직선 거리(m) 환산 */
+function walkMinutesToMaxDistance(minutes: number): number {
+  return (minutes * 80) / 1.3;
+}
+
+const MAX_REFRESH = 5;
 
 @Injectable()
 export class RecommendationService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
   /**
-   * Haversine 직선 거리(미터) 계산
+   * GET /recommendations/today — 오늘의 추천 조회
+   * 필터 파라미터가 없으면 사용자 기본 설정을 적용한다.
    */
-  private haversineDistance(
-    lat1: number,
-    lng1: number,
-    lat2: number,
-    lng2: number,
-  ): number {
-    const R = 6371000;
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLng = ((lng2 - lng1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  }
-
-  /**
-   * 도보 시간(분) 계산
-   */
-  private calculateWalkMinutes(
-    lat1: number,
-    lng1: number,
-    lat2: number,
-    lng2: number,
-  ): number {
-    const dist = this.haversineDistance(lat1, lng1, lat2, lng2);
-    return Math.round((dist * ROAD_CORRECTION) / WALK_SPEED_M_PER_MIN);
-  }
-
-  /**
-   * 오늘 날짜 문자열 (YYYY-MM-DD)
-   */
-  private getTodayDateStr(): string {
-    const now = new Date();
-    return now.toISOString().split('T')[0];
-  }
-
-  /**
-   * N일 전 날짜 계산
-   */
-  private getDaysAgoDate(days: number): Date {
-    const d = new Date();
-    d.setDate(d.getDate() - days);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }
-
-  /**
-   * 사용자 필터 정보 조회 (위치, 취향, 기본 설정)
-   */
-  private async getUserFilterContext(userId: string) {
+  async getToday(
+    userId: string,
+    categoryIdsParam: string | undefined,
+    priceRangeParam: string | undefined,
+    walkMinutesParam: number | undefined,
+  ) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -79,145 +53,85 @@ export class RecommendationService {
 
     if (!user || !user.location) {
       throw new HttpException(
-        { code: 'VALIDATION_ERROR', message: '회사 위치를 먼저 설정해주세요.' },
+        { code: 'VALIDATION_ERROR', message: '먼저 회사 위치를 설정해주세요.' },
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    return {
-      latitude: Number(user.location.latitude),
-      longitude: Number(user.location.longitude),
-      preferredCategoryIds: user.preferredCategories.map((pc) => pc.categoryId),
-      excludedCategoryIds: user.excludedCategories.map((ec) => ec.categoryId),
-      preferredPriceRange: user.preferredPriceRange,
-    };
-  }
-
-  /**
-   * 오늘의 추천 조회 — 5단계 필터링 + 조건 완화 규칙
-   */
-  async getToday(
-    userId: string,
-    filters: { categoryIds?: string; priceRange?: string; walkMinutes?: number },
-  ) {
-    const ctx = await this.getUserFilterContext(userId);
-    const today = this.getTodayDateStr();
-
-    // 필터 결정: 쿼리 파라미터 > 사용자 기본 설정
-    let categoryIds: string[] | null = null; // null = 전체
-    if (filters.categoryIds) {
-      if (filters.categoryIds === 'all') {
-        categoryIds = null; // 전체 카테고리
-      } else {
-        categoryIds = filters.categoryIds.split(',').filter(Boolean);
-        if (categoryIds.length === 0) {
-          throw new HttpException(
-            { code: 'VALIDATION_ERROR', message: 'categoryIds 값이 비어 있습니다.' },
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-      }
+    // 필터 결정 (파라미터 우선, 없으면 사용자 설정)
+    let filterCategoryIds: string[] | null = null;
+    if (categoryIdsParam === 'all') {
+      filterCategoryIds = null; // 전체
+    } else if (categoryIdsParam) {
+      filterCategoryIds = categoryIdsParam.split(',');
     } else {
-      // 파라미터 생략 시 → 사용자 선호 카테고리 적용
-      if (ctx.preferredCategoryIds.length > 0) {
-        categoryIds = ctx.preferredCategoryIds;
-      }
+      // 사용자 선호 카테고리 (없으면 전체)
+      const preferred = user.preferredCategories.map((pc) => pc.categoryId);
+      filterCategoryIds = preferred.length > 0 ? preferred : null;
     }
 
-    const priceRange = filters.priceRange || ctx.preferredPriceRange;
-    const walkMinutes = filters.walkMinutes || 10;
+    const filterPriceRange = priceRangeParam ?? user.preferredPriceRange;
+    const filterWalkMinutes = walkMinutesParam ?? 10;
 
-    // 오늘 기존 추천 로그에서 이전에 추천된 식당 제외 (새로고침 시 중복 방지)
-    const todayLogs = await this.prisma.recommendationLog.findMany({
+    // 오늘 추천 기록 조회 (새로고침 횟수)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todayLog = await this.prisma.recommendationLog.findFirst({
       where: {
         userId,
-        recommendationDate: new Date(today),
+        recommendationDate: today,
       },
+      orderBy: { createdAt: 'desc' },
       include: { items: true },
     });
 
-    const previouslyRecommendedIds = new Set<string>();
-    for (const log of todayLogs) {
-      for (const item of log.items) {
-        previouslyRecommendedIds.add(item.restaurantId);
-      }
-    }
+    const refreshCount = todayLog?.refreshCount ?? 0;
 
-    // 추천 실행
-    const result = await this.generateRecommendation({
+    // 추천 알고리즘 실행
+    const restaurants = await this.runRecommendation(
       userId,
-      latitude: ctx.latitude,
-      longitude: ctx.longitude,
-      categoryIds,
-      excludedCategoryIds: ctx.excludedCategoryIds,
-      priceRange,
-      walkMinutes,
-      previouslyRecommendedIds,
-    });
-
-    // 추천 로그 저장
-    if (result.restaurants.length > 0) {
-      await this.prisma.recommendationLog.create({
-        data: {
-          userId,
-          recommendationDate: new Date(today),
-          refreshCount: 0,
-          filterCategoryIds: categoryIds || [],
-          filterPriceRange: priceRange,
-          filterWalkMinutes: walkMinutes,
-          items: {
-            create: result.restaurants.map((r, idx) => ({
-              restaurantId: r.id,
-              displayOrder: idx + 1,
-            })),
-          },
-        },
-      });
-    }
-
-    // 오늘의 총 새로고침 횟수 계산
-    const refreshCount = todayLogs.reduce(
-      (sum, log) => sum + log.refreshCount,
-      0,
+      user.location,
+      filterCategoryIds,
+      filterPriceRange as PriceRange | null,
+      filterWalkMinutes,
+      user.excludedCategories.map((ec) => ec.categoryId),
     );
 
+    // 즐겨찾기 + 방문이력 추가
+    const enriched = await this.enrichRestaurants(restaurants, userId);
+
     return {
-      restaurants: result.restaurants,
+      restaurants: enriched,
       refreshCount,
-      maxRefreshCount: MAX_REFRESH_COUNT,
+      maxRefreshCount: MAX_REFRESH,
       filterApplied: {
-        categoryIds: categoryIds,
-        priceRange,
-        walkMinutes,
+        categoryIds: filterCategoryIds,
+        priceRange: filterPriceRange,
+        walkMinutes: filterWalkMinutes,
       },
     };
   }
 
-  /**
-   * 추천 새로고침 — 횟수 확인 + 새 추천 생성
-   */
+  /** POST /recommendations/today/refresh — 추천 새로고침 */
   async refresh(
     userId: string,
-    filters: { categoryIds?: string[]; priceRange?: string; walkMinutes?: number },
+    categoryIds: string[] | undefined,
+    priceRange: string | undefined,
+    walkMinutes: number | undefined,
   ) {
-    const ctx = await this.getUserFilterContext(userId);
-    const today = this.getTodayDateStr();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    // 오늘 새로고침 횟수 확인
-    const todayLogs = await this.prisma.recommendationLog.findMany({
-      where: {
-        userId,
-        recommendationDate: new Date(today),
-      },
-      include: { items: true },
+    // 오늘의 마지막 추천 로그 조회
+    const latestLog = await this.prisma.recommendationLog.findFirst({
+      where: { userId, recommendationDate: today },
+      orderBy: { createdAt: 'desc' },
     });
 
-    const totalRefreshCount = todayLogs.reduce(
-      (sum, log) => sum + log.refreshCount,
-      0,
-    );
+    const currentRefresh = latestLog?.refreshCount ?? 0;
 
-    if (totalRefreshCount >= MAX_REFRESH_COUNT) {
+    if (currentRefresh >= MAX_REFRESH) {
       throw new HttpException(
         {
           code: 'REFRESH_LIMIT_EXCEEDED',
@@ -227,439 +141,312 @@ export class RecommendationService {
       );
     }
 
-    // 필터 결정
-    let categoryIds: string[] | null = null;
-    if (filters.categoryIds) {
-      if (filters.categoryIds.length === 1 && filters.categoryIds[0] === 'all') {
-        categoryIds = null;
-      } else if (filters.categoryIds.length === 0) {
-        throw new HttpException(
-          { code: 'VALIDATION_ERROR', message: 'categoryIds 값이 비어 있습니다.' },
-          HttpStatus.BAD_REQUEST,
-        );
-      } else {
-        categoryIds = filters.categoryIds;
-      }
-    } else {
-      if (ctx.preferredCategoryIds.length > 0) {
-        categoryIds = ctx.preferredCategoryIds;
-      }
-    }
-
-    const priceRange = filters.priceRange || ctx.preferredPriceRange;
-    const walkMinutes = filters.walkMinutes || 10;
-
-    // 이전 추천 식당 수집 (중복 방지)
-    const previouslyRecommendedIds = new Set<string>();
-    for (const log of todayLogs) {
-      for (const item of log.items) {
-        previouslyRecommendedIds.add(item.restaurantId);
-      }
-    }
-
-    // 새 추천 생성
-    const result = await this.generateRecommendation({
-      userId,
-      latitude: ctx.latitude,
-      longitude: ctx.longitude,
-      categoryIds,
-      excludedCategoryIds: ctx.excludedCategoryIds,
-      priceRange,
-      walkMinutes,
-      previouslyRecommendedIds,
+    // 사용자 정보 조회
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        location: true,
+        preferredCategories: true,
+        excludedCategories: true,
+      },
     });
 
-    // 추천 로그 저장 (새로고침 카운트 증가)
-    if (result.restaurants.length > 0) {
-      await this.prisma.recommendationLog.create({
-        data: {
-          userId,
-          recommendationDate: new Date(today),
-          refreshCount: totalRefreshCount + 1,
-          filterCategoryIds: categoryIds || [],
-          filterPriceRange: priceRange,
-          filterWalkMinutes: walkMinutes,
-          items: {
-            create: result.restaurants.map((r, idx) => ({
-              restaurantId: r.id,
-              displayOrder: idx + 1,
-            })),
-          },
-        },
-      });
+    if (!user || !user.location) {
+      throw new HttpException(
+        { code: 'VALIDATION_ERROR', message: '먼저 회사 위치를 설정해주세요.' },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
+    // 필터 결정
+    let filterCategoryIds: string[] | null = null;
+    if (categoryIds && categoryIds.length > 0) {
+      if (categoryIds.includes('all')) {
+        filterCategoryIds = null;
+      } else {
+        filterCategoryIds = categoryIds;
+      }
+    } else {
+      const preferred = user.preferredCategories.map((pc) => pc.categoryId);
+      filterCategoryIds = preferred.length > 0 ? preferred : null;
+    }
+
+    const filterPriceRange = (priceRange ?? user.preferredPriceRange) as PriceRange | null;
+    const filterWalkMinutes = walkMinutes ?? 10;
+
+    // 이전 추천된 식당 ID 목록 (중복 방지)
+    const previousRecommendedIds = await this.getPreviouslyRecommendedIds(userId, today);
+
+    // 추천 실행
+    const restaurants = await this.runRecommendation(
+      userId,
+      user.location,
+      filterCategoryIds,
+      filterPriceRange,
+      filterWalkMinutes,
+      user.excludedCategories.map((ec) => ec.categoryId),
+      previousRecommendedIds,
+    );
+
+    const newRefreshCount = currentRefresh + 1;
+
+    // 추천 로그 저장
+    const log = await this.prisma.recommendationLog.create({
+      data: {
+        userId,
+        recommendationDate: today,
+        refreshCount: newRefreshCount,
+        filterCategoryIds: filterCategoryIds ?? [],
+        filterPriceRange: filterPriceRange ?? undefined,
+        filterWalkMinutes: filterWalkMinutes,
+        items: {
+          create: restaurants.map((r, i) => ({
+            restaurantId: r.id,
+            displayOrder: i + 1,
+          })),
+        },
+      },
+    });
+
+    const enriched = await this.enrichRestaurants(restaurants, userId);
+
     return {
-      restaurants: result.restaurants,
-      refreshCount: totalRefreshCount + 1,
-      maxRefreshCount: MAX_REFRESH_COUNT,
+      restaurants: enriched,
+      refreshCount: newRefreshCount,
+      maxRefreshCount: MAX_REFRESH,
       filterApplied: {
-        categoryIds,
-        priceRange,
-        walkMinutes,
+        categoryIds: filterCategoryIds,
+        priceRange: filterPriceRange,
+        walkMinutes: filterWalkMinutes,
       },
     };
   }
 
   /**
-   * 추천 알고리즘 핵심 — 5단계 필터링 + 조건 완화 규칙
-   *
-   * 1. 도보 거리 필터링
-   * 2. 카테고리/가격대 필터링 + 제외 카테고리
-   * 3. 최근 5일 먹은 식당 제외
-   * 4. 최근 3일 먹은 카테고리 가중치 낮춤
-   * 5. 랜덤 3개 선택
-   *
-   * 조건 완화 순서:
-   * 0단계: 기본 조건
-   * 1단계: 도보 15분으로 확대
-   * 2단계: 먹은 이력 제외 5일 → 3일
-   * 3단계: 카테고리 가중치 제거
-   * 4단계: 먹은 이력 제외 완전 해제
+   * 5단계 필터링 + 4단계 조건 완화 (기능 명세 01의 3.1절)
    */
-  private async generateRecommendation(params: {
-    userId: string;
-    latitude: number;
-    longitude: number;
-    categoryIds: string[] | null;
-    excludedCategoryIds: string[];
-    priceRange: string;
-    walkMinutes: number;
-    previouslyRecommendedIds: Set<string>;
-  }) {
-    const {
-      userId,
-      latitude,
-      longitude,
-      categoryIds,
-      excludedCategoryIds,
-      priceRange,
-      walkMinutes,
-      previouslyRecommendedIds,
-    } = params;
+  private async runRecommendation(
+    userId: string,
+    userLocation: { latitude: any; longitude: any },
+    filterCategoryIds: string[] | null,
+    filterPriceRange: PriceRange | null,
+    filterWalkMinutes: number,
+    excludedCategoryIds: string[],
+    previousRecommendedIds: string[] = [],
+  ) {
+    const userLat = Number(userLocation.latitude);
+    const userLng = Number(userLocation.longitude);
 
-    // 사용자 즐겨찾기 조회
-    const favorites = await this.prisma.favorite.findMany({
-      where: { userId },
-      select: { restaurantId: true },
-    });
-    const favoriteIds = new Set(favorites.map((f) => f.restaurantId));
+    // 최근 먹은 이력 조회
+    const fiveDaysAgo = new Date();
+    fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
-    // 방문 이력 조회
-    const allVisits = await this.prisma.eatingHistory.findMany({
-      where: { userId, restaurantId: { not: null } },
-      select: { restaurantId: true, eatenDate: true, rating: true },
-      orderBy: { eatenDate: 'desc' },
-    });
-
-    // 식당별 방문 정보 집계
-    const visitMap = new Map<string, { rating: number; visitCount: number }>();
-    for (const v of allVisits) {
-      if (!v.restaurantId) continue;
-      const existing = visitMap.get(v.restaurantId);
-      if (existing) {
-        existing.visitCount += 1;
-        // 가장 최근 별점 사용
-      } else {
-        visitMap.set(v.restaurantId, { rating: v.rating, visitCount: 1 });
-      }
-    }
-
-    // 조건 완화 단계별 시도
-    for (let relaxStep = 0; relaxStep <= 4; relaxStep++) {
-      const candidates = await this.getCandidates({
-        latitude,
-        longitude,
-        categoryIds,
-        excludedCategoryIds,
-        priceRange,
-        walkMinutes,
-        previouslyRecommendedIds,
-        relaxStep,
+    const recentHistories = await this.prisma.eatingHistory.findMany({
+      where: {
         userId,
-      });
+        eatenDate: { gte: fiveDaysAgo },
+      },
+      include: { restaurant: { select: { categoryId: true } } },
+    });
 
-      if (candidates.length >= RECOMMENDATION_COUNT) {
-        // 4단계: 최근 3일 먹은 카테고리 가중치 (relaxStep < 3일 때만 적용)
-        let selected: typeof candidates;
-        if (relaxStep < 3) {
-          selected = this.weightedRandomSelect(candidates, userId, allVisits);
-        } else {
-          selected = this.randomSelect(candidates, RECOMMENDATION_COUNT);
-        }
+    const recentRestaurantIds5d = recentHistories
+      .filter((h) => h.restaurantId)
+      .map((h) => h.restaurantId!);
 
-        // 식당 목록 형식으로 변환
-        return {
-          restaurants: selected.map((r) => {
-            const wm = this.calculateWalkMinutes(
-              latitude,
-              longitude,
-              Number(r.latitude),
-              Number(r.longitude),
-            );
-            const visit = visitMap.get(r.id);
+    const recentRestaurantIds3d = recentHistories
+      .filter((h) => h.restaurantId && h.eatenDate >= threeDaysAgo)
+      .map((h) => h.restaurantId!);
 
-            return {
-              id: r.id,
-              name: r.name,
-              category: {
-                id: r.categoryId,
-                name: r.categoryName,
-                colorCode: r.colorCode,
-              },
-              walkMinutes: wm,
-              priceRange: r.priceRange,
-              thumbnailUrl: r.thumbnailUrl,
-              description: r.description,
-              isFavorite: favoriteIds.has(r.id),
-              myVisit: visit
-                ? { rating: visit.rating, visitCount: visit.visitCount }
-                : null,
-            };
-          }),
-        };
-      }
+    const recentCategoryIds3d = recentHistories
+      .filter((h) => h.eatenDate >= threeDaysAgo && h.restaurant)
+      .map((h) => h.restaurant!.categoryId);
 
-      // 후보가 0보다 크지만 3 미만이면 가능한 만큼 반환 (4단계까지 시도 후)
-      if (relaxStep === 4 && candidates.length > 0) {
-        return {
-          restaurants: candidates.map((r) => {
-            const wm = this.calculateWalkMinutes(
-              latitude,
-              longitude,
-              Number(r.latitude),
-              Number(r.longitude),
-            );
-            const visit = visitMap.get(r.id);
+    // 기본 조건: 폐업 아닌 식당
+    const baseWhere: Prisma.RestaurantWhereInput = {
+      isClosed: false,
+      id: { notIn: previousRecommendedIds.length > 0 ? previousRecommendedIds : undefined },
+    };
 
-            return {
-              id: r.id,
-              name: r.name,
-              category: {
-                id: r.categoryId,
-                name: r.categoryName,
-                colorCode: r.colorCode,
-              },
-              walkMinutes: wm,
-              priceRange: r.priceRange,
-              thumbnailUrl: r.thumbnailUrl,
-              description: r.description,
-              isFavorite: favoriteIds.has(r.id),
-              myVisit: visit
-                ? { rating: visit.rating, visitCount: visit.visitCount }
-                : null,
-            };
-          }),
-        };
+    // 카테고리 필터 (제외 카테고리 적용)
+    if (filterCategoryIds) {
+      // 제외 카테고리는 항상 빼기
+      const effectiveIds = filterCategoryIds.filter((id) => !excludedCategoryIds.includes(id));
+      baseWhere.categoryId = { in: effectiveIds };
+    } else if (excludedCategoryIds.length > 0) {
+      baseWhere.categoryId = { notIn: excludedCategoryIds };
+    }
+
+    // 가격대 필터
+    if (filterPriceRange) {
+      baseWhere.priceRange = filterPriceRange;
+    }
+
+    // 전체 후보 조회
+    const allCandidates = await this.prisma.restaurant.findMany({
+      where: baseWhere,
+      include: {
+        category: { select: { id: true, name: true, colorCode: true } },
+      },
+    });
+
+    // 거리 계산 및 필터링
+    type CandidateWithDistance = typeof allCandidates[number] & { walkMinutes: number };
+
+    const withDistance: CandidateWithDistance[] = allCandidates
+      .map((r) => {
+        const dist = haversineDistance(
+          userLat, userLng,
+          Number(r.latitude), Number(r.longitude),
+        );
+        return { ...r, walkMinutes: distanceToWalkMinutes(dist) };
+      })
+      .filter((r) => r.walkMinutes <= filterWalkMinutes);
+
+    // 5단계 필터링
+    // Step 3: 최근 5일 먹은 식당 제외
+    let candidates = withDistance.filter((r) => !recentRestaurantIds5d.includes(r.id));
+
+    // Step 4: 최근 3일 먹은 카테고리 가중치 낮춤 (해당 카테고리의 식당을 뒤로)
+    candidates = this.applyCategoryWeight(candidates, recentCategoryIds3d);
+
+    // 3개 이상이면 선택
+    if (candidates.length >= 3) {
+      return this.selectRandom(candidates, 3);
+    }
+
+    // 조건 완화 시작
+    // 1단계: 도보 거리 15분으로 확대
+    if (filterWalkMinutes < 15) {
+      candidates = withDistance.length >= 3
+        ? withDistance
+        : allCandidates
+            .map((r) => {
+              const dist = haversineDistance(userLat, userLng, Number(r.latitude), Number(r.longitude));
+              return { ...r, walkMinutes: distanceToWalkMinutes(dist) };
+            })
+            .filter((r) => r.walkMinutes <= 15);
+
+      candidates = candidates.filter((r) => !recentRestaurantIds5d.includes(r.id));
+      candidates = this.applyCategoryWeight(candidates, recentCategoryIds3d);
+
+      if (candidates.length >= 3) {
+        return this.selectRandom(candidates, 3);
       }
     }
 
-    // 4단계까지 완화해도 후보 0개
-    return { restaurants: [] };
+    // 2단계: 먹은 이력 제외 5일 → 3일
+    const relaxedCandidates15 = allCandidates
+      .map((r) => {
+        const dist = haversineDistance(userLat, userLng, Number(r.latitude), Number(r.longitude));
+        return { ...r, walkMinutes: distanceToWalkMinutes(dist) };
+      })
+      .filter((r) => r.walkMinutes <= 15);
+
+    candidates = relaxedCandidates15.filter((r) => !recentRestaurantIds3d.includes(r.id));
+    candidates = this.applyCategoryWeight(candidates, recentCategoryIds3d);
+
+    if (candidates.length >= 3) {
+      return this.selectRandom(candidates, 3);
+    }
+
+    // 3단계: 카테고리 가중치 제거
+    candidates = relaxedCandidates15.filter((r) => !recentRestaurantIds3d.includes(r.id));
+    if (candidates.length >= 3) {
+      return this.selectRandom(candidates, 3);
+    }
+
+    // 4단계: 먹은 이력 제외 완전 해제
+    candidates = relaxedCandidates15;
+    if (candidates.length >= 3) {
+      return this.selectRandom(candidates, 3);
+    }
+
+    // 4단계에서도 3개 미만이면 있는 만큼 반환
+    return this.selectRandom(candidates, Math.min(3, candidates.length));
   }
 
-  /**
-   * 조건 완화 단계에 따른 후보 식당 조회
-   */
-  private async getCandidates(params: {
-    latitude: number;
-    longitude: number;
-    categoryIds: string[] | null;
-    excludedCategoryIds: string[];
-    priceRange: string;
-    walkMinutes: number;
-    previouslyRecommendedIds: Set<string>;
-    relaxStep: number;
-    userId: string;
-  }) {
-    const {
-      latitude,
-      longitude,
-      categoryIds,
-      excludedCategoryIds,
-      priceRange,
-      walkMinutes,
-      previouslyRecommendedIds,
-      relaxStep,
-      userId,
-    } = params;
+  /** 카테고리 가중치 적용: 최근 3일 먹은 카테고리의 식당을 뒤로 */
+  private applyCategoryWeight<T extends { category: { id: string } }>(
+    candidates: T[],
+    recentCategoryIds: string[],
+  ): T[] {
+    if (recentCategoryIds.length === 0) return candidates;
 
-    // 1단계 완화: 도보 15분으로 확대
-    const effectiveWalkMinutes =
-      relaxStep >= 1 && walkMinutes < 15 ? 15 : walkMinutes;
+    const preferred = candidates.filter((c) => !recentCategoryIds.includes(c.category.id));
+    const deprioritized = candidates.filter((c) => recentCategoryIds.includes(c.category.id));
 
-    // 직선 거리 한도 (미터)
-    const maxDistMeters =
-      (effectiveWalkMinutes * WALK_SPEED_M_PER_MIN) / ROAD_CORRECTION;
-
-    // 먹은 이력 제외 기간 결정
-    let excludeDays: number;
-    if (relaxStep >= 4) {
-      excludeDays = 0; // 제외 완전 해제
-    } else if (relaxStep >= 2) {
-      excludeDays = 3; // 5일 → 3일로 단축
-    } else {
-      excludeDays = 5; // 기본 5일
-    }
-
-    // 제외할 식당 ID 조회 (최근 N일 먹은 식당)
-    const excludedRestaurantIds = new Set<string>(previouslyRecommendedIds);
-
-    if (excludeDays > 0) {
-      const recentHistories = await this.prisma.eatingHistory.findMany({
-        where: {
-          userId,
-          restaurantId: { not: null },
-          eatenDate: { gte: this.getDaysAgoDate(excludeDays) },
-        },
-        select: { restaurantId: true },
-      });
-      for (const h of recentHistories) {
-        if (h.restaurantId) excludedRestaurantIds.add(h.restaurantId);
-      }
-    }
-
-    // PostGIS 거리 기반 쿼리로 후보 조회
-    const candidates = await this.prisma.$queryRaw<
-      Array<{
-        id: string;
-        name: string;
-        category_id: string;
-        category_name: string;
-        color_code: string;
-        latitude: number;
-        longitude: number;
-        price_range: string | null;
-        thumbnail_url: string | null;
-        description: string | null;
-      }>
-    >`
-      SELECT r.id, r.name, r.category_id, c.name AS category_name, c.color_code,
-             r.latitude, r.longitude, r.price_range, r.thumbnail_url, r.description
-      FROM restaurant r
-      JOIN category c ON r.category_id = c.id
-      WHERE r.is_closed = false
-        AND r.is_user_created = false
-        AND ST_DWithin(
-          r.geom,
-          ST_MakePoint(${longitude}, ${latitude})::geography,
-          ${maxDistMeters}
-        )
-    `;
-
-    // 애플리케이션 레벨 필터링
-    let filtered = candidates
-      .map((r) => ({
-        id: r.id,
-        name: r.name,
-        categoryId: r.category_id,
-        categoryName: r.category_name,
-        colorCode: r.color_code,
-        latitude: r.latitude,
-        longitude: r.longitude,
-        priceRange: r.price_range,
-        thumbnailUrl: r.thumbnail_url,
-        description: r.description,
-      }))
-      // 이전 추천 + 최근 먹은 식당 제외
-      .filter((r) => !excludedRestaurantIds.has(r.id))
-      // 제외 카테고리 필터
-      .filter((r) => !excludedCategoryIds.includes(r.categoryId));
-
-    // 카테고리 필터 (null이면 전체)
-    if (categoryIds && categoryIds.length > 0) {
-      filtered = filtered.filter((r) => categoryIds.includes(r.categoryId));
-    }
-
-    // 가격대 필터 (가격 정보 없는 식당은 제외)
-    if (priceRange) {
-      filtered = filtered.filter(
-        (r) => r.priceRange === priceRange || r.priceRange === null,
-      );
-    }
-
-    return filtered;
+    return [...preferred, ...deprioritized];
   }
 
-  /**
-   * 카테고리 가중치 기반 랜덤 선택 (최근 3일 먹은 카테고리 확률 감소)
-   */
-  private weightedRandomSelect(
-    candidates: Array<{
+  /** 랜덤 N개 선택 */
+  private selectRandom<T>(candidates: T[], count: number): T[] {
+    if (candidates.length <= count) return candidates;
+
+    const shuffled = [...candidates].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
+  }
+
+  /** 오늘 이전에 추천된 식당 ID 목록 */
+  private async getPreviouslyRecommendedIds(userId: string, today: Date): Promise<string[]> {
+    const logs = await this.prisma.recommendationLog.findMany({
+      where: { userId, recommendationDate: today },
+      include: { items: { select: { restaurantId: true } } },
+    });
+
+    return logs.flatMap((log) => log.items.map((item) => item.restaurantId));
+  }
+
+  /** 식당에 즐겨찾기 + 방문이력 정보 추가 */
+  private async enrichRestaurants(
+    restaurants: Array<{
       id: string;
       name: string;
-      categoryId: string;
-      categoryName: string;
-      colorCode: string;
-      latitude: number;
-      longitude: number;
-      priceRange: string | null;
+      category: { id: string; name: string; colorCode: string };
+      walkMinutes: number;
+      priceRange: any;
       thumbnailUrl: string | null;
       description: string | null;
     }>,
     userId: string,
-    allVisits: Array<{ restaurantId: string | null; eatenDate: Date; rating: number }>,
   ) {
-    // 최근 3일 먹은 카테고리 파악 (이력에서 카테고리 추출은 간소화)
-    const threeDaysAgo = this.getDaysAgoDate(3);
-    const recentCategoryIds = new Set<string>();
+    if (restaurants.length === 0) return [];
 
-    // 후보 목록에서 최근 3일 방문한 카테고리를 추출
-    const recentRestaurantIds = new Set(
-      allVisits
-        .filter((v) => v.restaurantId && new Date(v.eatenDate) >= threeDaysAgo)
-        .map((v) => v.restaurantId!),
-    );
+    const restaurantIds = restaurants.map((r) => r.id);
 
-    for (const c of candidates) {
-      if (recentRestaurantIds.has(c.id)) {
-        recentCategoryIds.add(c.categoryId);
+    const favorites = await this.prisma.favorite.findMany({
+      where: { userId, restaurantId: { in: restaurantIds } },
+    });
+    const favoriteSet = new Set(favorites.map((f) => f.restaurantId));
+
+    const histories = await this.prisma.eatingHistory.findMany({
+      where: { userId, restaurantId: { in: restaurantIds } },
+    });
+    const visitMap = new Map<string, { rating: number; visitCount: number }>();
+    for (const h of histories) {
+      if (!h.restaurantId) continue;
+      const existing = visitMap.get(h.restaurantId);
+      if (existing) {
+        existing.visitCount++;
+        existing.rating = Math.round(
+          (existing.rating * (existing.visitCount - 1) + h.rating) / existing.visitCount,
+        );
+      } else {
+        visitMap.set(h.restaurantId, { rating: h.rating, visitCount: 1 });
       }
     }
 
-    // 가중치 부여: 최근 먹은 카테고리 = 0.3, 나머지 = 1.0
-    const weights = candidates.map((c) =>
-      recentCategoryIds.has(c.categoryId) ? 0.3 : 1.0,
-    );
-
-    return this.weightedSample(candidates, weights, RECOMMENDATION_COUNT);
-  }
-
-  /**
-   * 가중치 기반 랜덤 샘플링 (중복 없이)
-   */
-  private weightedSample<T>(items: T[], weights: number[], count: number): T[] {
-    const result: T[] = [];
-    const used = new Set<number>();
-
-    for (let i = 0; i < Math.min(count, items.length); i++) {
-      // 사용 가능한 항목의 가중치 합
-      let totalWeight = 0;
-      for (let j = 0; j < items.length; j++) {
-        if (!used.has(j)) totalWeight += weights[j];
-      }
-
-      // 랜덤 선택
-      let random = Math.random() * totalWeight;
-      for (let j = 0; j < items.length; j++) {
-        if (used.has(j)) continue;
-        random -= weights[j];
-        if (random <= 0) {
-          result.push(items[j]);
-          used.add(j);
-          break;
-        }
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * 단순 랜덤 선택 (가중치 없이)
-   */
-  private randomSelect<T>(items: T[], count: number): T[] {
-    const shuffled = [...items].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, count);
+    return restaurants.map((r) => ({
+      id: r.id,
+      name: r.name,
+      category: r.category,
+      walkMinutes: r.walkMinutes,
+      priceRange: r.priceRange,
+      thumbnailUrl: r.thumbnailUrl,
+      description: r.description,
+      isFavorite: favoriteSet.has(r.id),
+      myVisit: visitMap.get(r.id) ?? null,
+    }));
   }
 }

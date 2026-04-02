@@ -1,10 +1,14 @@
-// POST /favorites/toggle 요청
+// ─────────────────────────────────────────
+// 즐겨찾기 API 타입 (API 스펙 7절)
+// ─────────────────────────────────────────
+
+// --- 즐겨찾기 토글 (POST /favorites/toggle) ---
+
 export interface ToggleFavoriteRequest {
   restaurantId: string;
 }
 
-// POST /favorites/toggle 응답
 export interface ToggleFavoriteResponse {
   restaurantId: string;
-  isFavorite: boolean;
+  isFavorite: boolean; // true면 추가됨, false면 해제됨
 }

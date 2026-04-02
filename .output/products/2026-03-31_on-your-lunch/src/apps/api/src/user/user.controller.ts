@@ -2,94 +2,87 @@ import {
   Controller,
   Get,
   Put,
+  Post,
   Patch,
   Delete,
-  Post,
   Body,
-  UseGuards,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
-import { CurrentUser } from '@/common';
 import { UserService } from './user.service';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { UpdateLocationDto } from './dto/update-location.dto';
+import { UpdatePreferencesDto } from './dto/update-preferences.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { UpdatePushTokenDto } from './dto/update-push-token.dto';
 
-@ApiTags('사용자')
-@Controller('users')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+@Controller('users/me')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private userService: UserService) {}
 
-  @Get('me')
-  @ApiOperation({ summary: '내 정보 조회' })
-  async getMe(@CurrentUser() user: { userId: string }) {
-    return this.userService.getMe(user.userId);
+  /** GET /users/me — 내 정보 조회 */
+  @Get()
+  getMe(@CurrentUser() user: { id: string }) {
+    return this.userService.getMe(user.id);
   }
 
-  @Put('me/location')
-  @ApiOperation({ summary: '회사 위치 설정/변경' })
-  async updateLocation(
-    @CurrentUser() user: { userId: string },
-    @Body() body: { latitude: number; longitude: number; address: string; buildingName?: string },
+  /** PUT /users/me/location — 회사 위치 설정 */
+  @Put('location')
+  updateLocation(
+    @CurrentUser() user: { id: string },
+    @Body() dto: UpdateLocationDto,
   ) {
-    return this.userService.updateLocation(user.userId, body);
+    return this.userService.updateLocation(user.id, dto);
   }
 
-  @Put('me/preferences')
-  @ApiOperation({ summary: '취향 설정/변경' })
-  async updatePreferences(
-    @CurrentUser() user: { userId: string },
-    @Body()
-    body: {
-      preferredCategoryIds: string[];
-      excludedCategoryIds: string[];
-      allergyTypeIds: string[];
-      preferredPriceRange: string;
-    },
+  /** PUT /users/me/preferences — 취향 설정 */
+  @Put('preferences')
+  updatePreferences(
+    @CurrentUser() user: { id: string },
+    @Body() dto: UpdatePreferencesDto,
   ) {
-    return this.userService.updatePreferences(user.userId, body);
+    return this.userService.updatePreferences(user.id, dto);
   }
 
-  @Post('me/onboarding/complete')
+  /** POST /users/me/onboarding/complete — 온보딩 완료 */
+  @Post('onboarding/complete')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '온보딩 완료' })
-  async completeOnboarding(@CurrentUser() user: { userId: string }) {
-    return this.userService.completeOnboarding(user.userId);
+  completeOnboarding(@CurrentUser() user: { id: string }) {
+    return this.userService.completeOnboarding(user.id);
   }
 
-  @Patch('me/profile')
-  @ApiOperation({ summary: '프로필 수정' })
-  async updateProfile(
-    @CurrentUser() user: { userId: string },
-    @Body() body: { nickname?: string },
+  /** PATCH /users/me/profile — 프로필 수정 */
+  @Patch('profile')
+  updateProfile(
+    @CurrentUser() user: { id: string },
+    @Body() dto: UpdateProfileDto,
   ) {
-    return this.userService.updateProfile(user.userId, body);
+    return this.userService.updateProfile(user.id, dto);
   }
 
-  @Put('me/notification')
-  @ApiOperation({ summary: '알림 설정 변경' })
-  async updateNotification(
-    @CurrentUser() user: { userId: string },
-    @Body() body: { enabled: boolean; time: string },
+  /** PUT /users/me/notification — 알림 설정 */
+  @Put('notification')
+  updateNotification(
+    @CurrentUser() user: { id: string },
+    @Body() dto: UpdateNotificationDto,
   ) {
-    return this.userService.updateNotification(user.userId, body);
+    return this.userService.updateNotification(user.id, dto);
   }
 
-  @Put('me/push-token')
-  @ApiOperation({ summary: '푸시 토큰 등록' })
-  async updatePushToken(
-    @CurrentUser() user: { userId: string },
-    @Body() body: { expoPushToken: string },
+  /** PUT /users/me/push-token — 푸시 토큰 등록 */
+  @Put('push-token')
+  updatePushToken(
+    @CurrentUser() user: { id: string },
+    @Body() dto: UpdatePushTokenDto,
   ) {
-    return this.userService.updatePushToken(user.userId, body.expoPushToken);
+    return this.userService.updatePushToken(user.id, dto);
   }
 
-  @Delete('me')
+  /** DELETE /users/me — 회원 탈퇴 */
+  @Delete()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '회원 탈퇴' })
-  async deleteAccount(@CurrentUser() user: { userId: string }) {
-    return this.userService.deleteAccount(user.userId);
+  deleteMe(@CurrentUser() user: { id: string }) {
+    return this.userService.deleteMe(user.id);
   }
 }

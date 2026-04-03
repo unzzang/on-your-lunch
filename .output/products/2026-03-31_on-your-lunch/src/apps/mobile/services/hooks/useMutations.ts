@@ -7,6 +7,7 @@ import type {
   UpdateLocationRequest,
   UpdateNotificationRequest,
   UpdateNotificationResponse,
+  UpdatePreferencesRequest,
   CreateEatingHistoryRequest,
   EatingHistoryResponse,
   ToggleFavoriteResponse,
@@ -33,6 +34,21 @@ export function useUpdateLocation() {
     mutationFn: async (body: UpdateLocationRequest) => {
       const response = await api
         .put('users/me/location', { json: body })
+        .json<ApiResponse<UserMeResponse>>();
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+    },
+  });
+}
+
+export function useUpdatePreferences() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: UpdatePreferencesRequest) => {
+      const response = await api
+        .put('users/me/preferences', { json: body })
         .json<ApiResponse<UserMeResponse>>();
       return response.data;
     },

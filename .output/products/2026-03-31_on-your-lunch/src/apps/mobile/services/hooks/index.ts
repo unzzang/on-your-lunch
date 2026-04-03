@@ -6,6 +6,7 @@ export { useAllergyTypes } from './useAllergyTypes';
 export {
   useFavoriteToggle,
   useUpdateProfile,
+  useUpdatePreferences,
   useUpdateLocation,
   useUpdateNotification,
   useCreateEatingHistory,

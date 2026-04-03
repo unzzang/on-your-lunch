@@ -1,31 +1,36 @@
-// ─────────────────────────────────────────
-// 탭 레이아웃
-//
-// 하단 탭 바 구성: 홈 / 탐색 / 이력 / 마이
-// 배달의민족 스타일의 깔끔한 탭 바.
-// ─────────────────────────────────────────
-
 import { Tabs } from 'expo-router';
-import { Text, StyleSheet } from 'react-native';
-import { Colors, Typography, IconSize } from '@/constants/tokens';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function TabsLayout() {
+const PRIMARY = '#D4501F';
+const INACTIVE = '#9CA3AF';
+
+export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.text.secondary,
-        tabBarStyle: styles.tabBar,
-        tabBarLabelStyle: styles.tabLabel,
+        tabBarActiveTintColor: PRIMARY,
+        tabBarInactiveTintColor: INACTIVE,
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '500',
+        },
+        tabBarStyle: {
+          backgroundColor: '#FFFFFF',
+          borderTopWidth: 1,
+          borderTopColor: '#E5E7EB',
+          height: 72,
+          paddingBottom: 28,
+          paddingTop: 8,
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: '홈',
-          tabBarIcon: ({ color }) => (
-            <Text style={[styles.tabIcon, { color }]}>{'🏠'}</Text>
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={24} color={color} />
           ),
         }}
       />
@@ -33,8 +38,8 @@ export default function TabsLayout() {
         name="explore"
         options={{
           title: '탐색',
-          tabBarIcon: ({ color }) => (
-            <Text style={[styles.tabIcon, { color }]}>{'🔍'}</Text>
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="search-outline" size={24} color={color} />
           ),
         }}
       />
@@ -42,8 +47,8 @@ export default function TabsLayout() {
         name="history"
         options={{
           title: '이력',
-          tabBarIcon: ({ color }) => (
-            <Text style={[styles.tabIcon, { color }]}>{'📅'}</Text>
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar-outline" size={24} color={color} />
           ),
         }}
       />
@@ -51,28 +56,11 @@ export default function TabsLayout() {
         name="mypage"
         options={{
           title: '마이',
-          tabBarIcon: ({ color }) => (
-            <Text style={[styles.tabIcon, { color }]}>{'👤'}</Text>
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={24} color={color} />
           ),
         }}
       />
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: Colors.bg.primary,
-    borderTopColor: Colors.border.default,
-    borderTopWidth: 1,
-    height: 84,
-    paddingBottom: 20,
-    paddingTop: 8,
-  },
-  tabLabel: {
-    ...Typography.caption,
-  },
-  tabIcon: {
-    fontSize: IconSize.navigation,
-  },
-});

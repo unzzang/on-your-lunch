@@ -1,17 +1,12 @@
-// ─────────────────────────────────────────
-// 디자인 토큰 상수
-//
-// 디자인 시스템 문서(005_design/design-system.md)의 값을 코드로 정의.
-// 임의 색상/크기를 쓰지 않고 반드시 이 파일의 토큰만 사용한다.
-// ─────────────────────────────────────────
+/**
+ * 온유어런치 디자인 토큰
+ * 출처: docs/005_design/2026-03-30(일)_design-system.md
+ */
 
-// --- 색상 ---
-
-export const Colors = {
+export const colors = {
   primary: '#D4501F',
   primaryHover: '#B8441A',
   primaryDisabled: '#E8A78E',
-
   secondary: '#6B7280',
   destructive: '#DC2626',
   success: '#16A34A',
@@ -35,10 +30,9 @@ export const Colors = {
     inverse: '#FFFFFF',
   },
 
-  overlay: 'rgba(0, 0, 0, 0.5)',
+  overlay: 'rgba(0,0,0,0.5)',
   toastBg: '#1F2937',
 
-  // 카테고리별 색상 (ERD CATEGORY 테이블 color_code와 일치)
   category: {
     korean: '#FF8C00',
     chinese: '#FF0000',
@@ -52,9 +46,7 @@ export const Colors = {
   rating: '#FBBF24',
 } as const;
 
-// --- 타이포그래피 ---
-
-export const Typography = {
+export const typo = {
   display: { fontSize: 28, fontWeight: '700' as const, lineHeight: 36 },
   h1: { fontSize: 24, fontWeight: '700' as const, lineHeight: 32 },
   h2: { fontSize: 20, fontWeight: '600' as const, lineHeight: 28 },
@@ -65,25 +57,21 @@ export const Typography = {
   overline: { fontSize: 11, fontWeight: '500' as const, lineHeight: 16 },
 } as const;
 
-// --- 간격 (4px 그리드) ---
-
-export const Spacing = {
+export const spacing = {
   xs: 4,
   sm: 8,
   md: 12,
-  base: 16,
-  lg: 20,
-  xl: 24,
-  '2xl': 32,
-  '3xl': 40,
-  '4xl': 48,
-  '5xl': 64,
-  '6xl': 80,
+  lg: 16,
+  xl: 20,
+  '2xl': 24,
+  '3xl': 32,
+  '4xl': 40,
+  '5xl': 48,
+  '6xl': 64,
+  '7xl': 80,
 } as const;
 
-// --- 모서리 반경 ---
-
-export const Radius = {
+export const radius = {
   sm: 4,
   md: 8,
   lg: 12,
@@ -91,9 +79,7 @@ export const Radius = {
   full: 9999,
 } as const;
 
-// --- 그림자 ---
-
-export const Shadow = {
+export const shadow = {
   sm: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -117,21 +103,9 @@ export const Shadow = {
   },
 } as const;
 
-// --- 아이콘 크기 ---
-
-export const IconSize = {
-  inline: 16,
-  button: 20,
-  navigation: 24,
-} as const;
-
-// --- Z-index ---
-
-export const ZIndex = {
-  content: 0,
-  stickyHeader: 100,
-  dropdown: 200,
-  modalOverlay: 300,
-  modal: 400,
-  toast: 500,
-} as const;
+// alias (자동 생성된 파일과의 호환)
+export const Colors = colors;
+export const Typography = typo;
+export const Spacing = spacing;
+export const Radius = radius;
+export const Shadow = shadow;

@@ -1,30 +1,25 @@
-// ─────────────────────────────────────────
-// 탐색 스토어
-//
-// 탐색 화면의 뷰 모드(지도/리스트) 상태 유지.
-// 탭을 이동했다 돌아왔을 때 마지막 뷰 모드를 기억.
-// ─────────────────────────────────────────
-
 import { create } from 'zustand';
-
-type ViewMode = 'map' | 'list';
+import type { RestaurantSort } from '@on-your-lunch/shared-types';
 
 interface ExploreState {
-  // 현재 뷰 모드
-  viewMode: ViewMode;
+  searchQuery: string;
+  selectedCategoryId: string | null;
+  sortBy: RestaurantSort;
 
-  // 액션
-  setViewMode: (mode: ViewMode) => void;
-  toggleViewMode: () => void;
+  setSearchQuery: (query: string) => void;
+  setCategory: (id: string | null) => void;
+  setSortBy: (sort: RestaurantSort) => void;
+  resetExplore: () => void;
 }
 
 export const useExploreStore = create<ExploreState>((set) => ({
-  viewMode: 'list',
+  searchQuery: '',
+  selectedCategoryId: null,
+  sortBy: 'distance' as RestaurantSort,
 
-  setViewMode: (mode) => set({ viewMode: mode }),
-
-  toggleViewMode: () =>
-    set((state) => ({
-      viewMode: state.viewMode === 'map' ? 'list' : 'map',
-    })),
+  setSearchQuery: (query) => set({ searchQuery: query }),
+  setCategory: (id) => set({ selectedCategoryId: id }),
+  setSortBy: (sort) => set({ sortBy: sort }),
+  resetExplore: () =>
+    set({ searchQuery: '', selectedCategoryId: null, sortBy: 'distance' as RestaurantSort }),
 }));

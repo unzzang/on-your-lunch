@@ -3,7 +3,8 @@ import { resolve } from 'path';
 
 // 루트 .env 로드 (Prisma, JWT 등에서 사용)
 // 반드시 다른 모듈 import 전에 실행해야 process.env가 채워진다
-config({ path: resolve(__dirname, '../../../.env') });
+// process.cwd()는 항상 apps/api/ 이므로, ../../.env로 워크스페이스 루트의 .env를 참조
+config({ path: resolve(process.cwd(), '../../.env'), override: true });
 
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
@@ -15,6 +16,13 @@ import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Bootstrap');
+
+  // globalPrefix 바깥의 헬스체크 엔드포인트 — Railway 배포 시 사용
+  // /health로 접근 가능 (v1 prefix 적용 안 됨)
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.get('/health', (_req: any, res: any) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
 
   // 모든 API 경로 앞에 /v1을 붙임 (예: /v1/categories)
   app.setGlobalPrefix('v1');

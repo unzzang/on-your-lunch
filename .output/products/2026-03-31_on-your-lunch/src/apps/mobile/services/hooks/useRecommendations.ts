@@ -1,44 +1,43 @@
-// ─────────────────────────────────────────
-// 추천 관련 TanStack Query 훅
-//
-// 오늘의 추천 조회 + 새로고침.
-// ─────────────────────────────────────────
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/services/api';
+import { api } from '../api';
+import { useFilterStore } from '../../stores/filterStore';
 import type {
   ApiResponse,
   RecommendationTodayResponse,
   RefreshRecommendationRequest,
 } from '@on-your-lunch/shared-types';
 
-// 오늘의 추천 조회
 export function useRecommendations() {
+  const { selectedCategoryId, walkMinutes, priceRange } = useFilterStore();
+
   return useQuery({
-    queryKey: ['recommendations', 'today'],
+    queryKey: ['recommendations', selectedCategoryId, walkMinutes, priceRange],
     queryFn: async () => {
+      const params = new URLSearchParams();
+      if (selectedCategoryId) params.set('categoryIds', selectedCategoryId);
+      if (priceRange) params.set('priceRange', priceRange);
+      params.set('walkMinutes', String(walkMinutes));
+
       const response = await api
-        .get('recommendations/today')
+        .get('recommendations/today', { searchParams: params })
         .json<ApiResponse<RecommendationTodayResponse>>();
       return response.data;
     },
   });
 }
 
-// 추천 새로고침
-export function useRefreshRecommendations() {
+export function useRefreshRecommendation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (request: RefreshRecommendationRequest) => {
+    mutationFn: async (body: RefreshRecommendationRequest) => {
       const response = await api
-        .post('recommendations/today/refresh', { json: request })
+        .post('recommendations/today/refresh', { json: body })
         .json<ApiResponse<RecommendationTodayResponse>>();
       return response.data;
     },
-    onSuccess: (data) => {
-      // 새로고침 결과로 캐시 업데이트
-      queryClient.setQueryData(['recommendations', 'today'], data);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recommendations'] });
     },
   });
 }

@@ -10,7 +10,7 @@ watchPaths = ["apps/api/**", "packages/shared-types/**"]
 
 [deploy]
 # 헬스체크 경로
-healthcheckPath = "/api/health"
+healthcheckPath = "/health"
 # 헬스체크 타임아웃 (마이그레이션 실행 시간 고려)
 healthcheckTimeout = 120
 # 재시작 정책

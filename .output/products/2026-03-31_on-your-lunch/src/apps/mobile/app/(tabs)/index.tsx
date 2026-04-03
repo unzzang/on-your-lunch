@@ -1,383 +1,372 @@
-// ─────────────────────────────────────────
-// 홈 화면 (오늘의 추천)
-//
-// App Bar + 인사 영역 + 카테고리 칩 + 서브 필터 + 추천 카드 3장 + 새로고침 버튼.
-// 4가지 상태: 정상 / 로딩(스켈레톤) / 빈 / 에러.
-// ─────────────────────────────────────────
-
-import { useState, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  RefreshControl,
+  FlatList,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/tokens';
-import { useFilterStore } from '@/stores/filterStore';
-import { useRecommendations, useRefreshRecommendations } from '@/services/hooks';
-import { useCategories, useFavoriteToggle, useMe } from '@/services/hooks';
-import RestaurantCard from '@/components/RestaurantCard';
-import CategoryChips from '@/components/CategoryChips';
-import SkeletonCard from '@/components/SkeletonCard';
-import EmptyState from '@/components/EmptyState';
-import ErrorState from '@/components/ErrorState';
-import type { WalkMinutes } from '@on-your-lunch/shared-types';
-import { PriceRange } from '@on-your-lunch/shared-types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { colors, typo, spacing, radius, shadow } from '../../constants/tokens';
 
-const WALK_OPTIONS: { label: string; value: WalkMinutes }[] = [
-  { label: '5분', value: 5 },
-  { label: '10분', value: 10 },
-  { label: '15분', value: 15 },
+const CATEGORIES = [
+  { id: 'all', name: '전체' },
+  { id: 'korean', name: '한식' },
+  { id: 'chinese', name: '중식' },
+  { id: 'japanese', name: '일식' },
+  { id: 'western', name: '양식' },
+  { id: 'asian', name: '아시안' },
+  { id: 'snack', name: '분식' },
+  { id: 'salad', name: '샐러드' },
 ];
 
-const PRICE_OPTIONS: { label: string; value: PriceRange }[] = [
-  { label: '~1만', value: PriceRange.UNDER_10K },
-  { label: '1~2만', value: PriceRange.BETWEEN_10K_20K },
-  { label: '2만~', value: PriceRange.OVER_20K },
+const MOCK_RESTAURANTS = [
+  {
+    id: '1',
+    name: '을지로 골목식당',
+    category: '한식',
+    walkMinutes: 8,
+    priceRange: '~1만원',
+    isFavorite: false,
+  },
+  {
+    id: '2',
+    name: '파스타공방',
+    category: '양식',
+    walkMinutes: 5,
+    priceRange: '~1.5만원',
+    isFavorite: true,
+  },
+  {
+    id: '3',
+    name: '스시히로',
+    category: '일식',
+    walkMinutes: 10,
+    priceRange: '~2만원',
+    isFavorite: false,
+  },
 ];
 
-export default function HomeScreen() {
-  const router = useRouter();
-  const { categoryIds, priceRange, walkMinutes, toggleCategory, setCategoryIds, setPriceRange, setWalkMinutes, resetFilters } = useFilterStore();
+type CategoryItem = (typeof CATEGORIES)[number];
+type Restaurant = (typeof MOCK_RESTAURANTS)[number];
 
-  const { data: meData } = useMe();
-  const { data: categories = [] } = useCategories();
-  const {
-    data: recommendData,
-    isLoading,
-    isError,
-    refetch,
-  } = useRecommendations();
-  const refreshMutation = useRefreshRecommendations();
-  const favoriteMutation = useFavoriteToggle();
-
-  const [refreshing, setRefreshing] = useState(false);
-
-  const nickname = meData?.nickname ?? '사용자';
-  const restaurants = recommendData?.restaurants ?? [];
-  const refreshCount = recommendData?.refreshCount ?? 0;
-  const maxRefresh = recommendData?.maxRefreshCount ?? 5;
-
-  const onPullRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
-  }, [refetch]);
-
-  const handleRefresh = useCallback(() => {
-    if (refreshCount >= maxRefresh) return;
-    refreshMutation.mutate({
-      categoryIds: categoryIds.length > 0 ? categoryIds : undefined,
-      priceRange: priceRange ?? undefined,
-      walkMinutes,
-    });
-  }, [refreshCount, maxRefresh, refreshMutation, categoryIds, priceRange, walkMinutes]);
-
-  const handleCategoryToggle = useCallback(
-    (id: string) => {
-      if (id === 'ALL') {
-        setCategoryIds([]);
-      } else {
-        toggleCategory(id);
-      }
-    },
-    [setCategoryIds, toggleCategory],
-  );
-
-  const handleRestaurantPress = useCallback(
-    (id: string) => {
-      router.push(`/restaurant/${id}`);
-    },
-    [router],
-  );
-
-  const handleFavoriteToggle = useCallback(
-    (id: string) => {
-      favoriteMutation.mutate(id);
-    },
-    [favoriteMutation],
-  );
-
-  // 렌더 콘텐츠: 로딩 / 에러 / 빈 / 정상
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <View style={styles.cardArea}>
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-        </View>
-      );
-    }
-
-    if (isError) {
-      return <ErrorState onRetry={() => refetch()} />;
-    }
-
-    if (restaurants.length === 0) {
-      return (
-        <EmptyState
-          icon="🍽"
-          title="조건에 맞는 식당을 찾지 못했어요"
-          description="필터를 바꿔보세요"
-          actionLabel="필터 초기화"
-          onAction={resetFilters}
-          actionVariant="secondary"
-        />
-      );
-    }
-
-    return (
-      <View style={styles.cardArea}>
-        {restaurants.map((r) => (
-          <RestaurantCard
-            key={r.id}
-            id={r.id}
-            name={r.name}
-            category={r.category}
-            walkMinutes={r.walkMinutes}
-            priceRange={r.priceRange}
-            thumbnailUrl={r.thumbnailUrl}
-            isFavorite={r.isFavorite}
-            myVisit={r.myVisit}
-            onPress={handleRestaurantPress}
-            onFavoriteToggle={handleFavoriteToggle}
-          />
-        ))}
-
-        {/* 새로고침 버튼 */}
-        <TouchableOpacity
-          style={[
-            styles.refreshButton,
-            refreshCount >= maxRefresh && styles.refreshButtonDisabled,
-          ]}
-          onPress={handleRefresh}
-          disabled={refreshCount >= maxRefresh || refreshMutation.isPending}
-          activeOpacity={0.7}
-        >
-          <Text
-            style={[
-              styles.refreshIcon,
-              refreshCount >= maxRefresh && styles.refreshIconDisabled,
-            ]}
-          >
-            {'🔄'}
-          </Text>
-          <Text
-            style={[
-              styles.refreshText,
-              refreshCount >= maxRefresh && styles.refreshTextDisabled,
-            ]}
-          >
-            다른 추천 보기 ({refreshCount}/{maxRefresh})
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+export default function HomeTab() {
+  const insets = useSafeAreaInsets();
+  const selectedCategory = 'all';
+  const refreshCount = 4;
+  const maxRefresh = 5;
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* App Bar */}
       <View style={styles.appBar}>
         <Text style={styles.logo}>온유어런치</Text>
-        <TouchableOpacity style={styles.bellButton} activeOpacity={0.7}>
-          <Text style={styles.bellIcon}>{'🔔'}</Text>
+        <TouchableOpacity style={styles.bellButton}>
+          <Ionicons name="notifications-outline" size={24} color={colors.text.secondary} />
         </TouchableOpacity>
       </View>
 
       <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onPullRefresh} />
-        }
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
       >
-        {/* 인사 영역 */}
+        {/* Greeting */}
         <View style={styles.greeting}>
-          <Text style={styles.greetingText}>{nickname}님,</Text>
+          <Text style={styles.greetingText}>사용자님,</Text>
           <Text style={styles.greetingText}>오늘 점심 뭐 먹을까요?</Text>
         </View>
 
-        {/* 카테고리 칩 */}
-        <CategoryChips
-          categories={categories}
-          selectedIds={categoryIds}
-          onToggle={handleCategoryToggle}
-        />
-
-        {/* 서브 필터 */}
-        <View style={styles.subFilters}>
-          {/* 도보 거리 */}
-          <View style={styles.segmentGroup}>
-            {WALK_OPTIONS.map((opt) => (
+        {/* Category Chips */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chipContainer}
+          style={styles.chipScroll}
+        >
+          {CATEGORIES.map((cat: CategoryItem) => {
+            const isActive = cat.id === selectedCategory;
+            return (
               <TouchableOpacity
-                key={opt.value}
+                key={cat.id}
                 style={[
-                  styles.segment,
-                  walkMinutes === opt.value && styles.segmentActive,
+                  styles.chip,
+                  isActive ? styles.chipActive : styles.chipInactive,
                 ]}
-                onPress={() => setWalkMinutes(opt.value)}
-                activeOpacity={0.7}
               >
                 <Text
                   style={[
-                    styles.segmentText,
-                    walkMinutes === opt.value && styles.segmentTextActive,
+                    styles.chipText,
+                    isActive ? styles.chipTextActive : styles.chipTextInactive,
                   ]}
                 >
-                  {opt.label}
+                  {cat.name}
                 </Text>
               </TouchableOpacity>
-            ))}
+            );
+          })}
+        </ScrollView>
+
+        {/* Sub Filters */}
+        <View style={styles.subFilterRow}>
+          <View style={styles.segmentGroup}>
+            {['5분', '10분', '15분'].map((label, i) => {
+              const isActive = i === 1;
+              return (
+                <TouchableOpacity
+                  key={label}
+                  style={[
+                    styles.segment,
+                    isActive && styles.segmentActive,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      isActive && styles.segmentTextActive,
+                    ]}
+                  >
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
-
-          {/* 가격대 */}
           <View style={styles.segmentGroup}>
-            {PRICE_OPTIONS.map((opt) => (
-              <TouchableOpacity
-                key={opt.value}
-                style={[
-                  styles.segment,
-                  priceRange === opt.value && styles.segmentActive,
-                ]}
-                onPress={() =>
-                  setPriceRange(priceRange === opt.value ? null : opt.value)
-                }
-                activeOpacity={0.7}
-              >
-                <Text
+            {['~1만', '1~2만', '2만~'].map((label, i) => {
+              const isActive = i === 0;
+              return (
+                <TouchableOpacity
+                  key={label}
                   style={[
-                    styles.segmentText,
-                    priceRange === opt.value && styles.segmentTextActive,
+                    styles.segment,
+                    isActive && styles.segmentActive,
                   ]}
                 >
-                  {opt.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      isActive && styles.segmentTextActive,
+                    ]}
+                  >
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
-        {/* 구분선 */}
+        {/* Divider */}
         <View style={styles.divider} />
 
-        {/* 메인 콘텐츠 */}
-        {renderContent()}
+        {/* Recommendation Cards */}
+        {MOCK_RESTAURANTS.map((restaurant: Restaurant) => (
+          <TouchableOpacity key={restaurant.id} style={styles.card} activeOpacity={0.7}>
+            {/* Image Placeholder */}
+            <View style={styles.cardImage}>
+              <Ionicons name="restaurant-outline" size={48} color={colors.text.placeholder} />
+            </View>
+            {/* Info */}
+            <View style={styles.cardInfo}>
+              <View style={styles.cardRow}>
+                <Text style={styles.cardName}>{restaurant.name}</Text>
+                <TouchableOpacity style={styles.heartButton}>
+                  <Ionicons
+                    name={restaurant.isFavorite ? 'heart' : 'heart-outline'}
+                    size={24}
+                    color={restaurant.isFavorite ? colors.primary : colors.text.placeholder}
+                  />
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.cardMeta}>
+                {restaurant.category} · 도보 {restaurant.walkMinutes}분 · {restaurant.priceRange}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+
+        {/* Refresh Button */}
+        <TouchableOpacity style={styles.refreshButton} activeOpacity={0.7}>
+          <Ionicons name="refresh-outline" size={20} color={colors.primary} />
+          <Text style={styles.refreshText}>
+            다른 추천 보기 ({refreshCount}/{maxRefresh})
+          </Text>
+        </TouchableOpacity>
+
+        <View style={{ height: spacing.lg }} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.bg.primary,
+    backgroundColor: colors.bg.primary,
   },
+
+  // App Bar
   appBar: {
     height: 56,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: Spacing.base,
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg,
+    backgroundColor: colors.bg.primary,
   },
   logo: {
-    ...Typography.h2,
-    color: Colors.primary,
+    ...typo.h2,
+    color: colors.primary,
   },
   bellButton: {
     width: 44,
     height: 44,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  bellIcon: {
-    fontSize: 24,
-  },
-  scroll: {
+
+  // Scroll
+  scrollView: {
     flex: 1,
   },
-  scrollContent: {
-    paddingBottom: Spacing['2xl'],
-  },
+
+  // Greeting
   greeting: {
-    paddingHorizontal: Spacing.base,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.md,
   },
   greetingText: {
-    ...Typography.h1,
-    color: Colors.text.primary,
+    ...typo.h1,
+    color: colors.text.primary,
   },
-  subFilters: {
+
+  // Category Chips
+  chipScroll: {
+    flexGrow: 0,
+  },
+  chipContainer: {
+    paddingHorizontal: spacing.lg,
+    gap: spacing.sm,
+  },
+  chip: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.full,
+  },
+  chipActive: {
+    backgroundColor: colors.primary,
+  },
+  chipInactive: {
+    backgroundColor: colors.bg.tertiary,
+  },
+  chipText: {
+    ...typo.body2,
+    fontWeight: '500',
+  },
+  chipTextActive: {
+    color: colors.text.inverse,
+  },
+  chipTextInactive: {
+    color: colors.text.secondary,
+  },
+
+  // Sub Filters
+  subFilterRow: {
     flexDirection: 'row',
-    paddingHorizontal: Spacing.base,
-    paddingTop: Spacing.md,
-    gap: Spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
+    gap: spacing.md,
   },
   segmentGroup: {
     flexDirection: 'row',
-    backgroundColor: Colors.bg.tertiary,
-    borderRadius: Radius.md,
+    backgroundColor: colors.bg.tertiary,
+    borderRadius: radius.md,
     padding: 2,
   },
   segment: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: Radius.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+    borderRadius: radius.sm,
   },
   segmentActive: {
-    backgroundColor: Colors.bg.primary,
-    ...Shadow.sm,
+    backgroundColor: colors.bg.primary,
+    ...shadow.sm,
   },
   segmentText: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
+    ...typo.caption,
+    color: colors.text.secondary,
   },
   segmentTextActive: {
-    color: Colors.primary,
+    color: colors.primary,
     fontWeight: '500',
   },
+
+  // Divider
   divider: {
     height: 1,
-    backgroundColor: Colors.border.default,
-    marginTop: Spacing.md,
+    backgroundColor: colors.border.default,
   },
-  cardArea: {
-    paddingHorizontal: Spacing.base,
-    paddingTop: Spacing.base,
+
+  // Cards
+  card: {
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.md,
+    borderRadius: radius.lg,
+    backgroundColor: colors.bg.primary,
+    ...shadow.sm,
+    overflow: 'hidden',
   },
+  cardImage: {
+    height: 160,
+    backgroundColor: colors.bg.tertiary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardInfo: {
+    padding: spacing.lg,
+  },
+  cardRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  cardName: {
+    ...typo.h3,
+    color: colors.text.primary,
+    flex: 1,
+  },
+  heartButton: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardMeta: {
+    ...typo.body2,
+    color: colors.text.secondary,
+    marginTop: spacing.xs,
+  },
+
+  // Refresh
   refreshButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.lg,
     height: 48,
-    backgroundColor: Colors.bg.secondary,
-    borderRadius: Radius.md,
+    borderRadius: radius.md,
+    backgroundColor: colors.bg.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
-    gap: Spacing.sm,
-    marginTop: Spacing.sm,
-  },
-  refreshButtonDisabled: {
-    backgroundColor: Colors.bg.tertiary,
-  },
-  refreshIcon: {
-    fontSize: 20,
-  },
-  refreshIconDisabled: {
-    opacity: 0.4,
+    borderColor: colors.border.default,
+    gap: spacing.sm,
   },
   refreshText: {
-    ...Typography.body2,
+    ...typo.body2,
     fontWeight: '500',
-    color: Colors.text.secondary,
-  },
-  refreshTextDisabled: {
-    color: Colors.text.placeholder,
+    color: colors.text.secondary,
   },
 });

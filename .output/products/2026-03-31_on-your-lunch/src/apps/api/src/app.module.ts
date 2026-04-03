@@ -11,8 +11,10 @@ import { FavoriteModule } from './favorite/favorite.module';
 import { ShareModule } from './share/share.module';
 import { NotificationModule } from './notification/notification.module';
 import { EventModule } from './event/event.module';
+import { AppController } from './app.controller';
 
 @Module({
+  controllers: [AppController],
   imports: [
     ScheduleModule.forRoot(),    // @Cron 데코레이터 활성화
     PrismaModule,                // DB 연결 — 모든 모듈이 사용

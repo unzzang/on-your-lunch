@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, PriceRange } from '@prisma/client';
 
 // Haversine 공식으로 두 좌표 간 직선 거리(미터) 계산
 function haversineDistance(
@@ -190,7 +190,7 @@ export class RestaurantService {
     }
 
     if (priceRange) {
-      where.priceRange = priceRange;
+      where.priceRange = priceRange as PriceRange;
     }
 
     if (favoritesOnly) {

@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typo, spacing, radius } from '../../constants/tokens';
+import { colors, typo, spacing, radius } from '../../../constants/tokens';
 
 interface MenuItemProps {
   icon: string;
@@ -23,6 +24,7 @@ function MenuItem({ icon, label, onPress }: MenuItemProps) {
 
 export default function MyPageTab() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -33,7 +35,7 @@ export default function MyPageTab() {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Profile */}
-        <TouchableOpacity style={styles.profileCard} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.profileCard} activeOpacity={0.7} onPress={() => router.push('/(tabs)/mypage-tab/edit-profile')}>
           <View style={styles.avatar}>
             <Ionicons name="person" size={28} color={colors.text.placeholder} />
           </View>
@@ -48,11 +50,11 @@ export default function MyPageTab() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>설정</Text>
           <View style={styles.sectionContent}>
-            <MenuItem icon="location-outline" label="회사 위치 변경" />
+            <MenuItem icon="location-outline" label="회사 위치 변경" onPress={() => router.push('/(tabs)/mypage-tab/edit-location')} />
             <View style={styles.divider} />
-            <MenuItem icon="restaurant-outline" label="취향 설정" />
+            <MenuItem icon="restaurant-outline" label="취향 설정" onPress={() => router.push('/(tabs)/mypage-tab/edit-preference')} />
             <View style={styles.divider} />
-            <MenuItem icon="notifications-outline" label="알림 설정" />
+            <MenuItem icon="notifications-outline" label="알림 설정" onPress={() => router.push('/(tabs)/mypage-tab/notification')} />
           </View>
         </View>
 
@@ -71,7 +73,7 @@ export default function MyPageTab() {
           <TouchableOpacity style={styles.accountButton}>
             <Text style={styles.accountText}>로그아웃</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.accountButton}>
+          <TouchableOpacity style={styles.accountButton} onPress={() => router.push('/(tabs)/mypage-tab/withdraw')}>
             <Text style={[styles.accountText, { color: colors.text.placeholder }]}>회원 탈퇴</Text>
           </TouchableOpacity>
         </View>

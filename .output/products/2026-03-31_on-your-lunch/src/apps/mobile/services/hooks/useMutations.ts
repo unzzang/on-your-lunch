@@ -9,6 +9,7 @@ import type {
   UpdateNotificationResponse,
   CreateEatingHistoryRequest,
   EatingHistoryResponse,
+  ToggleFavoriteResponse,
 } from '@on-your-lunch/shared-types';
 
 export function useUpdateProfile() {
@@ -52,6 +53,22 @@ export function useUpdateNotification() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['me'] });
+    },
+  });
+}
+
+export function useFavoriteToggle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (restaurantId: string) => {
+      const response = await api
+        .post('favorites/toggle', { json: { restaurantId } })
+        .json<ApiResponse<ToggleFavoriteResponse>>();
+      return response.data;
+    },
+    onSuccess: (_data, restaurantId) => {
+      queryClient.invalidateQueries({ queryKey: ['restaurant', restaurantId] });
+      queryClient.invalidateQueries({ queryKey: ['recommendations'] });
     },
   });
 }

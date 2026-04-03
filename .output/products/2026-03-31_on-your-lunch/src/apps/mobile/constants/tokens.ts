@@ -61,6 +61,7 @@ export const spacing = {
   xs: 4,
   sm: 8,
   md: 12,
+  base: 16,
   lg: 16,
   xl: 20,
   '2xl': 24,

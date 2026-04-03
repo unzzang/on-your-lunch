@@ -49,14 +49,15 @@
 │   │       │   ├── _layout.tsx       루트 레이아웃 (QueryClient, GestureHandler)
 │   │       │   ├── (auth)/           인증 (login, terms)
 │   │       │   ├── (onboarding)/     온보딩 3단계 (location, preference, exclusion)
-│   │       │   ├── (tabs)/           메인 탭 (홈, 탐색, 이력, 마이)
-│   │       │   ├── restaurant/       식당 상세 [id]
-│   │       │   ├── record/           먹었어요 기록 [restaurantId]
-│   │       │   └── mypage/           마이페이지 하위 (프로필, 위치, 취향, 알림, 탈퇴)
+│   │       │   └── (tabs)/           메인 탭 (각 탭이 독립 Stack 보유)
+│   │       │       ├── home/           홈 탭 + 식당 상세 [id]
+│   │       │       ├── explore/        탐색 탭 + 식당 상세 [id]
+│   │       │       ├── history/        이력 탭 + 식당 상세 [id] + 기록 [restaurantId]
+│   │       │       └── mypage-tab/     마이 탭 + 프로필/위치/취향/알림/탈퇴
 │   │       ├── stores/             Zustand 스토어 (auth, onboarding, filter, explore)
 │   │       ├── services/           API 클라이언트 (ky) + TanStack Query 훅
 │   │       ├── constants/          디자인 토큰 상수
-│   │       └── components/         공유 컴포넌트
+│   │       └── components/         공유 컴포넌트 + screens/ (탭 간 공유 화면)
 │   └── packages/
 │       └── shared-types/         ← 프론트↔백엔드 공유 타입
 ├── CLAUDE.md                     ← 이 파일

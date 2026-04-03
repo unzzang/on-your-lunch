@@ -1,14 +1,19 @@
+import { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typo, spacing, radius, shadow } from '../../constants/tokens';
+import { colors, typo, spacing, radius, shadow } from '../../../constants/tokens';
+import { useRecommendations, useRefreshRecommendation } from '../../../services/hooks';
+import ErrorState from '../../../components/ErrorState';
+import EmptyState from '../../../components/EmptyState';
 
 const CATEGORIES = [
   { id: 'all', name: '전체' },
@@ -21,41 +26,37 @@ const CATEGORIES = [
   { id: 'salad', name: '샐러드' },
 ];
 
-const MOCK_RESTAURANTS = [
-  {
-    id: '1',
-    name: '을지로 골목식당',
-    category: '한식',
-    walkMinutes: 8,
-    priceRange: '~1만원',
-    isFavorite: false,
-  },
-  {
-    id: '2',
-    name: '파스타공방',
-    category: '양식',
-    walkMinutes: 5,
-    priceRange: '~1.5만원',
-    isFavorite: true,
-  },
-  {
-    id: '3',
-    name: '스시히로',
-    category: '일식',
-    walkMinutes: 10,
-    priceRange: '~2만원',
-    isFavorite: false,
-  },
-];
-
 type CategoryItem = (typeof CATEGORIES)[number];
-type Restaurant = (typeof MOCK_RESTAURANTS)[number];
+
+function SkeletonCard() {
+  return (
+    <View style={styles.card}>
+      <View style={styles.cardImageSkeleton} />
+      <View style={styles.cardInfo}>
+        <View style={styles.skeletonLine1} />
+        <View style={styles.skeletonLine2} />
+      </View>
+    </View>
+  );
+}
 
 export default function HomeTab() {
   const insets = useSafeAreaInsets();
-  const selectedCategory = 'all';
-  const refreshCount = 4;
-  const maxRefresh = 5;
+  const router = useRouter();
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const { data, isLoading, isError, refetch } = useRecommendations();
+  const refreshMutation = useRefreshRecommendation();
+
+  const restaurants = data?.restaurants ?? [];
+  const refreshCount = data?.refreshCount ?? 0;
+  const maxRefresh = data?.maxRefreshCount ?? 5;
+
+  const handleRefresh = () => {
+    refreshMutation.mutate({
+      excludeRestaurantIds: restaurants.map((r: any) => r.restaurantId),
+    });
+  };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -93,6 +94,7 @@ export default function HomeTab() {
                   styles.chip,
                   isActive ? styles.chipActive : styles.chipInactive,
                 ]}
+                onPress={() => setSelectedCategory(cat.id)}
               >
                 <Text
                   style={[
@@ -160,39 +162,83 @@ export default function HomeTab() {
         {/* Divider */}
         <View style={styles.divider} />
 
-        {/* Recommendation Cards */}
-        {MOCK_RESTAURANTS.map((restaurant: Restaurant) => (
-          <TouchableOpacity key={restaurant.id} style={styles.card} activeOpacity={0.7}>
-            {/* Image Placeholder */}
-            <View style={styles.cardImage}>
-              <Ionicons name="restaurant-outline" size={48} color={colors.text.placeholder} />
-            </View>
-            {/* Info */}
-            <View style={styles.cardInfo}>
-              <View style={styles.cardRow}>
-                <Text style={styles.cardName}>{restaurant.name}</Text>
-                <TouchableOpacity style={styles.heartButton}>
-                  <Ionicons
-                    name={restaurant.isFavorite ? 'heart' : 'heart-outline'}
-                    size={24}
-                    color={restaurant.isFavorite ? colors.primary : colors.text.placeholder}
-                  />
-                </TouchableOpacity>
-              </View>
-              <Text style={styles.cardMeta}>
-                {restaurant.category} · 도보 {restaurant.walkMinutes}분 · {restaurant.priceRange}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+        {/* 로딩 상태 */}
+        {isLoading && (
+          <View>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </View>
+        )}
 
-        {/* Refresh Button */}
-        <TouchableOpacity style={styles.refreshButton} activeOpacity={0.7}>
-          <Ionicons name="refresh-outline" size={20} color={colors.primary} />
-          <Text style={styles.refreshText}>
-            다른 추천 보기 ({refreshCount}/{maxRefresh})
-          </Text>
-        </TouchableOpacity>
+        {/* 에러 상태 */}
+        {isError && !isLoading && (
+          <ErrorState
+            message="추천을 불러올 수 없어요"
+            onRetry={() => refetch()}
+          />
+        )}
+
+        {/* 빈 상태 */}
+        {!isLoading && !isError && restaurants.length === 0 && (
+          <EmptyState
+            icon="restaurant-outline"
+            title="추천 식당이 없어요"
+            subtitle="위치와 취향을 설정하면 맞춤 추천을 받을 수 있어요"
+          />
+        )}
+
+        {/* 정상 상태: Recommendation Cards */}
+        {!isLoading && !isError && restaurants.length > 0 && (
+          <>
+            {restaurants.map((restaurant: any) => (
+              <TouchableOpacity
+                key={restaurant.restaurantId}
+                style={styles.card}
+                activeOpacity={0.7}
+                onPress={() => router.push(`/(tabs)/home/restaurant/${restaurant.restaurantId}`)}
+              >
+                {/* Image Placeholder */}
+                <View style={styles.cardImage}>
+                  <Ionicons name="restaurant-outline" size={48} color={colors.text.placeholder} />
+                </View>
+                {/* Info */}
+                <View style={styles.cardInfo}>
+                  <View style={styles.cardRow}>
+                    <Text style={styles.cardName}>{restaurant.name}</Text>
+                    <TouchableOpacity style={styles.heartButton}>
+                      <Ionicons
+                        name={restaurant.isFavorite ? 'heart' : 'heart-outline'}
+                        size={24}
+                        color={restaurant.isFavorite ? colors.primary : colors.text.placeholder}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={styles.cardMeta}>
+                    {restaurant.categoryName ?? restaurant.category?.name ?? ''} · 도보 {restaurant.walkMinutes}분
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+
+            {/* Refresh Button */}
+            <TouchableOpacity
+              style={styles.refreshButton}
+              activeOpacity={0.7}
+              onPress={handleRefresh}
+              disabled={refreshCount >= maxRefresh || refreshMutation.isPending}
+            >
+              {refreshMutation.isPending ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+              ) : (
+                <Ionicons name="refresh-outline" size={20} color={colors.primary} />
+              )}
+              <Text style={styles.refreshText}>
+                다른 추천 보기 ({refreshCount}/{maxRefresh})
+              </Text>
+            </TouchableOpacity>
+          </>
+        )}
 
         <View style={{ height: spacing.lg }} />
       </ScrollView>
@@ -308,6 +354,25 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: colors.border.default,
+  },
+
+  // Skeleton
+  cardImageSkeleton: {
+    height: 160,
+    backgroundColor: colors.bg.tertiary,
+  },
+  skeletonLine1: {
+    height: 20,
+    width: '50%',
+    backgroundColor: colors.bg.tertiary,
+    borderRadius: radius.sm,
+  },
+  skeletonLine2: {
+    height: 14,
+    width: '70%',
+    backgroundColor: colors.bg.tertiary,
+    borderRadius: radius.sm,
+    marginTop: spacing.sm,
   },
 
   // Cards

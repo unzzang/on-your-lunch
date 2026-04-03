@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -6,10 +7,14 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typo, spacing, radius, shadow } from '../../constants/tokens';
+import { colors, typo, spacing, radius, shadow } from '../../../constants/tokens';
+import ErrorState from '../../../components/ErrorState';
+import EmptyState from '../../../components/EmptyState';
 
 const CATEGORIES = [
   { id: 'all', name: '전체' },
@@ -65,9 +70,21 @@ const MOCK_RESTAURANTS = [
   },
 ];
 
+// 시뮬레이션용 상태 (실제 API 연동 시 useQuery로 대체)
+type LoadState = 'loading' | 'error' | 'empty' | 'success';
+
 export default function ExploreTab() {
   const insets = useSafeAreaInsets();
-  const selectedCategory = 'all';
+  const router = useRouter();
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  // 현재는 하드코딩 데이터 사용. API 연동 시 useRestaurantList 훅으로 교체.
+  const loadState: LoadState = 'success';
+  const restaurants = MOCK_RESTAURANTS;
+
+  const handleRetry = () => {
+    // API 연동 시 refetch() 호출
+  };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -94,6 +111,7 @@ export default function ExploreTab() {
             <TouchableOpacity
               key={cat.id}
               style={[styles.chip, isActive ? styles.chipActive : styles.chipInactive]}
+              onPress={() => setSelectedCategory(cat.id)}
             >
               <Text style={[styles.chipText, isActive ? styles.chipTextActive : styles.chipTextInactive]}>
                 {cat.name}
@@ -113,39 +131,77 @@ export default function ExploreTab() {
         <Ionicons name="chevron-down-outline" size={14} color={colors.text.secondary} />
       </View>
 
-      {/* Restaurant List */}
-      <FlatList
-        data={MOCK_RESTAURANTS}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.listItem} activeOpacity={0.7}>
-            <View style={styles.listThumb}>
-              <Ionicons name="restaurant-outline" size={24} color={colors.text.placeholder} />
-            </View>
-            <View style={styles.listInfo}>
-              <View style={styles.listRow}>
-                <Text style={styles.listName}>{item.name}</Text>
-                <TouchableOpacity style={styles.heartBtn}>
-                  <Ionicons
-                    name={item.isFavorite ? 'heart' : 'heart-outline'}
-                    size={20}
-                    color={item.isFavorite ? colors.primary : colors.text.placeholder}
-                  />
-                </TouchableOpacity>
+      {/* 로딩 상태 */}
+      {loadState === 'loading' && (
+        <View style={styles.stateContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={styles.stateText}>식당을 불러오는 중...</Text>
+        </View>
+      )}
+
+      {/* 에러 상태 */}
+      {loadState === 'error' && (
+        <ErrorState
+          message="식당 목록을 불러올 수 없어요"
+          onRetry={handleRetry}
+        />
+      )}
+
+      {/* 빈 상태 */}
+      {loadState === 'empty' && (
+        <EmptyState
+          icon="search-outline"
+          title="검색 결과가 없어요"
+          subtitle="다른 키워드나 카테고리로 검색해보세요"
+        />
+      )}
+
+      {/* 정상 상태: Restaurant List */}
+      {loadState === 'success' && (
+        <FlatList
+          data={restaurants}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          ListEmptyComponent={
+            <EmptyState
+              icon="search-outline"
+              title="검색 결과가 없어요"
+              subtitle="다른 키워드나 카테고리로 검색해보세요"
+            />
+          }
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.listItem}
+              activeOpacity={0.7}
+              onPress={() => router.push(`/(tabs)/explore/restaurant/${item.id}`)}
+            >
+              <View style={styles.listThumb}>
+                <Ionicons name="restaurant-outline" size={24} color={colors.text.placeholder} />
               </View>
-              <Text style={styles.listMeta}>
-                {item.category} · 도보 {item.walkMinutes}분 · {item.priceRange}
-              </Text>
-              {item.rating && (
-                <Text style={styles.listVisit}>
-                  ★ {item.rating} · {item.visitCount}번 방문
+              <View style={styles.listInfo}>
+                <View style={styles.listRow}>
+                  <Text style={styles.listName}>{item.name}</Text>
+                  <TouchableOpacity style={styles.heartBtn}>
+                    <Ionicons
+                      name={item.isFavorite ? 'heart' : 'heart-outline'}
+                      size={20}
+                      color={item.isFavorite ? colors.primary : colors.text.placeholder}
+                    />
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.listMeta}>
+                  {item.category} · 도보 {item.walkMinutes}분 · {item.priceRange}
                 </Text>
-              )}
-            </View>
-          </TouchableOpacity>
-        )}
-      />
+                {item.rating && (
+                  <Text style={styles.listVisit}>
+                    ★ {item.rating} · {item.visitCount}번 방문
+                  </Text>
+                )}
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </View>
   );
 }
@@ -154,6 +210,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.bg.primary,
+  },
+
+  // State
+  stateContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 64,
+    gap: spacing.md,
+  },
+  stateText: {
+    ...typo.body2,
+    color: colors.text.secondary,
   },
 
   // Search

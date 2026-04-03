@@ -21,14 +21,6 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(onboarding)" />
-            <Stack.Screen
-              name="restaurant/[id]"
-              options={{ animation: 'slide_from_right' }}
-            />
-            <Stack.Screen
-              name="record/[restaurantId]"
-              options={{ animation: 'slide_from_bottom', presentation: 'modal' }}
-            />
           </Stack>
         </QueryClientProvider>
       </SafeAreaProvider>

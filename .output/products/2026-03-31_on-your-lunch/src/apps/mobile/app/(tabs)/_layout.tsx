@@ -1,32 +1,30 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-
-const PRIMARY = '#D4501F';
-const INACTIVE = '#9CA3AF';
+import { colors, typo, spacing } from '../../constants/tokens';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: PRIMARY,
-        tabBarInactiveTintColor: INACTIVE,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.text.placeholder,
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: typo.overline.fontSize,
           fontWeight: '500',
         },
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: colors.bg.primary,
           borderTopWidth: 1,
-          borderTopColor: '#E5E7EB',
+          borderTopColor: colors.border.default,
           height: 72,
           paddingBottom: 28,
-          paddingTop: 8,
+          paddingTop: spacing.sm,
         },
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: '홈',
           tabBarIcon: ({ color, size }) => (
@@ -53,7 +51,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="mypage"
+        name="mypage-tab"
         options={{
           title: '마이',
           tabBarIcon: ({ color, size }) => (

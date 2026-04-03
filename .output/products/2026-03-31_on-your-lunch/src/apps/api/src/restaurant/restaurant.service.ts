@@ -122,18 +122,16 @@ export class RestaurantService {
       ],
     };
 
-    const totalCount = await this.prisma.restaurant.count({ where });
-    const restaurants = await this.prisma.restaurant.findMany({
+    // 전체 후보 조회 (페이징 없이)
+    const allRestaurants = await this.prisma.restaurant.findMany({
       where,
       include: {
         category: { select: { id: true, name: true, colorCode: true } },
       },
-      skip: (page - 1) * limit,
-      take: limit,
     });
 
     // 거리 계산 + 필터링 (도보 15분 이내)
-    const items = restaurants
+    const filtered = allRestaurants
       .map((r) => {
         let walkMinutes = 0;
         if (userLocation) {
@@ -157,7 +155,10 @@ export class RestaurantService {
       })
       .filter(Boolean);
 
+    // 거리 필터 후 정확한 totalCount + 수동 페이징
+    const totalCount = filtered.length;
     const totalPages = Math.ceil(totalCount / limit);
+    const items = filtered.slice((page - 1) * limit, page * limit);
 
     return {
       items,
@@ -174,6 +175,8 @@ export class RestaurantService {
   /** GET /restaurants — 식당 탐색 리스트 */
   async findAll(
     categoryIds: string | undefined,
+    priceRange: string | undefined,
+    walkMinutes: number | undefined,
     sort: string,
     page: number,
     limit: number,
@@ -186,6 +189,10 @@ export class RestaurantService {
       where.categoryId = { in: categoryIds.split(',') };
     }
 
+    if (priceRange) {
+      where.priceRange = priceRange;
+    }
+
     if (favoritesOnly) {
       const favs = await this.prisma.favorite.findMany({
         where: { userId },
@@ -194,18 +201,28 @@ export class RestaurantService {
       where.id = { in: favs.map((f) => f.restaurantId) };
     }
 
-    const totalCount = await this.prisma.restaurant.count({ where });
-    const restaurants = await this.prisma.restaurant.findMany({
+    // 전체 후보 조회 (페이징 없이)
+    const allRestaurants = await this.prisma.restaurant.findMany({
       where,
       include: {
         category: { select: { id: true, name: true, colorCode: true } },
       },
-      skip: (page - 1) * limit,
-      take: limit,
     });
 
     // 사용자 위치
     const userLocation = await this.prisma.userLocation.findUnique({ where: { userId } });
+
+    // 거리 계산 + 필터링 (도보 시간 필터 포함)
+    const walkMinutesLimit = walkMinutes ?? 15;
+    const maxDistMeters = (walkMinutesLimit * 80) / 1.3;
+    const filteredRestaurants = allRestaurants.filter((r) => {
+      if (!userLocation) return true;
+      const dist = haversineDistance(
+        Number(userLocation.latitude), Number(userLocation.longitude),
+        Number(r.latitude), Number(r.longitude),
+      );
+      return dist <= maxDistMeters;
+    });
 
     // 즐겨찾기 ID 목록
     const favoriteIds = new Set(
@@ -217,7 +234,7 @@ export class RestaurantService {
 
     // 내 방문 이력 (식당별 집계)
     const histories = await this.prisma.eatingHistory.findMany({
-      where: { userId, restaurantId: { in: restaurants.map((r) => r.id) } },
+      where: { userId, restaurantId: { in: filteredRestaurants.map((r) => r.id) } },
     });
     const visitMap = new Map<string, { rating: number; visitCount: number }>();
     for (const h of histories) {
@@ -233,7 +250,7 @@ export class RestaurantService {
       }
     }
 
-    let items = restaurants.map((r) => {
+    let allItems = filteredRestaurants.map((r) => {
       let walkMinutes = 0;
       if (userLocation) {
         const dist = haversineDistance(
@@ -256,14 +273,17 @@ export class RestaurantService {
       };
     });
 
-    // 정렬
+    // 정렬 (전체 데이터 대상)
     if (sort === 'distance') {
-      items.sort((a, b) => a.walkMinutes - b.walkMinutes);
+      allItems.sort((a, b) => a.walkMinutes - b.walkMinutes);
     } else if (sort === 'rating') {
-      items.sort((a, b) => (b.myVisit?.rating ?? 0) - (a.myVisit?.rating ?? 0));
+      allItems.sort((a, b) => (b.myVisit?.rating ?? 0) - (a.myVisit?.rating ?? 0));
     }
 
+    // 거리 필터 후 정확한 totalCount + 수동 페이징
+    const totalCount = allItems.length;
     const totalPages = Math.ceil(totalCount / limit);
+    const items = allItems.slice((page - 1) * limit, page * limit);
 
     return {
       items,

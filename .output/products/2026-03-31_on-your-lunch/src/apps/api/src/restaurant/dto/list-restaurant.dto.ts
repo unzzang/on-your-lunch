@@ -7,6 +7,17 @@ export class ListRestaurantDto {
   categoryIds?: string; // 쉼표 구분 UUID
 
   @IsOptional()
+  @IsIn(['LOW', 'MEDIUM', 'HIGH'])
+  priceRange?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(30)
+  walkMinutes?: number;
+
+  @IsOptional()
   @IsIn(['distance', 'rating'])
   sort?: string = 'distance';
 

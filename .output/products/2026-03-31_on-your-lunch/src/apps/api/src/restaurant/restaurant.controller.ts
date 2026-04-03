@@ -37,7 +37,8 @@ export class RestaurantController {
     @CurrentUser() user: { id: string },
   ) {
     return this.restaurantService.findAll(
-      dto.categoryIds, dto.sort!, dto.page!, dto.limit!, dto.favoritesOnly!, user.id,
+      dto.categoryIds, dto.priceRange, dto.walkMinutes,
+      dto.sort!, dto.page!, dto.limit!, dto.favoritesOnly!, user.id,
     );
   }
 

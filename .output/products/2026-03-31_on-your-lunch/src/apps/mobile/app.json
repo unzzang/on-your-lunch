@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "온유어런치",
+    "slug": "on-your-lunch",
+    "version": "0.1.0",
+    "owner": "onyourmark",
+    "scheme": "onyourlunch",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#D4501F"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "kr.onyourlunch.app",
+      "associatedDomains": ["applinks:api.onyourlunch.kr"],
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "회사 근처 맛집을 추천하기 위해 위치 정보를 사용합니다."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#D4501F"
+      },
+      "package": "kr.onyourlunch.app",
+      "permissions": ["ACCESS_FINE_LOCATION"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "updates": {
+      "url": "https://u.expo.dev/EAS_PROJECT_ID_HERE"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "EAS_PROJECT_ID_HERE"
+      },
+      "router": {
+        "origin": "https://onyourlunch.kr"
+      }
+    }
+  }
+}

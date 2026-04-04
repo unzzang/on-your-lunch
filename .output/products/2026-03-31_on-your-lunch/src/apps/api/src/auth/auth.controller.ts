@@ -27,6 +27,14 @@ export class AuthController {
     return data;
   }
 
+  /** POST /auth/dev-login — 개발용 임시 로그인 [Public, development only] */
+  @Public()
+  @Post('dev-login')
+  @HttpCode(HttpStatus.OK)
+  devLogin(@Body() body: { email?: string }) {
+    return this.authService.devLogin(body?.email);
+  }
+
   /** POST /auth/refresh — 토큰 갱신 [Public] */
   @Public()
   @Post('refresh')

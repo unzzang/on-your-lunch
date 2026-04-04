@@ -48,6 +48,41 @@ PO ↔ 위더 (필요할 때만 호출)
 
 ---
 
+## 7 Stage 프로세스
+
+모든 서비스 프로젝트는 아래 파이프라인을 따른다. 각 Stage의 상세 절차는 `.claude/processes/`에 정의.
+
+| Stage | 이름 | 핵심 | 프로세스 파일 |
+|-------|------|------|-------------|
+| 0 | 프로젝트 셋업 | `/create-project` 대화형 셋업 | `Project_Setup_Process.md` |
+| 1 | 사전조사 | 조사설계 → 4명 병렬 리서치 → 검증 → 전략 종합 | `Research_Process.md` |
+| 2 | 기획 | Gate 1(서비스 정의) → Gate 2(기능 설계) → Gate 3(기술 설계) | `Planning_Process.md` |
+| 3 | 디자인 | 시스템 → 화면 → 리뷰 → 핸드오프 | `Design_Process.md` |
+| 4 | 개발 | 아키텍처 → 환경 → API 계약 → 기능 개발 → QA 투입 | `Development_Process.md` |
+| 5 | QA | 정적 → 통합 → 기능 → 재검증 | `QA_Process.md` |
+| 6 | 출시 | 준비 → 런칭 → 안정화 | `Launch_Process.md` |
+
+---
+
+## 핵심 스킬 (슬래시 커맨드)
+
+| 카테고리 | 커맨드 | 용도 |
+|---------|--------|------|
+| **프로젝트** | `/create-project` | 새 프로젝트 대화형 셋업 |
+| **기획** | `/spec`, `/decision`, `/minutes` | 명세서, 의사결정 기록, 회의록 |
+| **리서치** | `/research` | 5단계 사전조사 |
+| **디자인** | `/design`, `/graphic-design` | UI/UX 디자인, 콘텐츠 비주얼 |
+| **개발** | `/backend`, `/backend-dev`, `/frontend`, `/admin-fe` | 설계 + 구현 |
+| **검증** | `/qa`, `/verify`, `/verify-stage`, `/review` | QA, 정합성 검증, 리뷰 |
+| **콘텐츠** | `/blog`, `/video`, `/sns` | 블로그, 영상, SNS |
+| **마케팅** | `/marketing`, `/cs` | GTM, CS 피드백 |
+| **운영** | `/operations`, `/data` | 모니터링, 데이터 분석 |
+| **소통** | `/inbox` | PO에게 확인 요청 |
+
+전체 스킬 목록: `.claude/skills/INDEX.md`
+
+---
+
 ## 회사 구조
 
 ```
@@ -60,5 +95,23 @@ On-Your-Mark_Company/
 ├── .documents/           ← 회사 문서 (전사 회의록, 회사 DR)
 ├── .efforts/             ← 프로젝트 현황판 (상태 카드)
 ├── .kits/                ← 템플릿 (프로젝트 + 문서)
-└── .infra/               ← 회사 운영용 코드 (내부 도구, 웹사이트)
+├── .infra/               ← 회사 운영용 코드 (내부 도구, 웹사이트)
+└── .output/              ← 프로젝트 산출물 (코드 + 문서)
+    ├── products/           서비스 프로덕트 ({시작일}_{프로젝트명}/)
+    └── contents/           콘텐츠 프로젝트
 ```
+
+### 프로젝트 산출물 위치
+
+각 프로젝트는 `.output/products/{YYYY-MM-DD}_{프로젝트명}/` 아래에 위치하며, 내부에 `.docs/`(문서)와 `src/`(코드)를 갖는다. `.efforts/`의 카드는 이 경로를 가리키는 포인터.
+
+### 핵심 참조 경로
+
+| 필요할 때 | 참조 위치 |
+|----------|----------|
+| 운영 규칙 | `.claude/rules/` (`INDEX.md`로 탐색) |
+| 프로세스 절차서 | `.claude/processes/` |
+| 에이전트 정보 | `.claude/agents/{이름}/AGENTS.md` |
+| 팀 정보 | `.claude/teams/{팀명}/TEAM.md` |
+| 템플릿 | `.kits/templates/` |
+| 아키텍처 패턴 | `.claude/references/architecture-patterns.md` |

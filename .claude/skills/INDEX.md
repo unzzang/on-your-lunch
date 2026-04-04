@@ -24,7 +24,7 @@
 
 | 스킬 | 용도 | 관련 프로세스 |
 |------|------|-------------|
-| `init/` | 프로젝트 셋업 | `processes/Project_Setup_Process.md` |
+| `create-project/` | 프로젝트 셋업 | `processes/Project_Setup_Process.md` |
 | `research/` | 사전조사 5단계 | `processes/Research_Process.md` |
 | `spec/` | 기능 명세서 작성 | — |
 | `decision/` | 의사결정 기록 (DR) | — |

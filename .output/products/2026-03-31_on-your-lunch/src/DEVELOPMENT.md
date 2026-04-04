@@ -1175,7 +1175,11 @@ cd src/apps/mobile && npx expo start --ios --offline
 
 **삽질 기록 (향후 방지):**
 
-1. **Expo Go 버전 불일치** — 시뮬레이터의 Expo Go(v55)와 프로젝트 SDK(v52)가 달라서 설치 확인 팝업 발생. `npx expo start --ios`로 실행하면 자동으로 맞는 버전 설치를 제안함. `Y`로 승인 필요.
+1. **Expo Go 버전 불일치** — 시뮬레이터와 실제 기기의 Expo Go 버전이 다를 수 있다.
+   - **시뮬레이터**: `npx expo start --ios`가 프로젝트 SDK에 맞는 Expo Go를 자동 설치. 항상 호환됨.
+   - **실제 기기(iPhone)**: App Store에서 설치한 Expo Go는 특정 SDK까지만 지원. 프로젝트 SDK가 더 높으면 "project is incompatible" 에러 발생.
+   - **해결**: 실제 기기의 Expo Go 앱 → Settings에서 **Supported SDK 버전 확인** → 프로젝트 SDK를 그 버전에 맞출 것.
+   - **향후 방지**: 프론트엔드 세팅(Phase 5) 시 **실제 기기 Expo Go의 SDK 버전을 먼저 확인**하고 그에 맞춰 프로젝트 SDK를 설정할 것.
 
 2. **Expo 계정 로그인 에러** — `ApiV2Error: Your username, email, or password was incorrect.` 발생 시 `--offline` 옵션으로 우회. 로컬 개발에서는 Expo 계정이 필수가 아님. Expo 계정은 앱스토어 배포 시에만 필요.
 

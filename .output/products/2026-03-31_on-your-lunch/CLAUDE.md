@@ -15,7 +15,7 @@
 | 영역 | 기술 |
 |------|------|
 | 백엔드 | NestJS 11 + Prisma 6 + PostgreSQL 16 (PostGIS) |
-| 모바일 | Expo 55 + React Native + expo-router + Zustand 5 + TanStack Query v5 |
+| 모바일 | Expo 54 + React Native + expo-router + Zustand 5 + TanStack Query v5 |
 | 인프라 | Railway (API + DB) + Cloudflare R2 (파일) + FCM (푸시) + Sentry (에러) |
 | 외부 서비스 | 카카오 로컬 API, 카카오맵 SDK, Google OAuth, 카카오톡 공유 SDK |
 | 빌드 | pnpm workspace + Turborepo |

@@ -134,6 +134,107 @@ export class AuthService {
   }
 
   /**
+   * 개발용 임시 로그인.
+   * NODE_ENV=development에서만 동작한다. 프로덕션에서는 404를 반환한다.
+   * 테스트 사용자를 자동 생성하고, 온보딩 완료 상태 + JWT를 발급한다.
+   */
+  async devLogin(email?: string) {
+    if (process.env.NODE_ENV !== 'development') {
+      throw new HttpException(
+        { code: 'NOT_FOUND', message: 'Not Found' },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const testEmail = email || 'test@example.com';
+    const testGoogleId = 'dev-test-user';
+
+    // 1. 테스트 사용자 조회 또는 생성
+    let user = await this.prisma.user.findUnique({
+      where: { googleId: testGoogleId },
+    });
+
+    if (!user) {
+      user = await this.prisma.user.create({
+        data: {
+          email: testEmail,
+          nickname: '사용자',
+          googleId: testGoogleId,
+          profileImageUrl: null,
+          marketingAgreed: true,
+          termsAgreedAt: new Date(),
+          preferredPriceRange: PriceRange.BETWEEN_10K_20K,
+          isOnboardingCompleted: true,
+        },
+      });
+    }
+
+    // 2. 온보딩 미완료 상태이면 완료로 업데이트
+    if (!user.isOnboardingCompleted) {
+      user = await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          isOnboardingCompleted: true,
+          preferredPriceRange: PriceRange.BETWEEN_10K_20K,
+        },
+      });
+    }
+
+    // 3. 회사 위치 설정 (강남역 근처)
+    await this.prisma.userLocation.upsert({
+      where: { userId: user.id },
+      update: {
+        latitude: 37.4979,
+        longitude: 127.0276,
+        address: '서울특별시 강남구 강남대로 396',
+        buildingName: '강남역',
+      },
+      create: {
+        userId: user.id,
+        latitude: 37.4979,
+        longitude: 127.0276,
+        address: '서울특별시 강남구 강남대로 396',
+        buildingName: '강남역',
+      },
+    });
+
+    // 4. 선호 카테고리를 전체(7개)로 설정
+    const allCategories = await this.prisma.category.findMany();
+    if (allCategories.length > 0) {
+      // 기존 선호 카테고리 삭제 후 전체 재등록
+      await this.prisma.userPreferredCategory.deleteMany({
+        where: { userId: user.id },
+      });
+      await this.prisma.userPreferredCategory.createMany({
+        data: allCategories.map((cat) => ({
+          userId: user.id,
+          categoryId: cat.id,
+        })),
+      });
+    }
+
+    // 5. JWT 토큰 발급
+    const tokens = await this.generateTokens(user.id, user.email);
+
+    // Refresh Token 저장
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken: tokens.refreshToken },
+    });
+
+    return {
+      ...tokens,
+      user: {
+        id: user.id,
+        email: user.email,
+        nickname: user.nickname,
+        profileImageUrl: user.profileImageUrl,
+        isOnboardingCompleted: user.isOnboardingCompleted,
+      },
+    };
+  }
+
+  /**
    * Google ID Token 모의 검증 (로컬 개발용).
    * 프로덕션에서는 Google OAuth2Client.verifyIdToken()으로 교체해야 한다.
    */

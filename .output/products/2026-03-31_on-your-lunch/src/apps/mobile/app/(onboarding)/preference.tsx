@@ -27,7 +27,7 @@ const PRICE_OPTIONS: { label: string; value: PriceRange }[] = [
 
 export default function PreferenceScreen() {
   const router = useRouter();
-  const { setPreferences, setStep } = useOnboardingStore();
+  const { setPreferredCategories, setPriceRange, setStep } = useOnboardingStore();
   const { data: categories = [] } = useCategories();
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -41,10 +41,11 @@ export default function PreferenceScreen() {
 
   const handleNext = useCallback(() => {
     if (selectedCategories.length === 0 || !selectedPrice) return;
-    setPreferences(selectedCategories, selectedPrice);
+    setPreferredCategories(selectedCategories);
+    setPriceRange(selectedPrice);
     setStep(3);
     router.push('/(onboarding)/exclusion');
-  }, [selectedCategories, selectedPrice, setPreferences, setStep, router]);
+  }, [selectedCategories, selectedPrice, setPreferredCategories, setPriceRange, setStep, router]);
 
   const canProceed = selectedCategories.length > 0 && selectedPrice !== null;
 

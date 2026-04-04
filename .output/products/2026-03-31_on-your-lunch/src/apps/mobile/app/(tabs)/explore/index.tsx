@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   View,
   Text,
@@ -12,78 +11,43 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typo, spacing, radius, shadow } from '../../../constants/tokens';
+import { colors, typo, spacing, radius } from '../../../constants/tokens';
 import ErrorState from '../../../components/ErrorState';
 import EmptyState from '../../../components/EmptyState';
+import { useRestaurants, useCategories, useFavoriteToggle } from '../../../services/hooks';
+import { useExploreStore } from '../../../stores/exploreStore';
+import { PriceRange } from '@on-your-lunch/shared-types';
 
-const CATEGORIES = [
-  { id: 'all', name: '전체' },
-  { id: 'korean', name: '한식' },
-  { id: 'chinese', name: '중식' },
-  { id: 'japanese', name: '일식' },
-  { id: 'western', name: '양식' },
-  { id: 'asian', name: '아시안' },
-  { id: 'snack', name: '분식' },
-  { id: 'salad', name: '샐러드' },
-];
-
-const MOCK_RESTAURANTS = [
-  {
-    id: '1',
-    name: '을지로 골목식당',
-    category: '한식',
-    walkMinutes: 3,
-    priceRange: '~1만원',
-    rating: 4.0,
-    visitCount: 3,
-    isFavorite: true,
-  },
-  {
-    id: '2',
-    name: '파스타공방',
-    category: '양식',
-    walkMinutes: 5,
-    priceRange: '~1.5만원',
-    rating: null,
-    visitCount: 0,
-    isFavorite: false,
-  },
-  {
-    id: '3',
-    name: '스시히로',
-    category: '일식',
-    walkMinutes: 8,
-    priceRange: '~2만원',
-    rating: 4.5,
-    visitCount: 1,
-    isFavorite: true,
-  },
-  {
-    id: '4',
-    name: '베트남쌀국수',
-    category: '아시안',
-    walkMinutes: 6,
-    priceRange: '~1만원',
-    rating: null,
-    visitCount: 0,
-    isFavorite: false,
-  },
-];
-
-// 시뮬레이션용 상태 (실제 API 연동 시 useQuery로 대체)
-type LoadState = 'loading' | 'error' | 'empty' | 'success';
+function priceRangeLabel(range: PriceRange | null): string {
+  switch (range) {
+    case PriceRange.UNDER_10K:
+      return '~1만원';
+    case PriceRange.BETWEEN_10K_20K:
+      return '1~2만원';
+    case PriceRange.OVER_20K:
+      return '2만원~';
+    default:
+      return '';
+  }
+}
 
 export default function ExploreTab() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const { selectedCategoryId, setCategory } = useExploreStore();
 
-  // 현재는 하드코딩 데이터 사용. API 연동 시 useRestaurantList 훅으로 교체.
-  const loadState: LoadState = 'success';
-  const restaurants = MOCK_RESTAURANTS;
+  const { data: categories } = useCategories();
+  const { data: restaurantData, isLoading, isError, refetch } = useRestaurants();
+  const favoriteMutation = useFavoriteToggle();
+
+  const restaurants = restaurantData?.items ?? [];
 
   const handleRetry = () => {
-    // API 연동 시 refetch() 호출
+    refetch();
+  };
+
+  const handleToggleFavorite = (restaurantId: string) => {
+    favoriteMutation.mutate(restaurantId);
   };
 
   return (
@@ -105,13 +69,21 @@ export default function ExploreTab() {
         contentContainerStyle={styles.chipContainer}
         style={styles.chipScroll}
       >
-        {CATEGORIES.map((cat) => {
-          const isActive = cat.id === selectedCategory;
+        <TouchableOpacity
+          style={[styles.chip, !selectedCategoryId ? styles.chipActive : styles.chipInactive]}
+          onPress={() => setCategory(null)}
+        >
+          <Text style={[styles.chipText, !selectedCategoryId ? styles.chipTextActive : styles.chipTextInactive]}>
+            전체
+          </Text>
+        </TouchableOpacity>
+        {(categories ?? []).map((cat) => {
+          const isActive = cat.id === selectedCategoryId;
           return (
             <TouchableOpacity
               key={cat.id}
               style={[styles.chip, isActive ? styles.chipActive : styles.chipInactive]}
-              onPress={() => setSelectedCategory(cat.id)}
+              onPress={() => setCategory(isActive ? null : cat.id)}
             >
               <Text style={[styles.chipText, isActive ? styles.chipTextActive : styles.chipTextInactive]}>
                 {cat.name}
@@ -119,10 +91,6 @@ export default function ExploreTab() {
             </TouchableOpacity>
           );
         })}
-        <TouchableOpacity style={[styles.chip, styles.chipInactive]}>
-          <Ionicons name="heart-outline" size={14} color={colors.text.secondary} />
-          <Text style={[styles.chipText, styles.chipTextInactive]}> 즐겨찾기</Text>
-        </TouchableOpacity>
       </ScrollView>
 
       {/* Sort */}
@@ -132,7 +100,7 @@ export default function ExploreTab() {
       </View>
 
       {/* 로딩 상태 */}
-      {loadState === 'loading' && (
+      {isLoading && (
         <View style={styles.stateContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.stateText}>식당을 불러오는 중...</Text>
@@ -140,24 +108,15 @@ export default function ExploreTab() {
       )}
 
       {/* 에러 상태 */}
-      {loadState === 'error' && (
+      {isError && (
         <ErrorState
           message="식당 목록을 불러올 수 없어요"
           onRetry={handleRetry}
         />
       )}
 
-      {/* 빈 상태 */}
-      {loadState === 'empty' && (
-        <EmptyState
-          icon="search-outline"
-          title="검색 결과가 없어요"
-          subtitle="다른 키워드나 카테고리로 검색해보세요"
-        />
-      )}
-
       {/* 정상 상태: Restaurant List */}
-      {loadState === 'success' && (
+      {!isLoading && !isError && (
         <FlatList
           data={restaurants}
           keyExtractor={(item) => item.id}
@@ -176,12 +135,21 @@ export default function ExploreTab() {
               onPress={() => router.push(`/(tabs)/explore/restaurant/${item.id}`)}
             >
               <View style={styles.listThumb}>
-                <Ionicons name="restaurant-outline" size={24} color={colors.text.placeholder} />
+                {item.thumbnailUrl ? (
+                  <View style={styles.listThumb}>
+                    <Ionicons name="restaurant-outline" size={24} color={colors.text.placeholder} />
+                  </View>
+                ) : (
+                  <Ionicons name="restaurant-outline" size={24} color={colors.text.placeholder} />
+                )}
               </View>
               <View style={styles.listInfo}>
                 <View style={styles.listRow}>
                   <Text style={styles.listName}>{item.name}</Text>
-                  <TouchableOpacity style={styles.heartBtn}>
+                  <TouchableOpacity
+                    style={styles.heartBtn}
+                    onPress={() => handleToggleFavorite(item.id)}
+                  >
                     <Ionicons
                       name={item.isFavorite ? 'heart' : 'heart-outline'}
                       size={20}
@@ -190,11 +158,12 @@ export default function ExploreTab() {
                   </TouchableOpacity>
                 </View>
                 <Text style={styles.listMeta}>
-                  {item.category} · 도보 {item.walkMinutes}분 · {item.priceRange}
+                  {item.category.name} · 도보 {item.walkMinutes}분
+                  {item.priceRange ? ` · ${priceRangeLabel(item.priceRange)}` : ''}
                 </Text>
-                {item.rating && (
+                {item.myVisit && (
                   <Text style={styles.listVisit}>
-                    ★ {item.rating} · {item.visitCount}번 방문
+                    ★ {item.myVisit.rating.toFixed(1)} · {item.myVisit.visitCount}번 방문
                   </Text>
                 )}
               </View>

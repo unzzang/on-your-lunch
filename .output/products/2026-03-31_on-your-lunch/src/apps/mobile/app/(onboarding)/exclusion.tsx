@@ -21,7 +21,7 @@ import { useCategories, useAllergyTypes } from '@/services/hooks';
 
 export default function ExclusionScreen() {
   const router = useRouter();
-  const { setExclusions } = useOnboardingStore();
+  const { setExcludedCategories: storeSetExcluded, setAllergyTypes } = useOnboardingStore();
   const { data: categories = [] } = useCategories();
   const { data: allergyTypes = [] } = useAllergyTypes();
 
@@ -41,14 +41,16 @@ export default function ExclusionScreen() {
   }, []);
 
   const handleComplete = useCallback(() => {
-    setExclusions(excludedCategories, selectedAllergies);
+    storeSetExcluded(excludedCategories);
+    setAllergyTypes(selectedAllergies);
     router.replace('/(tabs)');
-  }, [excludedCategories, selectedAllergies, setExclusions, router]);
+  }, [excludedCategories, selectedAllergies, storeSetExcluded, setAllergyTypes, router]);
 
   const handleSkip = useCallback(() => {
-    setExclusions([], []);
+    storeSetExcluded([]);
+    setAllergyTypes([]);
     router.replace('/(tabs)');
-  }, [setExclusions, router]);
+  }, [storeSetExcluded, setAllergyTypes, router]);
 
   return (
     <SafeAreaView style={styles.container}>

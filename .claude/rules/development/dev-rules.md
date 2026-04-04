@@ -17,8 +17,10 @@
 - 백엔드: API 비즈니스 로직 구현 완료 + 빌드/테스트/린트 통과
 - 프론트엔드: **실제 화면 UI 구현 완료** (빈 컴포넌트/구조만은 미완료 상태)
 - 프론트↔백엔드 연동 확인 (API 호출 → 화면 표시)
+- **MOCK/하드코딩 데이터 전량 제거** — `grep -rn "MOCK_" app/` 결과 0건
+- **API 훅 1:1 대조** — 백엔드 API 목록과 프론트 훅 목록을 대조하여 누락 0건
 - shared-types와 실제 API 응답 일치
-- 시뮬레이터에서 기본 동작 확인
+- 시뮬레이터에서 **모든 화면** 실제 데이터 표시 확인 (홈만이 아니라 전체)
 
 ## 버그 수정 후
 
@@ -59,6 +61,12 @@
 ❌ 에이전트에게 "화면 20개 한꺼번에 만들어줘" → 마지막에 실행 → 에러 폭발
 ✅ "화면 1개 만들고 시뮬레이터 확인" → "다음 화면" → 반복
 ```
+
+### ScrollView 규칙 (스크롤 안 되는 버그 방지)
+
+- `react-native-gesture-handler`의 `ScrollView` 사용 금지. `GestureHandlerRootView`와 제스처 충돌으로 스크롤이 동작하지 않음.
+- 반드시 `react-native`의 `ScrollView` 또는 `FlatList`를 사용한다.
+- 리스트 형태의 화면은 `FlatList` + `ListHeaderComponent` 패턴 권장.
 
 ### pnpm workspace + Expo 필수 설정 (누락 시 앱 크래시)
 

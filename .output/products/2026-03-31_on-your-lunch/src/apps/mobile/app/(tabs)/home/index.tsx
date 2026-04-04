@@ -1,19 +1,23 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  FlatList,
+  ScrollView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typo, spacing, radius, shadow } from '../../../constants/tokens';
 import { useRecommendations, useRefreshRecommendation } from '../../../services/hooks';
+import { useAuthStore } from '../../../stores/authStore';
 import ErrorState from '../../../components/ErrorState';
 import EmptyState from '../../../components/EmptyState';
+
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
 
 const CATEGORIES = [
   { id: 'all', name: '전체' },
@@ -45,17 +49,218 @@ export default function HomeTab() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
 
+  const { isAuthenticated, setTokens, setUser } = useAuthStore();
   const { data, isLoading, isError, refetch } = useRecommendations();
   const refreshMutation = useRefreshRecommendation();
+
+  // 토큰 없을 때 dev-login 재시도 후 refetch
+  const handleRetry = async () => {
+    if (!isAuthenticated && __DEV__) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/v1/auth/dev-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (response.ok) {
+          const json = await response.json();
+          const result = json.data;
+          setTokens(result.accessToken, result.refreshToken);
+          if (result.user) {
+            setUser(result.user.id, result.user.nickname ?? null, result.user.isOnboardingCompleted ?? false);
+          }
+        }
+      } catch (e) {
+        // dev-login 실패 시 그냥 refetch
+      }
+    }
+    refetch();
+  };
 
   const restaurants = data?.restaurants ?? [];
   const refreshCount = data?.refreshCount ?? 0;
   const maxRefresh = data?.maxRefreshCount ?? 5;
 
   const handleRefresh = () => {
-    refreshMutation.mutate({
-      excludeRestaurantIds: restaurants.map((r: any) => r.restaurantId),
-    });
+    refreshMutation.mutate({});
+  };
+
+  const renderHeader = useCallback(() => (
+    <>
+      {/* Greeting */}
+      <View style={styles.greeting}>
+        <Text style={styles.greetingText}>사용자님,</Text>
+        <Text style={styles.greetingText}>오늘 점심 뭐 먹을까요?</Text>
+      </View>
+
+      {/* Category Chips */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.chipContainer}
+        style={styles.chipScroll}
+        nestedScrollEnabled
+      >
+        {CATEGORIES.map((cat: CategoryItem) => {
+          const isActive = cat.id === selectedCategory;
+          return (
+            <TouchableOpacity
+              key={cat.id}
+              style={[
+                styles.chip,
+                isActive ? styles.chipActive : styles.chipInactive,
+              ]}
+              onPress={() => setSelectedCategory(cat.id)}
+            >
+              <Text
+                style={[
+                  styles.chipText,
+                  isActive ? styles.chipTextActive : styles.chipTextInactive,
+                ]}
+              >
+                {cat.name}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+
+      {/* Sub Filters */}
+      <View style={styles.subFilterRow}>
+        <View style={styles.segmentGroup}>
+          {['5분', '10분', '15분'].map((label, i) => {
+            const isActive = i === 1;
+            return (
+              <TouchableOpacity
+                key={label}
+                style={[
+                  styles.segment,
+                  isActive && styles.segmentActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.segmentText,
+                    isActive && styles.segmentTextActive,
+                  ]}
+                >
+                  {label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+        <View style={styles.segmentGroup}>
+          {['~1만', '1~2만', '2만~'].map((label, i) => {
+            const isActive = i === 0;
+            return (
+              <TouchableOpacity
+                key={label}
+                style={[
+                  styles.segment,
+                  isActive && styles.segmentActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.segmentText,
+                    isActive && styles.segmentTextActive,
+                  ]}
+                >
+                  {label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+
+      {/* Divider */}
+      <View style={styles.divider} />
+    </>
+  ), [selectedCategory]);
+
+  const renderRestaurantCard = useCallback(({ item: restaurant }: { item: any }) => (
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.7}
+      onPress={() => router.push(`/(tabs)/home/restaurant/${restaurant.id ?? restaurant.restaurantId}`)}
+    >
+      {/* Image Placeholder */}
+      <View style={styles.cardImage}>
+        <Ionicons name="restaurant-outline" size={48} color={colors.text.placeholder} />
+      </View>
+      {/* Info */}
+      <View style={styles.cardInfo}>
+        <View style={styles.cardRow}>
+          <Text style={styles.cardName}>{restaurant.name}</Text>
+          <TouchableOpacity style={styles.heartButton}>
+            <Ionicons
+              name={restaurant.isFavorite ? 'heart' : 'heart-outline'}
+              size={24}
+              color={restaurant.isFavorite ? colors.primary : colors.text.placeholder}
+            />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.cardMeta}>
+          {restaurant.categoryName ?? restaurant.category?.name ?? ''} · 도보 {restaurant.walkMinutes}분
+        </Text>
+      </View>
+    </TouchableOpacity>
+  ), [router]);
+
+  const renderFooter = useCallback(() => {
+    if (isLoading || isError || restaurants.length === 0) return null;
+    return (
+      <View>
+        <TouchableOpacity
+          style={styles.refreshButton}
+          activeOpacity={0.7}
+          onPress={handleRefresh}
+          disabled={refreshCount >= maxRefresh || refreshMutation.isPending}
+        >
+          {refreshMutation.isPending ? (
+            <ActivityIndicator size="small" color={colors.primary} />
+          ) : (
+            <Ionicons name="refresh-outline" size={20} color={colors.primary} />
+          )}
+          <Text style={styles.refreshText}>
+            다른 추천 보기 ({refreshCount}/{maxRefresh})
+          </Text>
+        </TouchableOpacity>
+        <View style={{ height: spacing.lg }} />
+      </View>
+    );
+  }, [refreshCount, maxRefresh, refreshMutation.isPending, isLoading, isError, restaurants.length, handleRefresh]);
+
+  // 로딩/에러/빈 상태일 때 표시할 컨텐츠
+  const renderStateContent = () => {
+    if (isLoading) {
+      return (
+        <View>
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </View>
+      );
+    }
+    if (isError) {
+      return (
+        <ErrorState
+          message="추천을 불러올 수 없어요"
+          onRetry={handleRetry}
+        />
+      );
+    }
+    if (restaurants.length === 0) {
+      return (
+        <EmptyState
+          icon="restaurant-outline"
+          title="추천 식당이 없어요"
+          subtitle="위치와 취향을 설정하면 맞춤 추천을 받을 수 있어요"
+        />
+      );
+    }
+    return null;
   };
 
   return (
@@ -68,180 +273,20 @@ export default function HomeTab() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Greeting */}
-        <View style={styles.greeting}>
-          <Text style={styles.greetingText}>사용자님,</Text>
-          <Text style={styles.greetingText}>오늘 점심 뭐 먹을까요?</Text>
-        </View>
-
-        {/* Category Chips */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.chipContainer}
-          style={styles.chipScroll}
-        >
-          {CATEGORIES.map((cat: CategoryItem) => {
-            const isActive = cat.id === selectedCategory;
-            return (
-              <TouchableOpacity
-                key={cat.id}
-                style={[
-                  styles.chip,
-                  isActive ? styles.chipActive : styles.chipInactive,
-                ]}
-                onPress={() => setSelectedCategory(cat.id)}
-              >
-                <Text
-                  style={[
-                    styles.chipText,
-                    isActive ? styles.chipTextActive : styles.chipTextInactive,
-                  ]}
-                >
-                  {cat.name}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-
-        {/* Sub Filters */}
-        <View style={styles.subFilterRow}>
-          <View style={styles.segmentGroup}>
-            {['5분', '10분', '15분'].map((label, i) => {
-              const isActive = i === 1;
-              return (
-                <TouchableOpacity
-                  key={label}
-                  style={[
-                    styles.segment,
-                    isActive && styles.segmentActive,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.segmentText,
-                      isActive && styles.segmentTextActive,
-                    ]}
-                  >
-                    {label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-          <View style={styles.segmentGroup}>
-            {['~1만', '1~2만', '2만~'].map((label, i) => {
-              const isActive = i === 0;
-              return (
-                <TouchableOpacity
-                  key={label}
-                  style={[
-                    styles.segment,
-                    isActive && styles.segmentActive,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.segmentText,
-                      isActive && styles.segmentTextActive,
-                    ]}
-                  >
-                    {label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
-
-        {/* Divider */}
-        <View style={styles.divider} />
-
-        {/* 로딩 상태 */}
-        {isLoading && (
-          <View>
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-          </View>
-        )}
-
-        {/* 에러 상태 */}
-        {isError && !isLoading && (
-          <ErrorState
-            message="추천을 불러올 수 없어요"
-            onRetry={() => refetch()}
-          />
-        )}
-
-        {/* 빈 상태 */}
-        {!isLoading && !isError && restaurants.length === 0 && (
-          <EmptyState
-            icon="restaurant-outline"
-            title="추천 식당이 없어요"
-            subtitle="위치와 취향을 설정하면 맞춤 추천을 받을 수 있어요"
-          />
-        )}
-
-        {/* 정상 상태: Recommendation Cards */}
-        {!isLoading && !isError && restaurants.length > 0 && (
+      <FlatList
+        data={!isLoading && !isError ? restaurants : []}
+        keyExtractor={(item: any) => String(item.id ?? item.restaurantId)}
+        renderItem={renderRestaurantCard}
+        ListHeaderComponent={
           <>
-            {restaurants.map((restaurant: any) => (
-              <TouchableOpacity
-                key={restaurant.restaurantId}
-                style={styles.card}
-                activeOpacity={0.7}
-                onPress={() => router.push(`/(tabs)/home/restaurant/${restaurant.restaurantId}`)}
-              >
-                {/* Image Placeholder */}
-                <View style={styles.cardImage}>
-                  <Ionicons name="restaurant-outline" size={48} color={colors.text.placeholder} />
-                </View>
-                {/* Info */}
-                <View style={styles.cardInfo}>
-                  <View style={styles.cardRow}>
-                    <Text style={styles.cardName}>{restaurant.name}</Text>
-                    <TouchableOpacity style={styles.heartButton}>
-                      <Ionicons
-                        name={restaurant.isFavorite ? 'heart' : 'heart-outline'}
-                        size={24}
-                        color={restaurant.isFavorite ? colors.primary : colors.text.placeholder}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  <Text style={styles.cardMeta}>
-                    {restaurant.categoryName ?? restaurant.category?.name ?? ''} · 도보 {restaurant.walkMinutes}분
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-
-            {/* Refresh Button */}
-            <TouchableOpacity
-              style={styles.refreshButton}
-              activeOpacity={0.7}
-              onPress={handleRefresh}
-              disabled={refreshCount >= maxRefresh || refreshMutation.isPending}
-            >
-              {refreshMutation.isPending ? (
-                <ActivityIndicator size="small" color={colors.primary} />
-              ) : (
-                <Ionicons name="refresh-outline" size={20} color={colors.primary} />
-              )}
-              <Text style={styles.refreshText}>
-                다른 추천 보기 ({refreshCount}/{maxRefresh})
-              </Text>
-            </TouchableOpacity>
+            {renderHeader()}
+            {renderStateContent()}
           </>
-        )}
-
-        <View style={{ height: spacing.lg }} />
-      </ScrollView>
+        }
+        ListFooterComponent={renderFooter}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContent}
+      />
     </View>
   );
 }
@@ -272,9 +317,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // Scroll
-  scrollView: {
-    flex: 1,
+  // List
+  listContent: {
+    flexGrow: 1,
   },
 
   // Greeting

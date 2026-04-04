@@ -26,14 +26,15 @@ export default function Index() {
           });
 
           if (response.ok) {
-            const data = await response.json();
-            setTokens(data.accessToken, data.refreshToken);
+            const json = await response.json();
+            const result = json.data; // API 응답 래퍼: { success, data: { ... } }
+            setTokens(result.accessToken, result.refreshToken);
 
-            if (data.user) {
+            if (result.user) {
               setUser(
-                data.user.id,
-                data.user.nickname ?? null,
-                data.user.isOnboardingCompleted ?? false,
+                result.user.id,
+                result.user.nickname ?? null,
+                result.user.isOnboardingCompleted ?? false,
               );
             }
           } else {

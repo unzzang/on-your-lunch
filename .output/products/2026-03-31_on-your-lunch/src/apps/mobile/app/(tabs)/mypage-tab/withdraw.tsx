@@ -18,18 +18,26 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/tokens';
 import { useAuthStore } from '@/stores/authStore';
+import { useDeleteAccount } from '@/services/hooks';
 
 export default function WithdrawScreen() {
   const router = useRouter();
   const logout = useAuthStore((s) => s.logout);
+  const deleteAccount = useDeleteAccount();
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleWithdraw = useCallback(async () => {
-    // 실제 구현: DELETE /users/me API 호출 후 로그아웃
+    try {
+      await deleteAccount.mutateAsync();
+    } catch {
+      Alert.alert('오류', '회원 탈퇴에 실패했어요. 다시 시도해주세요.');
+      setShowConfirm(false);
+      return;
+    }
     setShowConfirm(false);
     await logout();
     router.replace('/(auth)/login');
-  }, [logout, router]);
+  }, [logout, router, deleteAccount]);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -1,19 +1,14 @@
+import { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typo, spacing, radius } from '../../../constants/tokens';
 import ErrorState from '../../../components/ErrorState';
 import EmptyState from '../../../components/EmptyState';
+import { useEatingHistoryCalendar } from '../../../services/hooks';
+import type { CalendarDay } from '@on-your-lunch/shared-types';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
-const YEAR = 2026;
-const MONTH = 4;
-
-// 하드코딩된 더미 데이터 (API 연동 시 useEatingHistoryCalendar 훅으로 교체)
-const MOCK_RECORDS: Record<number, { name: string; category: string; rating: number; memo: string; categoryColor: string }[]> = {
-  1: [{ name: '을지로 골목식당', category: '한식', rating: 4, memo: '된장찌개 맛있었어요', categoryColor: '#FF8C00' }],
-  2: [{ name: '파스타공방', category: '양식', rating: 5, memo: '', categoryColor: '#00AA00' }],
-};
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate();
@@ -23,29 +18,71 @@ function getFirstDayOfMonth(year: number, month: number) {
   return new Date(year, month - 1, 1).getDay();
 }
 
-// 시뮬레이션용 상태 (실제 API 연동 시 useQuery로 대체)
-type LoadState = 'loading' | 'error' | 'empty' | 'success';
+function formatDateKey(year: number, month: number, day: number): string {
+  const m = String(month).padStart(2, '0');
+  const d = String(day).padStart(2, '0');
+  return `${year}-${m}-${d}`;
+}
 
 export default function HistoryTab() {
   const insets = useSafeAreaInsets();
-  const daysInMonth = getDaysInMonth(YEAR, MONTH);
-  const firstDay = getFirstDayOfMonth(YEAR, MONTH);
-  const today = 2;
+  const now = new Date();
+  const [year, setYear] = useState(now.getFullYear());
+  const [month, setMonth] = useState(now.getMonth() + 1);
+  const [selectedDay, setSelectedDay] = useState<number>(now.getDate());
 
-  // 현재는 하드코딩 데이터 사용. API 연동 시 useEatingHistoryCalendar 훅으로 교체.
-  const loadState: LoadState = 'success';
-  const records = MOCK_RECORDS;
+  const { data: calendarData, isLoading, isError, refetch } = useEatingHistoryCalendar(year, month);
 
-  const handleRetry = () => {
-    // API 연동 시 refetch() 호출
-  };
+  // CalendarDay[] -> Record<number, CalendarDay> (날짜 기준 lookup)
+  const dayMap = useMemo(() => {
+    const map: Record<number, CalendarDay> = {};
+    if (calendarData?.days) {
+      for (const day of calendarData.days) {
+        const dateNum = parseInt(day.date.split('-')[2], 10);
+        map[dateNum] = day;
+      }
+    }
+    return map;
+  }, [calendarData]);
 
-  // 캘린더 셀 구성
+  const daysInMonth = getDaysInMonth(year, month);
+  const firstDay = getFirstDayOfMonth(year, month);
+
   const cells: (number | null)[] = [];
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
-  const selectedDayRecords = records[today] || [];
+  const selectedDayData = selectedDay ? dayMap[selectedDay] : undefined;
+  const selectedRecords = selectedDayData?.records ?? [];
+
+  const isToday =
+    year === now.getFullYear() &&
+    month === now.getMonth() + 1 &&
+    selectedDay === now.getDate();
+
+  const handlePrevMonth = () => {
+    if (month === 1) {
+      setYear(year - 1);
+      setMonth(12);
+    } else {
+      setMonth(month - 1);
+    }
+    setSelectedDay(1);
+  };
+
+  const handleNextMonth = () => {
+    if (month === 12) {
+      setYear(year + 1);
+      setMonth(1);
+    } else {
+      setMonth(month + 1);
+    }
+    setSelectedDay(1);
+  };
+
+  const handleRetry = () => {
+    refetch();
+  };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -59,7 +96,7 @@ export default function HistoryTab() {
       </View>
 
       {/* 로딩 상태 */}
-      {loadState === 'loading' && (
+      {isLoading && (
         <View style={styles.stateContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.stateText}>이력을 불러오는 중...</Text>
@@ -67,32 +104,23 @@ export default function HistoryTab() {
       )}
 
       {/* 에러 상태 */}
-      {loadState === 'error' && (
+      {isError && (
         <ErrorState
           message="이력을 불러올 수 없어요"
           onRetry={handleRetry}
         />
       )}
 
-      {/* 빈 상태 */}
-      {loadState === 'empty' && (
-        <EmptyState
-          icon="calendar-outline"
-          title="아직 기록이 없어요"
-          subtitle="식당에서 '먹었어요'를 눌러 기록을 시작해보세요"
-        />
-      )}
-
       {/* 정상 상태 */}
-      {loadState === 'success' && (
+      {!isLoading && !isError && (
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Month Navigation */}
           <View style={styles.monthNav}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handlePrevMonth}>
               <Ionicons name="chevron-back" size={20} color={colors.text.primary} />
             </TouchableOpacity>
-            <Text style={styles.monthTitle}>{YEAR}년 {MONTH}월</Text>
-            <TouchableOpacity>
+            <Text style={styles.monthTitle}>{year}년 {month}월</Text>
+            <TouchableOpacity onPress={handleNextMonth}>
               <Ionicons name="chevron-forward" size={20} color={colors.text.primary} />
             </TouchableOpacity>
           </View>
@@ -109,20 +137,34 @@ export default function HistoryTab() {
           {/* Calendar Grid */}
           <View style={styles.calendarGrid}>
             {cells.map((day, index) => {
-              const hasRecord = day !== null && records[day];
-              const isToday = day === today;
+              const hasRecord = day !== null && !!dayMap[day];
+              const isDayToday =
+                day === now.getDate() &&
+                year === now.getFullYear() &&
+                month === now.getMonth() + 1;
+              const isSelected = day === selectedDay;
               return (
-                <TouchableOpacity key={index} style={styles.calendarCell}>
+                <TouchableOpacity
+                  key={index}
+                  style={styles.calendarCell}
+                  onPress={() => day !== null && setSelectedDay(day)}
+                >
                   {day !== null ? (
                     <>
-                      <Text style={[styles.dayText, isToday && styles.dayTextToday]}>
+                      <Text
+                        style={[
+                          styles.dayText,
+                          isDayToday && styles.dayTextToday,
+                          isSelected && styles.dayTextSelected,
+                        ]}
+                      >
                         {day}
                       </Text>
                       {hasRecord && (
                         <View
                           style={[
                             styles.dot,
-                            { backgroundColor: records[day][0].categoryColor },
+                            { backgroundColor: dayMap[day].records[0]?.category?.colorCode || colors.primary },
                           ]}
                         />
                       )}
@@ -136,14 +178,14 @@ export default function HistoryTab() {
           {/* Selected Day Records */}
           <View style={styles.recordSection}>
             <Text style={styles.recordDate}>
-              {MONTH}월 {today}일 (오늘)
+              {month}월 {selectedDay}일{isToday ? ' (오늘)' : ''}
             </Text>
-            {selectedDayRecords.length > 0 ? (
-              selectedDayRecords.map((record, i) => (
-                <View key={i} style={styles.recordCard}>
-                  <Text style={styles.recordName}>{record.name}</Text>
+            {selectedRecords.length > 0 ? (
+              selectedRecords.map((record) => (
+                <View key={record.id} style={styles.recordCard}>
+                  <Text style={styles.recordName}>{record.restaurant.name}</Text>
                   <Text style={styles.recordMeta}>
-                    {record.category} · {'★'.repeat(record.rating)}{'☆'.repeat(5 - record.rating)} {record.rating}.0
+                    {record.category.name} · {'★'.repeat(record.rating)}{'☆'.repeat(5 - record.rating)} {record.rating}.0
                   </Text>
                   {record.memo ? (
                     <Text style={styles.recordMemo}>"{record.memo}"</Text>
@@ -247,6 +289,9 @@ const styles = StyleSheet.create({
   },
   dayTextToday: {
     color: colors.primary,
+    fontWeight: '700',
+  },
+  dayTextSelected: {
     fontWeight: '700',
   },
   dot: {

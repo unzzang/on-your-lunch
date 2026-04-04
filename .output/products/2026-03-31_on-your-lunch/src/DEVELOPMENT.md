@@ -1307,6 +1307,165 @@ module.exports = config;
 
 ---
 
+## Phase 10: 프론트↔백엔드 API 연동
+
+> **목표:** 모든 화면에서 MOCK/하드코딩 데이터를 제거하고 실제 백엔드 API와 연결한다.
+> **비유:** 건물(프론트)과 수도관(백엔드)을 연결하는 것. Phase 5~9에서 건물은 지었지만, 수도꼭지에서 물이 안 나오는 상태였다.
+
+### 왜 별도 Phase인가?
+
+Phase 5~9에서 프론트엔드 화면을 만들 때 MOCK 데이터로 UI를 먼저 구현했다. 이유는:
+- 백엔드가 완성되기 전에 프론트 작업을 시작할 수 있다
+- UI 레이아웃을 빠르게 확인할 수 있다
+
+하지만 **MOCK 데이터를 실제 API로 교체하는 단계를 건너뛰면** "화면은 보이는데 데이터가 가짜"인 상태가 된다. 이것이 온유어런치에서 실제로 발생한 문제다.
+
+### 연동 체크리스트 (화면 단위)
+
+모든 화면을 아래 기준으로 점검한다. **한 줄이라도 MOCK이면 미완료.**
+
+| 화면 | 사용 API | 필요한 훅 | 확인 |
+|------|---------|---------|:---:|
+| 홈 탭 | GET /recommendations/today, POST /recommendations/today/refresh | useRecommendations, useRefreshRecommendation | ✅ |
+| 탐색 탭 | GET /restaurants, GET /categories | useRestaurants, useCategories | ✅ |
+| 이력 탭 | GET /eating-histories/calendar | useEatingHistoryCalendar | ✅ |
+| 마이 탭 | GET /users/me | useMe | ✅ |
+| 식당 상세 | GET /restaurants/{id} | useRestaurant | ✅ |
+| 기록 저장 | POST /eating-histories | useCreateEatingHistory | ✅ |
+| 즐겨찾기 | POST /favorites/toggle | useFavoriteToggle | ✅ |
+| 프로필 편집 | PATCH /users/me/profile | useUpdateProfile | ✅ |
+| 위치 변경 | PUT /users/me/location | useUpdateLocation | ✅ |
+| 취향 수정 | PUT /users/me/preferences | useUpdatePreferences | ✅ |
+| 알림 설정 | PUT /users/me/notification | useUpdateNotification | ✅ |
+| 회원 탈퇴 | DELETE /users/me | useDeleteAccount | ✅ |
+| 추천 새로고침 | POST /recommendations/today/refresh | useRefreshRecommendation | ✅ |
+
+### MOCK 데이터 잔류 검사 방법
+
+```bash
+# 프론트엔드 코드에서 MOCK 데이터 검색
+grep -rn "MOCK_" apps/mobile/app/ --include="*.tsx" --include="*.ts"
+grep -rn "하드코딩" apps/mobile/app/ --include="*.tsx" --include="*.ts"
+
+# 결과가 0건이어야 통과
+```
+
+### Phase 10 완료 후 확인
+
+- [ ] 모든 화면에서 MOCK 데이터가 제거되었는가
+- [ ] 백엔드 API 응답과 shared-types 타입이 일치하는가
+- [ ] 모든 화면에 에러/로딩/빈 상태가 구현되어 있는가
+- [ ] `react-native-gesture-handler`의 ScrollView를 사용하지 않는가 (FlatList 또는 react-native ScrollView만 사용)
+- [ ] 시뮬레이터에서 모든 탭 전환이 정상인가
+- [ ] 시뮬레이터에서 모든 화면에 실제 데이터가 표시되는가
+
+### 이 Phase에서 배운 것 (삽질 방지)
+
+1. **ScrollView 충돌** — `GestureHandlerRootView` 안에서 `react-native-gesture-handler`의 `ScrollView`를 쓰면 스크롤이 안 됨. 반드시 `react-native`의 `ScrollView` 또는 `FlatList`를 사용할 것.
+
+2. **API 응답 래퍼** — 모든 API가 `{ success: true, data: {...} }` 형태로 응답함. 프론트에서 `response.data`가 아니라 `response.data.data`처럼 한 단계 더 들어가야 할 수 있음. ky의 `.json<ApiResponse<T>>()` 후 `result.data`로 접근.
+
+3. **dev-login 토큰 문제** — 앱 시작 시 백엔드가 꺼져 있으면 dev-login 실패 → 토큰 없이 홈 진입 → 모든 API 401. "다시 시도" 버튼에서 dev-login 재시도 로직 필요.
+
+---
+
+## Phase 11: QA (품질 검증)
+
+> **목표:** 앱의 모든 기능이 기능 명세서대로 동작하는지 검증한다.
+> **비유:** 건물이 다 지어졌으니, 안전 검사를 받는 것.
+
+### QA 4단계 (건너뛰기 금지)
+
+QA는 반드시 아래 4단계를 순서대로 진행한다. 한 단계라도 실패하면 수정 후 해당 단계부터 재검증.
+
+#### Phase 11-1. 정적 검증
+
+코드 자체의 오류를 검사한다. 앱을 실행하지 않고도 확인 가능.
+
+```bash
+# 1. TypeScript 타입 체크
+npx tsc --project apps/mobile/tsconfig.json --noEmit
+
+# 2. 백엔드 빌드
+pnpm api:build
+
+# 3. 린트
+pnpm lint
+
+# 4. shared-types 빌드
+npx tsc --project packages/shared-types/tsconfig.json --noEmit
+```
+
+**통과 기준:** 에러 0건
+
+#### Phase 11-2. 통합 검증
+
+프론트↔백엔드 연결이 올바른지 확인한다.
+
+```bash
+# 1. 백엔드 서버 실행
+pnpm api:dev
+
+# 2. 모든 API 엔드포인트 호출 테스트
+TOKEN=$(curl -s -X POST http://localhost:3000/v1/auth/dev-login \
+  -H "Content-Type: application/json" | python3 -c \
+  "import sys,json; print(json.load(sys.stdin)['data']['accessToken'])")
+
+# 3. 각 API 정상 응답 확인
+curl -s http://localhost:3000/v1/categories -H "Authorization: Bearer $TOKEN"
+curl -s http://localhost:3000/v1/users/me -H "Authorization: Bearer $TOKEN"
+curl -s http://localhost:3000/v1/restaurants?page=1 -H "Authorization: Bearer $TOKEN"
+curl -s http://localhost:3000/v1/recommendations/today -H "Authorization: Bearer $TOKEN"
+curl -s "http://localhost:3000/v1/eating-histories/calendar?year=2026&month=4" -H "Authorization: Bearer $TOKEN"
+```
+
+**통과 기준:** 모든 API가 `{ success: true }` 반환
+
+#### Phase 11-3. 기능 검증 (시뮬레이터)
+
+시뮬레이터에서 핵심 플로우를 실제로 테스트한다.
+
+**핵심 플로우 체크리스트:**
+
+| # | 플로우 | 확인 사항 |
+|---|--------|---------|
+| 1 | 앱 시작 → 홈 | dev-login 자동 → 추천 3곳 표시 |
+| 2 | 추천 새로고침 | "다른 추천 보기" 탭 → 새 식당 표시, 횟수 증가 |
+| 3 | 식당 상세 | 카드 탭 → 상세 화면 (이름, 카테고리, 도보, 설명) |
+| 4 | 먹었어요 | 상세 → "먹었어요" → 별점/메모 → 저장 성공 |
+| 5 | 즐겨찾기 | 하트 탭 → 토글 동작 |
+| 6 | 탐색 탭 | 식당 목록 표시, 카테고리 필터 동작 |
+| 7 | 이력 탭 | 캘린더 표시, 날짜 선택 → 기록 표시 |
+| 8 | 마이 탭 | 닉네임/이메일 표시, 설정 메뉴 진입 |
+| 9 | 탭 간 이동 | 모든 탭 전환 정상, 뒤로 가기 정상 |
+| 10 | 에러 상태 | 서버 끄고 → "다시 시도" 동작 |
+
+#### Phase 11-4. 수정 재검증
+
+Phase 11-3에서 발견된 버그를 수정한 후, 해당 기능만 재검증.
+
+- 수정 전: 버그 재현 확인 (스크린샷)
+- 수정 후: 동일 시나리오 통과 확인 (스크린샷)
+- 리그레션: 수정이 다른 기능에 영향을 주지 않았는지 확인
+
+### QA 판정 기준
+
+| 판정 | 조건 |
+|------|------|
+| **통과** | 상 0건 + 중 0건 |
+| **조건부 통과** | 상 0건 + 중 3건 이하 |
+| **실패** | 상 1건 이상, 또는 중 4건 이상 |
+
+### 이슈 심각도 기준
+
+| 심각도 | 기준 | 예시 |
+|--------|------|------|
+| **상** | 핵심 기능 불가 | 앱 크래시, 로그인 불가, 추천 표시 안 됨 |
+| **중** | 기능 동작하나 불완전 | 스크롤 안 됨, 데이터 불일치, 에러 상태 미처리 |
+| **하** | 개선하면 좋은 수준 | UI 정렬, 로딩 속도, 폰트 미세 차이 |
+
+---
+
 ## 참조 문서
 
 | 문서 | 위치 | 내용 |
@@ -1326,6 +1485,9 @@ module.exports = config;
 3. **각 Phase 완료 후 PO 확인** — 동작을 직접 확인한 뒤 다음으로
 4. **한 번에 하나씩** — 파일 하나를 만들고, 왜 필요한지 이해하고, 다음으로
 5. **코드 작성은 개발팀이 수행** — 기획(위더)이 직접 코드를 쓰지 않음
+6. **MOCK 데이터는 반드시 제거** — Phase 10에서 모든 화면의 MOCK/하드코딩 데이터를 실제 API로 교체. 한 줄이라도 남아있으면 미완료
+7. **API 훅 대조 필수** — 백엔드 API 목록 vs 프론트 훅 목록을 1:1 대조. 누락된 훅이 있으면 생성
+8. **ScrollView는 react-native에서 import** — react-native-gesture-handler의 ScrollView 사용 금지. FlatList 권장
 
 ---
 

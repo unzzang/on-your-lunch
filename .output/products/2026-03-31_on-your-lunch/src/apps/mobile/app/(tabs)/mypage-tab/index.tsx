@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typo, spacing, radius } from '../../../constants/tokens';
+import { useMe } from '../../../services/hooks';
 
 interface MenuItemProps {
   icon: string;
@@ -25,6 +26,7 @@ function MenuItem({ icon, label, onPress }: MenuItemProps) {
 export default function MyPageTab() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { data: me, isLoading } = useMe();
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -40,8 +42,14 @@ export default function MyPageTab() {
             <Ionicons name="person" size={28} color={colors.text.placeholder} />
           </View>
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>사용자</Text>
-            <Text style={styles.profileEmail}>example@gmail.com</Text>
+            {isLoading ? (
+              <ActivityIndicator size="small" color={colors.primary} />
+            ) : (
+              <>
+                <Text style={styles.profileName}>{me?.nickname ?? '사용자'}</Text>
+                <Text style={styles.profileEmail}>{me?.email ?? ''}</Text>
+              </>
+            )}
           </View>
           <Ionicons name="chevron-forward" size={16} color={colors.text.placeholder} />
         </TouchableOpacity>

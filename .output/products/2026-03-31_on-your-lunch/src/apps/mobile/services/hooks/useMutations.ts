@@ -104,3 +104,11 @@ export function useCreateEatingHistory() {
     },
   });
 }
+
+export function useDeleteAccount() {
+  return useMutation({
+    mutationFn: async () => {
+      await api.delete('users/me').json<ApiResponse<{ message: string }>>();
+    },
+  });
+}

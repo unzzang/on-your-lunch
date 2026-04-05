@@ -1,0 +1,31 @@
+appId: com.onyourmark.onyourlunch
+---
+# 탐색 탭 검증
+- launchApp
+
+- extendedWaitUntil:
+    visible: "온유어런치"
+    timeout: 15000
+
+# 탐색 탭으로 이동
+- tapOn: "탐색"
+
+# 탐색 탭 확인
+- extendedWaitUntil:
+    visible: "식당명, 메뉴 검색"
+    timeout: 5000
+
+# 카테고리 칩 확인
+- assertVisible: "전체"
+- assertVisible: "한식"
+
+# 식당 목록 확인 (API 데이터)
+- assertVisible: "명동할머니국수"
+
+# 정렬 확인
+- assertVisible: "거리순"
+
+# 스크롤
+- scroll
+
+- takeScreenshot: "explore_tab_verified"

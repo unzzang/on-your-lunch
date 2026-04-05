@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api';
 import { useExploreStore } from '../../stores/exploreStore';
+import { useAuthStore } from '../../stores/authStore';
 import type {
   ApiResponse,
   PaginatedData,
@@ -9,6 +10,7 @@ import type {
 
 export function useRestaurants(page: number = 1, limit: number = 20) {
   const { selectedCategoryId, sortBy } = useExploreStore();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   return useQuery({
     queryKey: ['restaurants', selectedCategoryId, sortBy, page, limit],
@@ -24,5 +26,6 @@ export function useRestaurants(page: number = 1, limit: number = 20) {
         .json<ApiResponse<PaginatedData<RestaurantListItem>>>();
       return response.data;
     },
+    enabled: isAuthenticated,
   });
 }

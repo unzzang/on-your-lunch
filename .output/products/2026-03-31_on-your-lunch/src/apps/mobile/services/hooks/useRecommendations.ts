@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api';
 import { useFilterStore } from '../../stores/filterStore';
+import { useAuthStore } from '../../stores/authStore';
 import type {
   ApiResponse,
   RecommendationTodayResponse,
@@ -9,9 +10,11 @@ import type {
 
 export function useRecommendations() {
   const { selectedCategoryId, walkMinutes, priceRange } = useFilterStore();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   return useQuery({
     queryKey: ['recommendations', selectedCategoryId, walkMinutes, priceRange],
+    enabled: isAuthenticated,
     queryFn: async () => {
       const params = new URLSearchParams();
       if (selectedCategoryId) params.set('categoryIds', selectedCategoryId);

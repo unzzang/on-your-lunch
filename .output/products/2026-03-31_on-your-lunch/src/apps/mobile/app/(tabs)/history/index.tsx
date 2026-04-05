@@ -6,7 +6,10 @@ import { colors, typo, spacing, radius } from '../../../constants/tokens';
 import ErrorState from '../../../components/ErrorState';
 import EmptyState from '../../../components/EmptyState';
 import { useEatingHistoryCalendar } from '../../../services/hooks';
+import { useAuthStore } from '../../../stores/authStore';
 import type { CalendarDay } from '@on-your-lunch/shared-types';
+
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -31,6 +34,7 @@ export default function HistoryTab() {
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [selectedDay, setSelectedDay] = useState<number>(now.getDate());
 
+  const { isAuthenticated, setTokens, setUser } = useAuthStore();
   const { data: calendarData, isLoading, isError, refetch } = useEatingHistoryCalendar(year, month);
 
   // CalendarDay[] -> Record<number, CalendarDay> (날짜 기준 lookup)
@@ -80,7 +84,25 @@ export default function HistoryTab() {
     setSelectedDay(1);
   };
 
-  const handleRetry = () => {
+  const handleRetry = async () => {
+    if (!isAuthenticated && __DEV__) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/v1/auth/dev-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (response.ok) {
+          const json = await response.json();
+          const result = json.data;
+          setTokens(result.accessToken, result.refreshToken);
+          if (result.user) {
+            setUser(result.user.id, result.user.nickname ?? null, result.user.isOnboardingCompleted ?? false);
+          }
+        }
+      } catch (e) {
+        // dev-login 실패 시 그냥 refetch
+      }
+    }
     refetch();
   };
 

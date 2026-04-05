@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api';
+import { useAuthStore } from '../../stores/authStore';
 import type { ApiResponse, RestaurantDetailResponse } from '@on-your-lunch/shared-types';
 
 export function useRestaurant(id: string) {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
   return useQuery({
     queryKey: ['restaurant', id],
     queryFn: async () => {
@@ -11,6 +14,6 @@ export function useRestaurant(id: string) {
         .json<ApiResponse<RestaurantDetailResponse>>();
       return response.data;
     },
-    enabled: !!id,
+    enabled: !!id && isAuthenticated,
   });
 }

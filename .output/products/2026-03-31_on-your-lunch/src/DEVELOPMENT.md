@@ -1350,6 +1350,25 @@ grep -rn "하드코딩" apps/mobile/app/ --include="*.tsx" --include="*.ts"
 # 결과가 0건이어야 통과
 ```
 
+### 디자인 대조 검수
+
+화면별로 디자인 명세와 시뮬레이터를 나란히 비교한다.
+
+| 화면 | 디자인 명세 | 대조 결과 |
+|------|-----------|----------|
+| 홈 탭 | `docs/005_design/home.md` | |
+| 탐색 탭 | `docs/005_design/explore.md` | |
+| 이력 탭 | `docs/005_design/history.md` | |
+| 마이 탭 | `docs/005_design/mypage.md` | |
+| 식당 상세 | `docs/005_design/restaurant-detail.md` | |
+| 온보딩 | `docs/005_design/onboarding.md` | |
+
+각 화면에서 확인:
+- [ ] 레이아웃(배치, 간격)이 디자인과 일치
+- [ ] 색상/타이포가 토큰과 일치
+- [ ] 컴포넌트 스타일이 component-spec과 일치
+- [ ] 4가지 상태가 디자인에 맞게 구현
+
 ### Phase 10 완료 후 확인
 
 - [ ] 모든 화면에서 MOCK 데이터가 제거되었는가
@@ -1358,6 +1377,7 @@ grep -rn "하드코딩" apps/mobile/app/ --include="*.tsx" --include="*.ts"
 - [ ] `react-native-gesture-handler`의 ScrollView를 사용하지 않는가 (FlatList 또는 react-native ScrollView만 사용)
 - [ ] 시뮬레이터에서 모든 탭 전환이 정상인가
 - [ ] 시뮬레이터에서 모든 화면에 실제 데이터가 표시되는가
+- [ ] 디자인 대조 검수 통과 (불일치 0건 또는 수정 완료)
 
 ### 이 Phase에서 배운 것 (삽질 방지)
 

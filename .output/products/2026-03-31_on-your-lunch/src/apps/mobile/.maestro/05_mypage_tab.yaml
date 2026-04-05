@@ -1,0 +1,31 @@
+appId: com.onyourmark.onyourlunch
+---
+# 마이페이지 탭 검증
+- launchApp
+
+- extendedWaitUntil:
+    visible: "온유어런치"
+    timeout: 15000
+
+# 마이 탭으로 이동
+- tapOn: "마이"
+
+# 마이페이지 확인
+- extendedWaitUntil:
+    visible: "마이페이지"
+    timeout: 5000
+
+# 프로필 정보 확인 (API 데이터)
+- assertVisible: "사용자"
+- assertVisible: "test@example.com"
+
+# 설정 메뉴 확인
+- assertVisible: "회사 위치 변경"
+- assertVisible: "취향 설정"
+- assertVisible: "알림 설정"
+
+# 하단 링크 확인
+- assertVisible: "로그아웃"
+- assertVisible: "회원 탈퇴"
+
+- takeScreenshot: "mypage_tab_verified"

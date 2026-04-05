@@ -1,0 +1,31 @@
+appId: com.onyourmark.onyourlunch
+---
+# 이력 탭 검증
+- launchApp
+
+- extendedWaitUntil:
+    visible: "온유어런치"
+    timeout: 15000
+
+# 이력 탭으로 이동
+- tapOn: "이력"
+
+# 캘린더 확인
+- extendedWaitUntil:
+    visible: "2026년 4월"
+    timeout: 5000
+
+# 요일 헤더 확인
+- assertVisible: "일"
+- assertVisible: "월"
+
+# 먹은 이력 제목 확인
+- assertVisible: "먹은 이력"
+
+# 오늘 날짜 확인
+- assertVisible: "오늘"
+
+# 빈 상태 확인
+- assertVisible: "기록이 없어요"
+
+- takeScreenshot: "history_tab_verified"

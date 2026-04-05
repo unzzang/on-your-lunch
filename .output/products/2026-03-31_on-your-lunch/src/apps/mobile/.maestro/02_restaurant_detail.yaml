@@ -1,0 +1,33 @@
+appId: com.onyourmark.onyourlunch
+---
+# 식당 상세 화면 검증
+- launchApp
+
+- extendedWaitUntil:
+    visible: "온유어런치"
+    timeout: 15000
+
+# 홈 탭에서 첫 번째 식당 카드 탭
+- tapOn:
+    text: "진미평양냉면"
+
+# 식당 상세 화면 확인
+- extendedWaitUntil:
+    visible: "한식"
+    timeout: 5000
+
+# 식당 정보 확인
+- assertVisible: "도보"
+
+# 먹었어요 버튼 확인
+- assertVisible: "먹었어요"
+
+- takeScreenshot: "restaurant_detail_verified"
+
+# 뒤로 가기
+- back
+
+# 홈 탭 복귀 확인
+- assertVisible: "온유어런치"
+
+- takeScreenshot: "back_to_home_verified"

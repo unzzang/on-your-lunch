@@ -23,12 +23,12 @@
 | **상태 관리** | Zustand 5 | 이전 버전과 동일, 학습 비용 0 |
 | **API 통신** | TanStack Query v5 + ky | 이전 버전과 동일 |
 | **지도** | 카카오맵 JS SDK | WebView 없이 직접 사용 (JS 키: 1144f9ac...) |
-| **인증** | Google OAuth (next-auth) | 웹 환경에 최적화 |
-| **PWA** | next-pwa | 홈 화면 추가, 오프라인 지원 |
-| **백엔드** | NestJS 11 + Prisma 6 + PostgreSQL 16 | 변경 없음 (백엔드팀 담당) |
+| **인증** | Google OAuth (google-auth-library) + dev-login | next-auth 미사용. 백엔드 JWT 직접 발급 |
+| **네이티브** | Capacitor (@capacitor/core, @capacitor/cli, @capacitor/ios) | PWA 대신 iOS 네이티브 앱으로 전환 |
+| **백엔드** | NestJS 11 + Prisma 7 + PostgreSQL 16 | Prisma 6 → 7 업그레이드 |
 | **공유 타입** | @on-your-lunch/shared-types | 변경 없음 |
 | **빌드** | pnpm workspace + Turborepo | 변경 없음 |
-| **배포** | Vercel (프론트) + Railway (백엔드) | 즉시 배포 |
+| **배포** | Vercel (프론트 + 백엔드 Serverless) + Neon PostgreSQL | 백엔드도 Vercel Serverless로 통합 |
 
 ---
 
@@ -66,6 +66,8 @@ src/
 │       │   ├── useRecommendations.ts
 │       │   ├── useRestaurants.ts
 │       │   ├── useEatingHistory.ts
+│       │   ├── useKakaoMaps.ts       ← 카카오맵 전역 로딩 훅
+│       │   ├── useShareRestaurant.ts  ← 공유 훅
 │       │   └── ...
 │       ├── lib/                  유틸리티
 │       │   ├── api.ts              API 클라이언트 (ky)
@@ -83,6 +85,8 @@ src/
 │       ├── next.config.js
 │       ├── tailwind.config.js
 │       ├── tsconfig.json
+│       ├── capacitor.config.ts       ← Capacitor 설정 (iOS 네이티브)
+│       ├── ios/                      ← iOS 네이티브 프로젝트
 │       └── package.json
 └── packages/
     └── shared-types/           ← 공유 타입 (변경 없음)
@@ -271,60 +275,68 @@ apps/api/
 │   ├── recommendation/         ← 추천 알고리즘
 │   ├── eating-history/         ← 먹은 이력 + 캘린더
 │   ├── favorite/               ← 즐겨찾기
-│   ├── share/                  ← 딥링크
-│   ├── notification/           ← 푸시 알림
+│   ├── share/                  ← 공유 링크 (인증 불필요)
 │   ├── event/                  ← 이벤트 로그
-│   └── common/                 ← 데코레이터, 필터, 인터셉터
+│   ├── common/                 ← 데코레이터, 필터, 인터셉터
+│   │   └── utils/geo.utils.ts    거리 계산 공통 유틸
+│   └── vercel.ts               ← Vercel Serverless 진입점
+│   (※ notification 모듈은 user 모듈에 통합됨: /v1/users/me/notification)
+├── api/
+│   └── index.js                ← Vercel Function 엔트리
 ├── package.json
 ├── tsconfig.json
 └── nest-cli.json
 ```
 
-**백엔드 API 목록 (11개 모듈):**
+**백엔드 API 목록 (9개 모듈, notification은 user에 통합):**
 
 | 모듈 | 주요 엔드포인트 | 비고 |
 |------|---------------|------|
-| auth | `POST /v1/auth/google`, `POST /v1/auth/dev-login`, `POST /v1/auth/refresh` | dev-login은 개발용 |
-| user | `GET /v1/users/me`, `PUT /v1/users/me`, `POST /v1/users/onboarding` | |
+| auth | `POST /v1/auth/google`, `POST /v1/auth/dev-login`, `POST /v1/auth/refresh`, `POST /v1/auth/logout` | dev-login은 개발용 |
+| user | `GET /v1/users/me`, `PATCH /v1/users/me/profile`, `POST /v1/users/me/onboarding/complete` | 프로필 수정은 PATCH |
+| user (설정) | `PUT /v1/users/me/location`, `PUT /v1/users/me/preferences`, `GET /v1/users/me/notification`, `PUT /v1/users/me/notification` | 알림 설정도 user 모듈에 통합 |
 | category | `GET /v1/categories`, `GET /v1/categories/allergies` | 마스터 데이터 |
-| restaurant | `GET /v1/restaurants`, `GET /v1/restaurants/:id`, `GET /v1/restaurants/map` | 지도 핀 포함 |
-| recommendation | `GET /v1/recommendations/today`, `POST /v1/recommendations/refresh` | |
-| eating-history | `GET /v1/eating-history/calendar`, `POST /v1/eating-history` | |
-| favorite | `POST /v1/favorites/:restaurantId`, `DELETE /v1/favorites/:restaurantId` | |
-| share | `GET /v1/share/:restaurantId` | 딥링크 |
-| notification | `GET /v1/notifications/settings`, `PUT /v1/notifications/settings` | |
+| restaurant | `GET /v1/restaurants`, `GET /v1/restaurants/:id`, `GET /v1/restaurants/map`, `GET /v1/restaurants/search` | 검색 엔드포인트 추가 |
+| recommendation | `GET /v1/recommendations/today`, `POST /v1/recommendations/today/refresh` | refresh 경로에 today 포함 |
+| eating-history | `GET /v1/eating-histories/calendar`, `POST /v1/eating-histories`, `POST /v1/eating-histories/custom` | 복수형(eating-histories), 커스텀 기록 추가 |
+| favorite | `GET /v1/favorites`, `POST /v1/favorites/toggle` | 토글 방식 (추가/해제 한 엔드포인트) |
+| share | `GET /v1/share/restaurant/:id` | 인증 불필요 (Public) |
 | event | `POST /v1/events` | 이벤트 로그 |
 
-**백엔드 API 전체 엔드포인트 (26개):**
+**백엔드 API 전체 엔드포인트 (30개):**
 
 | # | 메서드 | 경로 | 설명 | 인증 |
 |---|--------|------|------|------|
 | 1 | POST | `/v1/auth/google` | Google OAuth 로그인 | 불필요 |
 | 2 | POST | `/v1/auth/dev-login` | 개발용 자동 로그인 | 불필요 |
 | 3 | POST | `/v1/auth/refresh` | 토큰 갱신 | Refresh 토큰 |
-| 4 | GET | `/v1/users/me` | 내 프로필 조회 | JWT |
-| 5 | PUT | `/v1/users/me` | 프로필 수정 (닉네임) | JWT |
-| 6 | PUT | `/v1/users/me/location` | 회사 위치 수정 | JWT |
-| 7 | PUT | `/v1/users/me/preferences` | 취향 수정 | JWT |
-| 8 | POST | `/v1/users/onboarding` | 온보딩 완료 (위치+취향+제외 한번에) | JWT |
-| 9 | DELETE | `/v1/users/me` | 회원 탈퇴 | JWT |
-| 10 | GET | `/v1/categories` | 카테고리 목록 (7건) | 불필요 |
-| 11 | GET | `/v1/categories/allergies` | 알레르기 목록 (6건) | 불필요 |
-| 12 | GET | `/v1/restaurants` | 식당 리스트 (필터/정렬/페이징) | JWT |
-| 13 | GET | `/v1/restaurants/:id` | 식당 상세 | JWT |
-| 14 | GET | `/v1/restaurants/map` | 지도 핀 목록 (좌표 범위) | JWT |
-| 15 | GET | `/v1/recommendations/today` | 오늘의 추천 3곳 | JWT |
-| 16 | POST | `/v1/recommendations/refresh` | 추천 새로고침 | JWT |
-| 17 | GET | `/v1/eating-history/calendar` | 월별 먹은 이력 (캘린더) | JWT |
-| 18 | POST | `/v1/eating-history` | 먹은 기록 저장 | JWT |
-| 19 | PUT | `/v1/eating-history/:id` | 기록 수정 | JWT |
-| 20 | DELETE | `/v1/eating-history/:id` | 기록 삭제 | JWT |
-| 21 | POST | `/v1/favorites/:restaurantId` | 즐겨찾기 추가 | JWT |
-| 22 | DELETE | `/v1/favorites/:restaurantId` | 즐겨찾기 해제 | JWT |
-| 23 | GET | `/v1/share/:restaurantId` | 공유 딥링크 | JWT |
-| 24 | GET | `/v1/notifications/settings` | 알림 설정 조회 | JWT |
-| 25 | PUT | `/v1/notifications/settings` | 알림 설정 변경 | JWT |
-| 26 | POST | `/v1/events` | 이벤트 로그 | JWT |
+| 4 | POST | `/v1/auth/logout` | 로그아웃 (refreshToken 무효화) | JWT |
+| 5 | GET | `/v1/users/me` | 내 프로필 조회 | JWT |
+| 6 | PATCH | `/v1/users/me/profile` | 프로필 수정 (닉네임, 프로필 이미지) | JWT |
+| 7 | PUT | `/v1/users/me/location` | 회사 위치 수정 | JWT |
+| 8 | PUT | `/v1/users/me/preferences` | 취향 수정 | JWT |
+| 9 | POST | `/v1/users/me/onboarding/complete` | 온보딩 완료 처리 | JWT |
+| 10 | GET | `/v1/users/me/notification` | 알림 설정 조회 | JWT |
+| 11 | PUT | `/v1/users/me/notification` | 알림 설정 변경 | JWT |
+| 12 | PUT | `/v1/users/me/push-token` | Expo 푸시 토큰 등록 | JWT |
+| 13 | DELETE | `/v1/users/me` | 회원 탈퇴 | JWT |
+| 14 | GET | `/v1/categories` | 카테고리 목록 (7건) | 불필요 |
+| 15 | GET | `/v1/categories/allergies` | 알레르기 목록 (6건) | 불필요 |
+| 16 | GET | `/v1/restaurants` | 식당 리스트 (필터/정렬/페이징) | JWT |
+| 17 | GET | `/v1/restaurants/:id` | 식당 상세 | JWT |
+| 18 | GET | `/v1/restaurants/map` | 지도 핀 목록 (좌표 범위) | JWT |
+| 19 | GET | `/v1/restaurants/search` | 식당 검색 (이름 기반) | JWT |
+| 20 | GET | `/v1/recommendations/today` | 오늘의 추천 3곳 | JWT |
+| 21 | POST | `/v1/recommendations/today/refresh` | 추천 새로고침 (하루 최대 5회) | JWT |
+| 22 | GET | `/v1/eating-histories/calendar` | 월별 먹은 이력 (캘린더) | JWT |
+| 23 | POST | `/v1/eating-histories` | 먹은 기록 저장 (등록된 식당) | JWT |
+| 24 | POST | `/v1/eating-histories/custom` | 먹은 기록 저장 (직접 입력) | JWT |
+| 25 | PATCH | `/v1/eating-histories/:id` | 기록 수정 (평점, 메모) | JWT |
+| 26 | DELETE | `/v1/eating-histories/:id` | 기록 삭제 | JWT |
+| 27 | GET | `/v1/favorites` | 즐겨찾기 목록 조회 | JWT |
+| 28 | POST | `/v1/favorites/toggle` | 즐겨찾기 토글 (추가/해제) | JWT |
+| 29 | GET | `/v1/share/restaurant/:id` | 공유 딥링크 | 불필요 |
+| 30 | POST | `/v1/events` | 이벤트 로그 | JWT |
 
 **Prisma 7 주의사항 (v1 교훈 — 반드시 숙지):**
 
@@ -353,11 +365,11 @@ apps/api/
 
 **확인 기준:**
 - [ ] `pnpm api:dev`로 서버 시작
-- [ ] `curl http://localhost:3000/health` → `{"status":"ok"}`
+- [ ] `curl http://localhost:3000/` → `{"service":"on-your-lunch","version":"1.0.0"}`
 - [ ] `curl http://localhost:3000/v1/categories` → 카테고리 7건
 - [ ] `curl -X POST http://localhost:3000/v1/auth/dev-login` → 토큰 발급
-- [ ] Swagger (`http://localhost:3000/v1/docs`) 접속 가능
-- [ ] 26개 엔드포인트 전체 등록 확인 (Swagger에서)
+- [ ] Swagger (`http://localhost:3000/api-docs`) 접속 가능
+- [ ] 30개 엔드포인트 전체 등록 확인 (Swagger에서)
 - [ ] **PO 확인:** Swagger에서 API 목록 직접 확인
 
 ### Phase 4. 백엔드 검증 (백엔드팀 담당)
@@ -377,14 +389,14 @@ apps/api/
    - [ ] 시드 데이터: 카테고리 7건, 알레르기 6건, 테스트 식당
    - [ ] 마이그레이션 정상 (`pnpm db:migrate`)
 
-3. **API 검증 (26개 엔드포인트):**
+3. **API 검증 (30개 엔드포인트):**
    - [ ] dev-login으로 토큰 발급 → 이후 모든 API 호출에 사용
    - [ ] 각 엔드포인트 요청 → `{ success: true, data: {...} }` 응답 확인
    - [ ] shared-types와 실제 응답 필드 1:1 대조
    - [ ] 에러 케이스: 잘못된 요청 → `{ success: false, error: {...} }` 확인
 
 4. **API 훅 대조 (프론트와 합의):**
-   - [ ] 백엔드 API 26개 vs 프론트 hooks 목록 1:1 대조
+   - [ ] 백엔드 API 30개 vs 프론트 hooks 목록 1:1 대조
    - [ ] 누락된 엔드포인트 0건
 
 5. **응답 필드 완전성 검증 (기능 명세 기준):**
@@ -442,9 +454,11 @@ hooks/
 ├── useRestaurant.ts          ← GET /v1/restaurants/:id
 ├── useCategories.ts          ← GET /v1/categories
 ├── useAllergyTypes.ts        ← GET /v1/categories/allergies
-├── useEatingHistory.ts       ← GET /v1/eating-history/calendar
+├── useEatingHistory.ts       ← GET /v1/eating-histories/calendar
 ├── useMe.ts                  ← GET /v1/users/me
-└── useMutations.ts           ← POST/PUT/DELETE 훅 모음
+├── useKakaoMaps.ts           ← 카카오맵 전역 로딩 훅
+├── useShareRestaurant.ts     ← GET /v1/share/restaurant/:id
+└── useMutations.ts           ← POST/PATCH/DELETE 훅 모음
 stores/
 ├── authStore.ts              ← 토큰 + 사용자 정보
 ├── filterStore.ts            ← 홈 필터 상태
@@ -550,6 +564,8 @@ components/features/RecordCard.tsx
 app/(main)/mypage/page.tsx
 app/(main)/mypage/edit-profile/page.tsx
 app/(main)/mypage/notification/page.tsx
+app/(main)/mypage/location/page.tsx         ← 위치 변경
+app/(main)/mypage/preference/page.tsx       ← 취향 설정
 app/(main)/mypage/withdraw/page.tsx
 ```
 
@@ -583,17 +599,19 @@ app/(main)/restaurant/[id]/page.tsx
 - [ ] 4가지 상태(정상/로딩/빈/에러) 전체 구현
 - [ ] 이미지가 디자인과 동일하게 표시
 
-### Phase 14. PWA 설정 + QA
+### Phase 14. Capacitor iOS + QA
 
-**목표:** 모바일에서 "홈 화면에 추가"로 앱처럼 사용 가능 + QA 통과
+**목표:** Capacitor로 iOS 네이티브 앱 빌드 + QA 통과
 
-**14-1. PWA 설정:**
-- manifest.json (앱 이름: 온유어런치, 아이콘, 테마 색상: #D4501F)
-- Service Worker (오프라인 캐싱)
-- 모바일 Safari에서 "홈 화면에 추가" 테스트
-- 모바일 Chrome에서 PWA 설치 테스트
+**14-1. Capacitor iOS 설정:**
+- `capacitor.config.ts` (앱 이름: 온유어런치, 서버 URL 설정)
+- `ios/` 네이티브 프로젝트 생성 (`npx cap add ios`)
+- 카카오맵 도메인 등록 필요 (Vercel URL + `capacitor://localhost`)
+- Xcode에서 빌드 + 시뮬레이터 테스트
 
-**14-2. QA 4단계 (건너뛰기 금지):**
+**14-2. QA 프로세스 (전면 개편):**
+
+QA는 Phase 1~4 + 세부 단계 3-A/B/C/D로 구성된다.
 
 **Phase 1 — 정적 검증:**
 - [ ] TypeScript 타입 체크 (에러 0건)
@@ -601,13 +619,14 @@ app/(main)/restaurant/[id]/page.tsx
 - [ ] 린트 통과
 
 **Phase 2 — 통합 검증:**
-- [ ] 모든 API 엔드포인트 호출 테스트 (success: true 반환)
+- [ ] 2-1. 스키마 ↔ 백엔드 정합성
+- [ ] 2-2. API 계약 ↔ 코드 정합성
+- [ ] 환경 정합성 (CORS, 환경변수)
 - [ ] shared-types와 실제 응답 필드 일치
-- [ ] CORS 정상 동작
 
-**Phase 3 — 기능 검증 (브라우저에서):**
+**Phase 3 — 기능 검증:**
 
-핵심 플로우 10개:
+**3-A. 핵심 플로우 (스모크 테스트):**
 1. [ ] 로그인 (dev-login) → 홈 진입
 2. [ ] 온보딩 3단계 (위치→취향→제외)
 3. [ ] 홈 추천 3곳 표시 + 새로고침
@@ -619,9 +638,26 @@ app/(main)/restaurant/[id]/page.tsx
 9. [ ] 마이페이지 프로필 편집
 10. [ ] 즐겨찾기 토글
 
+**3-B. UI 인터랙션 검증 (18시나리오):**
+- 버튼 클릭, 폼 제출, 모달/바텀시트 열기/닫기
+- 스크롤 동작, 탭 전환, 뒤로 가기
+- 로딩/빈/에러 상태 표시
+
+**3-C. 디자인 검증:**
+- 디자인 HTML과 구현 화면 1:1 대조
+- browse 스킬로 computed CSS 측정
+- 색상, 폰트, 간격, 아이콘 일치 확인
+
+**3-D. 에러 시나리오:**
+- 네트워크 에러 핸들링
+- 잘못된 입력 유효성 검사
+- 인증 만료 시 리다이렉트
+
+**기능 검증 체크리스트 257항목:** `.docs/004_planning/qa/` 참조
+
 **Phase 4 — 수정 재검증:**
 - 버그 수정 후 해당 기능만 재검증
-- 수정이 다른 기능에 영향 줬는지 확인
+- 수정이 다른 기능에 영향 줬는지 리그레션 확인
 
 **이슈 심각도:**
 
@@ -695,3 +731,30 @@ app/(main)/restaurant/[id]/page.tsx
 | 배포 | 앱스토어 심사 1~3일 | **Vercel 즉시 배포** |
 | 이미지 | Image 컴포넌트 + resizeMode | **img 태그 + object-fit: cover** |
 | 스크롤 | gesture-handler 충돌 | **브라우저 기본 스크롤** |
+
+---
+
+## v2 개발에서 배운 교훈 (2026-04-05~)
+
+### 배포/인프라 교훈
+
+| # | 교훈 | 방지법 |
+|---|------|--------|
+| 21 | NestJS + Vercel Serverless 변환이 복잡함 (cold start, adapter 필요) | **다음 프로젝트는 Next.js API Routes 사용 검토** |
+| 22 | Vercel Deployment Protection이 기본 활성화 → 배포 후 403 | **배포 후 Vercel 대시보드에서 Deployment Protection 비활성화** |
+| 23 | .vercelignore 없으면 node_modules까지 업로드 → 배포 실패 | **.vercelignore 파일에 node_modules, .env 등 명시** |
+
+### 카카오맵 교훈
+
+| # | 교훈 | 방지법 |
+|---|------|--------|
+| 24 | 카카오맵 SDK 전역 로딩 필요 — 클라이언트 네비게이션 시 Script onLoad 미호출 | **useKakaoMaps 훅으로 전역 로딩 상태 관리** |
+| 25 | Capacitor iOS에서 카카오맵 도메인 등록 필요 | **카카오 개발자 콘솔에 Vercel URL + capacitor://localhost 등록** |
+
+### QA/검증 교훈
+
+| # | 교훈 | 방지법 |
+|---|------|--------|
+| 26 | 기능 검증 체크리스트를 개발 후에 작성하면 누락 발생 | **기능 검증 체크리스트를 개발 전에 작성** |
+| 27 | 빌드 통과 ≠ 기능 동작 (타입 에러 0건이어도 UI 안 될 수 있음) | **브라우저 UI 인터랙션 검증 필수 (빌드만 믿지 않는다)** |
+| 28 | notification 모듈을 별도로 뒀으나 실제로는 user 모듈에 통합됨 | **API 설계 시 모듈 경계를 명확히 정의** |

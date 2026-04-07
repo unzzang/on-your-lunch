@@ -61,3 +61,13 @@ HTML 형식을 사용하는 이유:
 - [ ] `component-spec.md` 체크리스트 통과
 - [ ] `design-principles.md` 8가지 원칙 준수
 - [ ] Anti-Pattern 항목 위반 없음
+
+### 디자인 검증 체크리스트 (개발팀 핸드오프 전 자가 검증)
+
+- [ ] 배경색이 섹션별로 구분되어 있는가 (bg-primary vs bg-secondary)
+- [ ] font-size, font-weight가 디자인 토큰 값과 일치하는가
+- [ ] line-height가 적절한가 (단일행 텍스트에 과도한 lineHeight 미적용)
+- [ ] 음수 마진이 필요한 요소에 적용되어 있는가 (터치 영역 확보)
+- [ ] 디자인에 이미지가 있으면 코드에도 반드시 포함되어 있는가 (placeholder 금지)
+- [ ] 컬러 대비 4.5:1 이상 확인되었는가
+- [ ] 모바일 터치 영역 44×44px 이상 확보되었는가

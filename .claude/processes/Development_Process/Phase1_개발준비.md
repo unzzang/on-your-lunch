@@ -8,10 +8,12 @@
 
 **절차:**
 
-1. 기능 명세서 + 기술 스펙을 읽는다
-2. `.claude/references/architecture-patterns.md`에서 후보 패턴을 선정한다
-3. 백엔드/프론트/DB 아키텍처를 확정한다
-4. 선정 근거를 DR로 기록한다
+1. `.claude/references/tech-stack-guide.md`를 먼저 읽는다 (권장 스택 + 배포 교훈)
+2. 기능 명세서 + 기술 스펙을 읽는다
+3. `.claude/references/architecture-patterns.md`에서 후보 패턴을 선정한다
+4. 백엔드/프론트/DB 아키텍처를 확정한다
+5. 배포 방식을 확정한다 (어디에 어떻게 올릴지)
+6. 선정 근거를 DR로 기록한다
 
 **산출물:**
 
@@ -46,6 +48,7 @@
 - [ ] `pnpm install` → `pnpm dev` → 백엔드 + 프론트 정상 실행
 - [ ] `pnpm build` 통과
 - [ ] DB 마이그레이션 + 시드 성공
+- [ ] **PO 확인:** 브라우저에서 페이지가 뜨는지 직접 확인
 
 ---
 

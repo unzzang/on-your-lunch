@@ -8,13 +8,13 @@
 | `common/writing-rules.md` | 가짜 데이터 금지, 모호 표현 금지, 출처 필수. |
 | `common/gate-entry.md` | Gate 진입 시 프로세스 먼저 읽고, 활동 3분류 후 진행. |
 | `common/operation-structure.md` | PO 직접 지시 구조. 위더는 호출 시에만 개입. |
-| `common/folder-structure.md` | .docs/ 및 src/ 폴더 생성 규칙. |
-| `common/docs-index.md` | .docs/ 폴더별 정의 (뭐가 들어가고, 누가 참조하는지). |
-| `common/efforts-management.md` | .efforts/ 현황판 운영 (상태 카드 관리). |
-| `common/documents-management.md` | .documents/ vs .docs/ 구분 기준. |
-| `common/infra-management.md` | .infra/ vs src/ 구분 기준. |
-| `common/kits-management.md` | .kits/ 템플릿 사용법 + attachments 파일 정리 규칙. |
-| `common/output-management.md` | .output/ 프로젝트 산출물 관리. product/contents 분리. |
+| `common/folder-structure.md` | docs/ 및 src/ 폴더 생성 규칙. |
+| `common/docs-index.md` | docs/ 폴더별 정의 (뭐가 들어가고, 누가 참조하는지). |
+| `common/efforts-management.md` | efforts/ 현황판 운영 (상태 카드 관리). |
+| `common/documents-management.md` | documents/ vs docs/ 구분 기준. |
+| `common/infra-management.md` | infra/ vs src/ 구분 기준. |
+| `common/kits-management.md` | kits/ 템플릿 사용법 + attachments 파일 정리 규칙. |
+| `common/output-management.md` | output/ 프로젝트 산출물 관리. product/contents 분리. |
 | `common/stage-verification.md` | Stage 검증 절차. 1차 전문 → 2차 정합성 → PO 승인. |
 
 ## 팀별 규칙

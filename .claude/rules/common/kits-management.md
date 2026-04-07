@@ -1,13 +1,13 @@
-# .kits/ 템플릿 및 첨부 파일 관리 규칙
+# kits/ 템플릿 및 첨부 파일 관리 규칙
 
 ## 역할
 
-`.kits/`는 **재사용 가능한 템플릿과 외부 참고 파일**을 보관하는 공간이다.
+`kits/`는 **재사용 가능한 템플릿과 외부 참고 파일**을 보관하는 공간이다.
 
 ## 폴더 구조
 
 ```
-.kits/
+kits/
 ├── templates/           ← 템플릿
 │   ├── product/           프로젝트 스타터 킷 (clone해서 사용)
 │   └── documents/         문서 템플릿 (복사해서 사용)
@@ -22,7 +22,7 @@
 - `product/` — 새 서비스 프로젝트 시작 시 clone
 - `documents/meeting-note.md` — 회사 회의록 작성 시 복사
 - `documents/decision-record.md` — 회사 DR 작성 시 복사
-- `documents/effort-card.md` — 새 프로젝트 카드 생성 시 복사하여 `.efforts/001_On/`에 배치
+- `documents/effort-card.md` — 새 프로젝트 카드 생성 시 복사하여 `efforts/001_On/`에 배치
 
 ## attachments/ 사용법
 

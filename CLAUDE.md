@@ -64,6 +64,48 @@ PO ↔ 위더 (필요할 때만 호출)
 
 ---
 
+## 현재 활성 프로젝트
+
+| 프로젝트 | 경로 | Stage | 스택 |
+|---------|------|-------|------|
+| 온유어런치 | `output/products/2026-03-31_on-your-lunch/` | Stage 4 (개발) | NestJS 11 + Next.js 15 + PostgreSQL 16 |
+
+프로젝트별 상세 기술 정보는 각 프로젝트의 `CLAUDE.md`와 `src/DEVELOPMENT.md` 참조.
+
+### 온유어런치 아키텍처
+
+pnpm workspace + Turborepo 모노레포. v1(Expo)에서 v2(Next.js + PWA)로 전환 완료 (2026-04-05).
+
+```
+src/
+├── apps/api/          # NestJS 11 백엔드 (포트 3000, /v1 prefix)
+├── apps/web/          # Next.js 15 프론트엔드 (포트 3001, PWA)
+└── packages/shared-types/  # 프론트↔백엔드 공유 타입
+```
+
+- **백엔드**: Prisma 7 + PostgreSQL 16, JWT 인증, Swagger (`/api-docs`)
+- **프론트엔드**: App Router, Tailwind CSS 4, Zustand, TanStack Query 5, ky, Kakao Maps
+- **API 프록시**: Next.js `/api/*` → NestJS `/v1/*` (next.config.js rewrites)
+
+### 온유어런치 빠른 명령어 (`src/` 디렉토리에서 실행)
+
+```bash
+pnpm install              # 의존성 설치
+pnpm dev                  # 백엔드 + 프론트 동시 실행
+pnpm api:dev              # 백엔드 개발 서버 (포트 3000)
+pnpm web:dev              # 프론트엔드 개발 서버 (포트 3001)
+pnpm db:generate          # Prisma 클라이언트 재생성
+pnpm db:migrate           # Prisma 마이그레이션
+pnpm db:studio            # Prisma Studio (비주얼 DB 편집기)
+pnpm db:seed              # 시드 데이터 (카테고리 7건, 알레르기 6건)
+pnpm build                # 전체 빌드
+pnpm lint                 # 전체 린트
+pnpm test                 # 전체 테스트
+pnpm format               # Prettier 포맷팅
+```
+
+---
+
 ## 핵심 스킬 (슬래시 커맨드)
 
 | 카테고리 | 커맨드 | 용도 |
@@ -71,6 +113,7 @@ PO ↔ 위더 (필요할 때만 호출)
 | **프로젝트** | `/create-project` | 새 프로젝트 대화형 셋업 |
 | **기획** | `/spec`, `/decision`, `/minutes` | 명세서, 의사결정 기록, 회의록 |
 | **리서치** | `/research` | 5단계 사전조사 |
+| **분석** | `/app-analysis`, `/deep-dive` | 앱스토어/앱 서비스 심층 분석, 특정 기능 딥다이브 |
 | **디자인** | `/design`, `/graphic-design` | UI/UX 디자인, 콘텐츠 비주얼 |
 | **개발** | `/backend`, `/backend-dev`, `/frontend`, `/admin-fe` | 설계 + 구현 |
 | **검증** | `/qa`, `/verify`, `/verify-stage`, `/review` | QA, 정합성 검증, 리뷰 |
@@ -92,18 +135,19 @@ On-Your-Mark_Company/
 ├── README.md             ← 운영 매뉴얼
 ├── settings.json         ← 실행 설정
 ├── .claude/              ← 회사 인프라 (에이전트, 스킬, 프로세스, 규칙)
-├── .documents/           ← 회사 문서 (전사 회의록, 회사 DR)
-├── .efforts/             ← 프로젝트 현황판 (상태 카드)
-├── .kits/                ← 템플릿 (프로젝트 + 문서)
-├── .infra/               ← 회사 운영용 코드 (내부 도구, 웹사이트)
-└── .output/              ← 프로젝트 산출물 (코드 + 문서)
-    ├── products/           서비스 프로덕트 ({시작일}_{프로젝트명}/)
+├── analysis/             ← 분석 산출물
+├── documents/            ← 회사 문서 (전사 회의록, 회사 DR)
+├── efforts/              ← 프로젝트 현황판 (상태 카드)
+├── kits/                 ← 템플릿 (프로젝트 + 문서)
+├── infra/                ← 회사 운영용 코드 (내부 도구, 웹사이트)
+└── output/               ← 프로젝트 산출물 (코드 + 문서)
+    ├── products/           서비스 프로덕트 ({YYYY-MM-DD}_{프로젝트명}/)
     └── contents/           콘텐츠 프로젝트
 ```
 
 ### 프로젝트 산출물 위치
 
-각 프로젝트는 `.output/products/{YYYY-MM-DD}_{프로젝트명}/` 아래에 위치하며, 내부에 `.docs/`(문서)와 `src/`(코드)를 갖는다. `.efforts/`의 카드는 이 경로를 가리키는 포인터.
+각 프로젝트는 `output/products/{YYYY-MM-DD}_{프로젝트명}/` 아래에 위치하며, 내부에 `docs/`(문서), `design/`(디자인), `src/`(코드)를 갖는다. `efforts/`의 카드는 이 경로를 가리키는 포인터.
 
 ### 핵심 참조 경로
 
@@ -113,5 +157,5 @@ On-Your-Mark_Company/
 | 프로세스 절차서 | `.claude/processes/` |
 | 에이전트 정보 | `.claude/agents/{이름}/AGENTS.md` |
 | 팀 정보 | `.claude/teams/{팀명}/TEAM.md` |
-| 템플릿 | `.kits/templates/` |
+| 템플릿 | `kits/templates/` |
 | 아키텍처 패턴 | `.claude/references/architecture-patterns.md` |

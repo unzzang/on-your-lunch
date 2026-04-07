@@ -1,18 +1,18 @@
-# .documents/ 회사 문서 관리 규칙
+# documents/ 회사 문서 관리 규칙
 
 ## 역할
 
-`.documents/`는 **회사 레벨 문서**를 관리하는 공간이다. 프로젝트별 문서(`.docs/`)와 구분한다.
+`documents/`는 **회사 레벨 문서**를 관리하는 공간이다. 프로젝트별 문서(`docs/`)와 구분한다.
 
 ```
-.documents/ = 회사 전체에 관한 문서 (전사 회의록, 회사 의사결정)
-.docs/      = 개별 프로젝트 산출물 (기획서, 디자인, 리서치)
+documents/ = 회사 전체에 관한 문서 (전사 회의록, 회사 의사결정)
+docs/      = 개별 프로젝트 산출물 (기획서, 디자인, 리서치)
 ```
 
 ## 폴더 구조
 
 ```
-.documents/
+documents/
 ├── meeting-notes/       ← 회사 레벨 회의록
 └── decision-making/     ← 회사 레벨 의사결정 (DR)
 ```
@@ -23,8 +23,8 @@
 
 ### 템플릿
 
-- 회의록: `.kits/templates/documents/meeting-note.md`
-- 의사결정: `.kits/templates/documents/decision-record.md`
+- 회의록: `kits/templates/documents/meeting-note.md`
+- 의사결정: `kits/templates/documents/decision-record.md`
 
 ### 파일 정리 형식
 
@@ -59,8 +59,8 @@ decision-making/
 
 | 내용 | 저장 위치 |
 |------|----------|
-| 팀 구성 변경 | `.documents/decision-making/` |
-| 도구 변경 (Figma 도입 등) | `.documents/decision-making/` |
-| 사업 방향 논의 | `.documents/meeting-notes/` |
-| PACE 기능 명세 | 프로젝트 `.docs/planning/specs/` |
-| PACE 디자인 DR | 프로젝트 `.docs/decision-making/` |
+| 팀 구성 변경 | `documents/decision-making/` |
+| 도구 변경 (Figma 도입 등) | `documents/decision-making/` |
+| 사업 방향 논의 | `documents/meeting-notes/` |
+| PACE 기능 명세 | 프로젝트 `docs/planning/specs/` |
+| PACE 디자인 DR | 프로젝트 `docs/decision-making/` |

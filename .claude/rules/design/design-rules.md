@@ -7,7 +7,7 @@
 
 ## 작업 순서
 
-1. **토큰 확인** — `design-tokens.md`의 구조를 확인하고, 프로젝트 디자인 시스템(`.docs/005_design/design-system.md`)에 프로젝트 고유 값이 있는지 확인.
+1. **토큰 확인** — `design-tokens.md`의 구조를 확인하고, 프로젝트 디자인 시스템(`design/design-system.md`)에 프로젝트 고유 값이 있는지 확인.
 2. **원칙 확인** — `design-principles.md`의 8가지 원칙을 숙지.
 3. **디자인 시스템 먼저** — 개별 화면 전에 컬러, 타이포, 컴포넌트를 확정.
 4. **화면 디자인** — `component-spec.md` 형식으로 컴포넌트 명세 작성.

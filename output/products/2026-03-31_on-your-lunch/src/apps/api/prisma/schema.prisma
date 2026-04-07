@@ -1,0 +1,292 @@
+// 온유어런치 Prisma Schema
+// ERD: docs/004_planning/erd/2026-03-30(일)_ERD.md
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Enum ──
+
+enum PriceRange {
+  UNDER_10K
+  BETWEEN_10K_20K
+  OVER_20K
+}
+
+enum DataSource {
+  KAKAO
+  MANUAL
+  USER
+}
+
+// ── 마스터 테이블 ──
+
+model Category {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String   @unique @db.VarChar(30)
+  colorCode String   @map("color_code") @db.VarChar(7)
+  sortOrder Int      @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  restaurants      Restaurant[]
+  preferredByUsers UserPreferredCategory[]
+  excludedByUsers  UserExcludedCategory[]
+
+  @@map("category")
+}
+
+model AllergyType {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String   @unique @db.VarChar(20)
+  sortOrder Int      @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  users UserAllergy[]
+
+  @@map("allergy_type")
+}
+
+// ── 사용자 ──
+
+model User {
+  id                    String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                 String     @unique @db.VarChar(255)
+  nickname              String     @db.VarChar(10)
+  profileImageUrl       String?    @map("profile_image_url")
+  googleId              String     @unique @map("google_id") @db.VarChar(255)
+  refreshToken          String?    @map("refresh_token")
+  notificationEnabled   Boolean    @default(true) @map("notification_enabled")
+  notificationTime      String     @default("11:30") @map("notification_time") @db.VarChar(5)
+  marketingAgreed       Boolean    @default(false) @map("marketing_agreed")
+  termsAgreedAt         DateTime   @map("terms_agreed_at") @db.Timestamptz
+  expoPushToken         String?    @map("expo_push_token")
+  preferredPriceRange   PriceRange @map("preferred_price_range")
+  isOnboardingCompleted Boolean    @default(false) @map("is_onboarding_completed")
+  deletedAt             DateTime?  @map("deleted_at") @db.Timestamptz
+  createdAt             DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  location            UserLocation?
+  preferredCategories UserPreferredCategory[]
+  excludedCategories  UserExcludedCategory[]
+  allergies           UserAllergy[]
+  eatingHistories     EatingHistory[]
+  favorites           Favorite[]
+  recommendationLogs  RecommendationLog[]
+  eventLogs           EventLog[]
+
+  @@map("user")
+}
+
+model UserLocation {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String   @unique @map("user_id") @db.Uuid
+  latitude     Decimal  @db.Decimal(9, 6)
+  longitude    Decimal  @db.Decimal(9, 6)
+  address      String   @db.VarChar(255)
+  buildingName String?  @map("building_name") @db.VarChar(100)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("user_location")
+}
+
+model UserPreferredCategory {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  categoryId String   @map("category_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user     User     @relation(fields: [userId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@unique([userId, categoryId], map: "idx_upc_user_category")
+  @@map("user_preferred_category")
+}
+
+model UserExcludedCategory {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  categoryId String   @map("category_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user     User     @relation(fields: [userId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@unique([userId, categoryId], map: "idx_uec_user_category")
+  @@map("user_excluded_category")
+}
+
+model UserAllergy {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  allergyTypeId String   @map("allergy_type_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user        User        @relation(fields: [userId], references: [id])
+  allergyType AllergyType @relation(fields: [allergyTypeId], references: [id])
+
+  @@unique([userId, allergyTypeId], map: "idx_ua_user_allergy")
+  @@map("user_allergy")
+}
+
+// ── 식당 ──
+
+model Restaurant {
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kakaoPlaceId  String?     @unique @map("kakao_place_id") @db.VarChar(50)
+  name          String      @db.VarChar(100)
+  categoryId    String      @map("category_id") @db.Uuid
+  address       String      @db.VarChar(255)
+  latitude      Decimal     @db.Decimal(9, 6)
+  longitude     Decimal     @db.Decimal(9, 6)
+  phone         String?     @db.VarChar(20)
+  description   String?     @db.VarChar(200)
+  priceRange    PriceRange? @map("price_range")
+  businessHours String?     @map("business_hours") @db.VarChar(200)
+  thumbnailUrl  String?     @map("thumbnail_url")
+  isUserCreated Boolean     @default(false) @map("is_user_created")
+  isClosed      Boolean     @default(false) @map("is_closed")
+  dataSource    DataSource  @default(KAKAO) @map("data_source")
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  category               Category                @relation(fields: [categoryId], references: [id])
+  menus                  RestaurantMenu[]
+  photos                 RestaurantPhoto[]
+  eatingHistories        EatingHistory[]
+  favorites              Favorite[]
+  recommendationLogItems RecommendationLogItem[]
+
+  @@index([categoryId], map: "idx_restaurant_category")
+  @@map("restaurant")
+}
+
+model RestaurantMenu {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  restaurantId String   @map("restaurant_id") @db.Uuid
+  name         String   @db.VarChar(100)
+  price        Int?
+  sortOrder    Int      @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@index([restaurantId], map: "idx_restaurant_menu_restaurant")
+  @@map("restaurant_menu")
+}
+
+model RestaurantPhoto {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  restaurantId String   @map("restaurant_id") @db.Uuid
+  imageUrl     String   @map("image_url")
+  isThumbnail  Boolean  @default(false) @map("is_thumbnail")
+  sortOrder    Int      @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@index([restaurantId], map: "idx_restaurant_photo_restaurant")
+  @@map("restaurant_photo")
+}
+
+// ── 먹은 이력 + 즐겨찾기 ──
+
+model EatingHistory {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId               String    @map("user_id") @db.Uuid
+  restaurantId         String?   @map("restaurant_id") @db.Uuid
+  manualRestaurantName String?   @map("manual_restaurant_name") @db.VarChar(100)
+  manualCategoryId     String?   @map("manual_category_id") @db.Uuid
+  eatenDate            DateTime  @map("eaten_date") @db.Date
+  rating               Int       @db.SmallInt
+  memo                 String?   @db.VarChar(300)
+  isFromRecommendation Boolean   @default(false) @map("is_from_recommendation")
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  user       User        @relation(fields: [userId], references: [id])
+  restaurant Restaurant? @relation(fields: [restaurantId], references: [id])
+
+  @@unique([userId, restaurantId, eatenDate], map: "idx_eating_history_user_date")
+  @@index([userId, eatenDate(sort: Desc)], map: "idx_eating_history_user_recent")
+  @@map("eating_history")
+}
+
+model Favorite {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  restaurantId String   @map("restaurant_id") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user       User       @relation(fields: [userId], references: [id])
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@unique([userId, restaurantId], map: "idx_favorite_user_restaurant")
+  @@index([userId, createdAt(sort: Desc)], map: "idx_favorite_user_created")
+  @@map("favorite")
+}
+
+// ── 추천 기록 ──
+
+model RecommendationLog {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String?  @map("user_id") @db.Uuid
+  recommendationDate DateTime @map("recommendation_date") @db.Date
+  refreshCount       Int      @default(0) @map("refresh_count") @db.SmallInt
+  filterCategoryIds  String[] @map("filter_category_ids") @db.Uuid
+  filterPriceRange   String?  @map("filter_price_range") @db.VarChar(20)
+  filterWalkMinutes  Int?     @map("filter_walk_minutes") @db.SmallInt
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user  User?                   @relation(fields: [userId], references: [id])
+  items RecommendationLogItem[]
+
+  @@index([userId, recommendationDate(sort: Desc)], map: "idx_recommendation_log_user_date")
+  @@map("recommendation_log")
+}
+
+model RecommendationLogItem {
+  id                  String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  recommendationLogId String @map("recommendation_log_id") @db.Uuid
+  restaurantId        String @map("restaurant_id") @db.Uuid
+  displayOrder        Int    @map("display_order") @db.SmallInt
+
+  recommendationLog RecommendationLog @relation(fields: [recommendationLogId], references: [id])
+  restaurant        Restaurant        @relation(fields: [restaurantId], references: [id])
+
+  @@index([recommendationLogId], map: "idx_rli_log_id")
+  @@index([restaurantId], map: "idx_rli_restaurant")
+  @@map("recommendation_log_item")
+}
+
+// ── 기타 ──
+
+model KakaoCategoryMapping {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kakaoCategory String   @unique @map("kakao_category") @db.VarChar(100)
+  categoryId    String?  @map("category_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("kakao_category_mapping")
+}
+
+model EventLog {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  eventName String   @map("event_name") @db.VarChar(50)
+  eventData Json     @default("{}") @map("event_data")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt(sort: Desc)], map: "idx_event_log_user_created")
+  @@index([eventName, createdAt(sort: Desc)], map: "idx_event_log_name_created")
+  @@map("event_log")
+}

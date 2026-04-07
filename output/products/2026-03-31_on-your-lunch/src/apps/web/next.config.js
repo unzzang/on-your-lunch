@@ -10,12 +10,13 @@ const nextConfig = {
     NEXT_PUBLIC_KAKAO_JS_KEY: process.env.NEXT_PUBLIC_KAKAO_JS_KEY,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
-  /* API 프록시: 프론트 → 백엔드 (localhost:3000) */
+  /* API 프록시: 프론트 → 백엔드 */
   async rewrites() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:3000/v1/:path*',
+        destination: `${apiUrl}/v1/:path*`,
       },
     ];
   },

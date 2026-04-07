@@ -1,7 +1,11 @@
+import { existsSync } from 'fs';
 import { config } from 'dotenv';
 import { resolve } from 'path';
 
-config({ path: resolve(process.cwd(), '../../.env'), override: true });
+const envPath = resolve(process.cwd(), '../../.env');
+if (existsSync(envPath)) {
+  config({ path: envPath, override: true });
+}
 
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';

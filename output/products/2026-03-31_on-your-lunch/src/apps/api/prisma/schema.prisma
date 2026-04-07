@@ -2,7 +2,8 @@
 // ERD: docs/004_planning/erd/2026-03-30(일)_ERD.md
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {

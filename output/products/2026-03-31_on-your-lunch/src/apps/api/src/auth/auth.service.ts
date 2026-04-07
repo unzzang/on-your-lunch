@@ -128,7 +128,7 @@ export class AuthService {
   }
 
   async devLogin(email?: string) {
-    if (process.env.NODE_ENV !== 'development') {
+    if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEV_LOGIN !== 'true') {
       throw new HttpException(
         { code: 'NOT_FOUND', message: 'Not Found' },
         HttpStatus.NOT_FOUND,

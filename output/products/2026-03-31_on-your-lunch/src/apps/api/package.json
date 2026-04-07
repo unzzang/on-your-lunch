@@ -6,6 +6,7 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main",
+    "vercel-build": "nest build",
     "lint": "eslint src/**/*.ts",
     "test": "jest --config jest.config.ts --runInBand --forceExit"
   },
